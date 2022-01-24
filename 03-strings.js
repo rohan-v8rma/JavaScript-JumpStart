@@ -10,6 +10,8 @@ quotes when defining a string.
 
 SYNTAX for printing the value of a variable within a string. 
 ? console.log(`Value of <variable-name> is ${<variable-name>}`)
+
+! NOTICE the use of back-ticks instead of quotes.
 */
 
 let a = 2; 

@@ -14,7 +14,7 @@ returns true if element passes the test, else false. It takes in:
 element - The current element being passed from the array.
 
 ! A callback function is a function passed into another function 
-! as an argument, which is then invoked inside the outer function to 
+! as an argument, which is then invoked inside the outer function to do
 ! some kind of routine or action.
 
 ? thisArg (optional):

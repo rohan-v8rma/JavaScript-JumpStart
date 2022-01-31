@@ -3,24 +3,22 @@ numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 /*
 The syntax of the filter() method is:
 
-<array>.filter(callback(element), thisArg)
+<array>.filter(callbackFn(element), thisArg)
 
 ? filter() Parameters
 The filter() method takes in:
 
-? callback: 
+? callbackFn: 
 The test function to execute on each array element; 
 returns true if element passes the test, else false. It takes in:
 element - The current element being passed from the array.
-
-! A callback function is a function passed into another function 
-! as an argument, which is then invoked inside the outer function to do
-! some kind of routine or action.
+TODO: refer 12B for callback functions
 
 ? thisArg (optional):
 This value doesn't change what the array is, rather it is
 used as the value of the object 'this' when executing callback. 
 By default, it is undefined.
+TODO: refer 12B for usage of 'this' value
 */
 
 filtered = numbers.filter(function evenNumbers(number){

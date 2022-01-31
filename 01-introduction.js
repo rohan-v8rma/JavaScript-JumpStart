@@ -24,4 +24,16 @@ Although ending statements (NOT BLOCKS of code like if-else)
 with semi-colons is optional in JavaScript, it is best 
 practice to do so in order to avoid any edge case behaviour
 where statements place on two different lines are interpreted together.
+
+* 3. Data types in JavaScript 
+
+In Javascript, there are only 6 data types defined:
+
+? the primitives (boolean, number, string, null, undefined) 
+? object (the only reference/non-primitive type)
+
+for example, a string is an object which indices as its keys and 
+characters as the property names.
 */
+string = "helloworld";
+console.log(Object.getOwnPropertyNames(string));

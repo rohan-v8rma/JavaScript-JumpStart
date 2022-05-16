@@ -4,9 +4,14 @@ function eat(food){
 console.log(eat("bananas"))
 
 /*
-? Function DECLARATION vs Function EXPRESSION
+        INDEX   
+1. Function DECLARATION vs Function EXPRESSION
+2. call method of 'global Function class'
 
-* Function DECLARATION
+
+? 1. Function DECLARATION vs Function EXPRESSION
+
+* a. Function DECLARATION
 
 ? Syntax: 
 ? function <function-name>(paramA, paramB) {
@@ -35,7 +40,7 @@ the function definition, since JavaScript is a compiled language.
 
 /*
 
-* Function EXPRESSION
+* b. Function EXPRESSION
 
 ? Syntax:
 ? var <variable-name> = function (paramA, paramB){
@@ -59,8 +64,14 @@ reaches the line of code.
 
 ? For example: 
 */
-var calSub = function (x, y){
+var calSub = function (x, y) {
     let z = x - y;
     return z;
 }
 console.log("Subtraction : " + calSub(7, 4));
+
+/*
+? 2. call method of 'global Function class'
+
+
+*/

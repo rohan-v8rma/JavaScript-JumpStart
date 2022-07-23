@@ -9,15 +9,11 @@ The syntax of the filter() method is:
 The filter() method takes in:
 
 ? callbackFn: 
-The test function to execute on each array element; 
-returns true if element passes the test, else false. It takes in:
-element - The current element being passed from the array.
+The test function to execute on each array element; returns true if element passes the test, else false. It takes in an element - The current element being passed from the array.
 TODO: refer 12B for callback functions
 
 ? thisArg (optional):
-This value doesn't change what the array is, rather it is
-used as the value of the object 'this' when executing callback. 
-By default, it is undefined.
+This value doesn't change what the array is, rather it is used as the value of the object 'this' when executing callback. By default, it is undefined.
 TODO: refer 12B for usage of 'this' value
 */
 
@@ -46,7 +42,5 @@ console.log(arr.filter(myFilter, {val: 1}));
 console.log(arr.filter(myFilter, {val: 2}));
 
 /*
-The function 'myFilter' is executed on each element of the array 'arr'.
-So the elements for which the evaluated expression has a truth value of 1, 
-are getting added into the filtered array
+The function 'myFilter' is executed on each element of the array 'arr'. So the elements for which the evaluated expression has a truth value of 1, are getting added into the filtered array
 */

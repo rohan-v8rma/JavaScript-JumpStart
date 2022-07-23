@@ -19,8 +19,8 @@ type conversion can be either implicit or explicit.
 
 //* Truthy or Falsy
 if (-Infinity) {
-    console.log("This is a truthy value")
+    console.log("This is a truthy value");
 }
 else {
-    console.log("This is a falsy value")
-}
+    console.log("This is a falsy value");
+};

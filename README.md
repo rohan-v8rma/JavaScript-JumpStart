@@ -272,10 +272,28 @@ For example:
 
 ### b. Function EXPRESSION
 
+Function Expressions can be assigned to variables/kept as property values in Javascript.
+
+For calling the function expression, we just use the name of the variable it is stored in followed by arguments.
+
+The syntax for creating the assigning and calling the function expression is as follows:
 ```javascript
-var variableName = function (paramA, paramB){
+var variableName = function (paramA, paramB) {
     // Set of statements
-}
+};
+
+variableName(valueA, valueB);
+```
+OR
+```javascript
+const objectName = {
+  funcEx:  function (paramA, paramB) {
+            // Set of statements
+  },
+  key1: value1
+};
+
+objectName.funcEx(valueA, valueB);
 ```
 They can also be used in [IIFE](#immediately-invoked-function-expression-iife)s (which function declarations can be too but it is more appt. 
 to use function expressions).
@@ -295,7 +313,7 @@ reaches the line of code.
 var calSub = function (x, y) {
     let z = x - y;
     return z;
-}
+};
 console.log("Subtraction : " + calSub(7, 4));
 ```
 ## No Parameters vs. Default Parameters

@@ -19,7 +19,7 @@
     - [Structure of created array objects](#structure-of-created-array-objects)
     - [Accessing elements at specific indices of an array](#accessing-elements-at-specific-indices-of-an-array)
   - [Variable and Constant values](#variable-and-constant-values)
-    - [`let` keyword for variables](#let-keyword-for-variables)
+    - [`let` & `var` keywords for variables](#let--var-keywords-for-variables)
     - [`const` keyword for constants](#const-keyword-for-constants)
   - [Template literals and string interpolation in Javascript](#template-literals-and-string-interpolation-in-javascript)
   - [Ending statements with semi-colons](#ending-statements-with-semi-colons)
@@ -34,6 +34,7 @@
   - [`this` object of functions](#this-object-of-functions)
   - [Immediately Invoked Function Expression (`IIFE`)](#immediately-invoked-function-expression-iife)
     - [Use-case of an `IIFE`](#use-case-of-an-iife)
+- [ES6 (ECMAScript 6) Features](#es6-ecmascript-6-features)
 
 # Important Details and Methods related to Web Browsers
 
@@ -204,12 +205,50 @@ The second statement is valid.
 
 ## Variable and Constant values
 
-### `let` keyword for variables
+### `let` & `var` keywords for variables
+
 ```javascript
 let example_1;
-example = "some string";
+example_1 = "example string 1";
 console.log(example_1);
+
+var example_2;
+example_2 = "example string 2";
+console.log(example_2);
 ```
+- `let` is block-scoped, sa variable declared with `let` can only be access inside a block of code.
+  
+  `var` is function-scoped, so a variable declared inside a function with `var` can be used anywhere within a function.
+  ```javascript
+  // program to print the text
+  // variable `funcScope` cannot be used here
+  function greet() {
+      var funcScope = 'hello';
+
+      // variable `blockScope` cannot be used here
+      if(funcScope == 'hello'){
+          // variable `blockScope` can be used here
+          let blockScope = 'world';
+          console.log(funcScope + ' ' + blockScope);
+      }
+
+      // variable `blockScope` cannot be used here
+      console.log(funcScope + ' ' + blockScope); // error
+  }
+  // variable `funcScope` cannot be used here
+
+  greet();
+  ```
+- `let` does not allow to redeclare variables
+  
+  `var` allows to redeclare variables.
+  ```javascript
+  let blockScope = 5; // 5
+  let blockScope = 3; // error
+
+  var funcScope = 5; // 5
+  var funcScope = 3; // 3
+  ```
 
 ### `const` keyword for constants
 
@@ -230,7 +269,7 @@ console.log(example_2);
 ```
 ## Template literals and string interpolation in Javascript
 
-
+TODO
 
 ## Ending statements with semi-colons
 
@@ -400,6 +439,6 @@ Check out [20B-IIFE.js](./workshopper-javascripting-scripts/20B-IIFE.js) for an 
 
 * It is a common pattern for creating local scopes.  
 
-
+# ES6 (ECMAScript 6) Features
 
 

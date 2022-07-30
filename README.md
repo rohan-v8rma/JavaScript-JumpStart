@@ -1,14 +1,36 @@
-- [Important Details and Methods related to Web Browsers](#important-details-and-methods-related-to-web-browsers)
+- [Important Information relating to Web Browsers](#important-information-relating-to-web-browsers)
+  - [What is a Session?](#what-is-a-session)
+  - [Running a method in the Browser Console](#running-a-method-in-the-browser-console)
+- [Important Objects and Methods related to Web Browsers](#important-objects-and-methods-related-to-web-browsers)
   - [`console` object](#console-object)
     - [`console.log(<arg>)` method](#consolelogarg-method)
     - [`console.table(<arg>)` method](#consoletablearg-method)
     - [`console.warn(<arg>)` and `console.error(<arg>)` method](#consolewarnarg-and-consoleerrorarg-method)
     - [`console.time(<arg>)` and `console.timeEnd(<arg>)`;](#consoletimearg-and-consoletimeendarg)
     - [`console.clear()` method](#consoleclear-method)
-  - [Running a method in the Browser Console](#running-a-method-in-the-browser-console)
   - [`window` object and "context"](#window-object-and-context)
     - [Usage of `window.console` object](#usage-of-windowconsole-object)
-  - [`alert(<arg>)` or `window.alert(<arg>)` method](#alertarg-or-windowalertarg-method)
+    - [Useful properties of the `window` object](#useful-properties-of-the-window-object)
+      - [`window.innerWidth`](#windowinnerwidth)
+      - [`window.innerHeight`](#windowinnerheight)
+      - [`window.scrollX`](#windowscrollx)
+      - [`window.scrollY`](#windowscrolly)
+      - [`window.history`](#windowhistory)
+        - [`window.history.length`](#windowhistorylength)
+        - [`window.history.back()` or `window.history.forward()` or `window.history.go()`](#windowhistoryback-or-windowhistoryforward-or-windowhistorygo)
+      - [`window.location`](#windowlocation)
+        - [`window.location.href` vs. `window.location.assign` vs. `window.location.replace()`](#windowlocationhref-vs-windowlocationassign-vs-windowlocationreplace)
+          - [`window.location.href` property](#windowlocationhref-property)
+          - [`window.location.assign()` method](#windowlocationassign-method)
+          - [`window.location.replace()` method](#windowlocationreplace-method)
+        - [`window.location.reload()`](#windowlocationreload)
+        - [`window.location.toString()`](#windowlocationtostring)
+          - [What is a stringifier method?](#what-is-a-stringifier-method)
+    - [`window.document`](#windowdocument)
+    - [Other methods of `window` object](#other-methods-of-window-object)
+      - [`window.prompt()` or `prompt()`](#windowprompt-or-prompt)
+      - [`window.confirm()` or `confirm()`](#windowconfirm-or-confirm)
+      - [`window.alert(<arg>)` or `alert(<arg>)`](#windowalertarg-or-alertarg)
 - [General information about JavaScript](#general-information-about-javascript)
   - [Data types](#data-types)
     - [`string` data-type](#string-data-type)
@@ -18,6 +40,8 @@
   - [Arrays](#arrays)
     - [Structure of created array objects](#structure-of-created-array-objects)
     - [Accessing elements at specific indices of an array](#accessing-elements-at-specific-indices-of-an-array)
+    - [Some prototype methods of the global `Array` class](#some-prototype-methods-of-the-global-array-class)
+      - [`Array.prototype.forEach()`](#arrayprototypeforeach)
   - [Variable and Constant values](#variable-and-constant-values)
     - [`let` & `var` keywords for variables](#let--var-keywords-for-variables)
     - [`const` keyword for constants](#const-keyword-for-constants)
@@ -34,11 +58,34 @@
   - [`this` object of functions](#this-object-of-functions)
   - [Immediately Invoked Function Expression (`IIFE`)](#immediately-invoked-function-expression-iife)
     - [Use-case of an `IIFE`](#use-case-of-an-iife)
+- [DOM (Document Object Model)](#dom-document-object-model)
 - [ES6 (ECMAScript 6) Features](#es6-ecmascript-6-features)
+  - [Arrow Functions](#arrow-functions)
+  - [`let` and `const` keywords](#let-and-const-keywords)
 
-# Important Details and Methods related to Web Browsers
+# Important Information relating to Web Browsers
+
+## What is a Session?
+
+Session refers to a visitor's time browsing a web site. 
+
+It's meant to represent the time between a visitor's first arrival at a page on the site and the time they stop using the site.
+
+## Running a method in the Browser Console
+
+![](images/console-function-output-and-return-value.png)
+
+As we can see, the line just below `console.log("hello");` displays the output (`hello`) of the command.
+
+The line below that shows an arrow pointing to the left and `undefined`. This is the return value of the method that was run.
+
+# Important Objects and Methods related to Web Browsers
 
 ## `console` object
+
+- In the case of node, `console` is a defined object, which is why we can execute its methods along with the prefix `console` in node locally.
+- In web browsers, it is a property of the [global `window` object](#window-object-and-context). This is why we can directly access it in web browsers, since they have `window` [context](#window-object-and-context).
+
 
 A console traditionally refers to a computer terminal where a user may input commands and view output such as the results of inputted commands or status messages from the computer.
 
@@ -88,25 +135,19 @@ Your code took: 4.3919237898ms
 
 This clears the Browser's console.
 
-## Running a method in the Browser Console
-
-![](images/console-function-output-and-return-value.png)
-
-As we can see, the line just below `console.log("hello");` displays the output (`hello`) of the command.
-
-The line below that shows an arrow pointing to the left and `undefined`. This is the return value of the method that was run.
-
 ## `window` object and "context"
 
-`window` is a global variable representing the browser window in which the script is running.
-
-It is exposed to JavaScript code. 
+`window` is a global object representing the browser window in which the script is running, typically on the **client** side. 
 
 Javascript code has access to global variables based on where it's running - browser engine or node. 
 
 I'm calling this global state **context**.
 
-It only works in browsers and not in regular scripts, because only browsers have window context.
+Since `window` is a global object on the client side (web browsers), we can directly use the methods of `window` in our scripts as they will be running in `window` context. 
+
+We can also say that the `window` object is at the top of the scope chain.
+
+It only works in browsers and not in regular scripts running locally using node, because only browsers have window context.
 
 In node, accessing window is meaningless because there's no browser window.
 
@@ -125,14 +166,139 @@ if( window.console ) {
     window.console.log( open_date );
 };
 ```
-## `alert(<arg>)` or `window.alert(<arg>)` method
+
+### Useful properties of the `window` object
+
+#### `window.innerWidth`
+
+The read-only Window property `innerWidth` returns the interior width of the window in pixels. This includes the width of the vertical scroll bar, if present.
+
+#### `window.innerHeight`
+
+The read-only `innerHeight` property of the Window interface returns the interior height of the window in pixels, including the height of the horizontal scroll bar, if present.
+
+#### `window.scrollX`
+
+The read-only `scrollX` property of the Window **interface** returns the number of pixels that the document is currently scrolled horizontally.
+
+TODO: Difference between Window interface and global Window object
+
+#### `window.scrollY`
+
+The read-only `scrollY` property of the Window interface returns the number of pixels that the document is currently scrolled vertically.
+
+#### `window.history`
+
+The `window.history` read-only property returns a reference to the `History` object (i.e., the `history` key of the `window` object has value as the `History` object), which provides an interface for manipulating the browser [session](#what-is-a-session) history.
+
+Note that the history refers to the pages visited ONLY in the tab or frame that the current page is loaded in.
+
+##### `window.history.length`
+
+##### `window.history.back()` or `window.history.forward()` or `window.history.go()`
+
+Moving backward and forward through the user's history is done using the `back()`, `forward()`, and `go()` methods.
+
+- To move backward through history: `window.history.back()`.
+This acts exactly as if the user clicked on the `Back` button in their browser toolbar.
+
+- To move forward: `window.history.forward()`.
+This acts exactly as if the user clicked on the `Forward` button in their browser toolbar.
+
+- To move to a specific point in history: `window.history.go(integerVal)` loads a specific page from session history. 
+  
+  The current page's position is 0 and an integer value relative to the current page has to be passed. For example, we can move forward one page by passing 1.
+#### `window.location`
+
+The `window.location` read-only property returns a reference to the `Location` object ((i.e., the `location` key of the `window` object has value as the `Location` object)), with information about the current location of the document.
+
+It represents the current **URL** of the document being displayed in that window.
+
+Though `window.location` is a read-only `Location` object, we can also assign a string to it. 
+
+This means that you can work with `location` as if it were a string in most cases: `location = http://www.example.com` is a synonym of `location.href = http://www.example.com`. But the latter is preferred.
+
+##### `window.location.href` vs. `window.location.assign` vs. `window.location.replace()`
+
+All three commands are used to redirect the page to another page/website but differ in terms of their impact on the browser history, safety and return values.
+
+###### `window.location.href` property 
+
+It is a property of `window.location` that stores the URL of the current webpage.
+
+On changing the value of `href` property, a user would be navigated to a new URL, i.e. sent to a new webpage. 
+  
+It adds an item to the history list, so that the user can return to the current page upon clicking the `Back` button. 
+
+It is faster than using the `assign()` method as calling a function is slower than changing the value of the property.
+
+###### `window.location.assign()` method
+
+It is a property of `window.location` that stores a function expression. 
+
+The `assign` function is also used to navigate to a new URL. But it is preferred over updating the `href` property as calling a function is considered safer and more readable.
+
+However, it does not show the current location, it is only used to go to a new location.
+
+The `assign()` method is also preferred over `href` as it allows the user to mock the function and check the URL input parameters while testing, instead of directly assigning a faulty URL to the `href` property.
+
+Unlike the `replace` method, the `assign` method adds a new record to history so that the user can return to the current page upon clicking the `Back` button.
+
+###### `window.location.replace()` method 
+
+It is a property of `window.location` that stores a function expression. 
+  
+It is used to navigate to a new URL without adding a new record to the history. 
+
+The user won't be able to navigate back to the current page upon clicking the `Back` button.
+
+##### `window.location.reload()`
+
+The `reload()` method reloads the current document. It is the same as clicking the reload button in your browser.
+
+##### `window.location.toString()`
+
+The `window.location.toString()` [stringifier method](#what-is-a-stringifier-method) of the Location interface returns a string containing the whole URL. It is a read-only version of `window.location.href`.
+
+an api is a contract 
+
+###### What is a stringifier method?
+
+An object's stringifier is any attribute or method that is defined to provide a textual representation of the object for use in situations where a string is expected.
+
+### `window.document`
+
+More details under [DOM (Document Object Model)](#dom-document-object-model)
+
+### Other methods of `window` object
+
+These methods only work on browsers since only browsers have the pre-existing global `window` object.
+
+We can choose to use these methods without the `window` prefix because, as mentioned previously, browsers have `window` [context](#window-object-and-context).
+
+Note that there should be no locally defined function with the same name, otherwise just using the method name would lead to the local function being called.
+
+This is why it is safer to use the methods along with the prefix of `window` to ensure selection of the correct function definition.
+
+#### `window.prompt()` or `prompt()`
+
+TODO
+
+#### `window.confirm()` or `confirm()`
+
+TODO
+
+#### `window.alert(<arg>)` or `alert(<arg>)`
 
 The alert() method displays an alert box with a message and an OK button.
 
 The alert box takes the focus away from the current window, and forces the user to read the message.
 
 For example:
+
 ![](./images/javascript-alert.png)
+
+Note that this is not used nowadays. Instead, we use Bootstrap etc, to show beautified alerts.
 
 # General information about JavaScript
 
@@ -202,6 +368,11 @@ The first statement is invalid since identifies can't begin with numbers.
 
 The second statement is valid.
 
+### Some prototype methods of the global `Array` class
+
+#### `Array.prototype.forEach()`
+
+The `forEach()` method executes a provided function (Arrow/Callback/Inline-callback) once for each array element.
 
 ## Variable and Constant values
 
@@ -249,8 +420,12 @@ console.log(example_2);
   var funcScope = 5; // 5
   var funcScope = 3; // 3
   ```
+It would be better to use `let` when defining variables since both `let` and `const` have block-level scope, so resolving scopes would be easier and consistent.
 
 ### `const` keyword for constants
+
+Values defined using `const` have block-level scope.
+
 
 If you are sure that the value of a variable won't change throughout the program, it's recommended to use `const` so as to prevent any errors later on due to changing on variables not meant to be changed. 
 
@@ -267,6 +442,7 @@ This is correct:
 const example_2 = "yo";
 console.log(example_2);
 ```
+
 ## Template literals and string interpolation in Javascript
 
 TODO
@@ -439,6 +615,14 @@ Check out [20B-IIFE.js](./workshopper-javascripting-scripts/20B-IIFE.js) for an 
 
 * It is a common pattern for creating local scopes.  
 
+# DOM (Document Object Model)
+
 # ES6 (ECMAScript 6) Features
 
+## Arrow Functions
 
+TODO
+
+## `let` and `const` keywords
+
+Given under [Variable and Constant values](#variable-and-constant-values) above.

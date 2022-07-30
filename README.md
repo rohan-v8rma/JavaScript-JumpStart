@@ -1,5 +1,7 @@
 - [Important Information relating to Web Browsers](#important-information-relating-to-web-browsers)
   - [What is a Session?](#what-is-a-session)
+  - [User Agent](#user-agent)
+    - [User Agent string](#user-agent-string)
   - [Running a method in the Browser Console](#running-a-method-in-the-browser-console)
 - [Important Objects and Methods related to Web Browsers](#important-objects-and-methods-related-to-web-browsers)
   - [`console` object](#console-object)
@@ -35,13 +37,16 @@
   - [Data types](#data-types)
     - [`string` data-type](#string-data-type)
   - [`undefined` data type](#undefined-data-type)
+  - [Interfaces (Not available in JavaScript)](#interfaces-not-available-in-javascript)
   - [Objects](#objects)
   - [Prototypes](#prototypes)
   - [Arrays](#arrays)
     - [Structure of created array objects](#structure-of-created-array-objects)
     - [Accessing elements at specific indices of an array](#accessing-elements-at-specific-indices-of-an-array)
-    - [Some prototype methods of the global `Array` class](#some-prototype-methods-of-the-global-array-class)
+    - [What is an `Array`-like object?](#what-is-an-array-like-object)
+    - [Some prototype/static methods of the global `Array` class](#some-prototypestatic-methods-of-the-global-array-class)
       - [`Array.prototype.forEach()`](#arrayprototypeforeach)
+      - [`Array.from()`](#arrayfrom)
   - [Variable and Constant values](#variable-and-constant-values)
     - [`let` & `var` keywords for variables](#let--var-keywords-for-variables)
     - [`const` keyword for constants](#const-keyword-for-constants)
@@ -51,6 +56,7 @@
   - [Function DECLARATION vs Function EXPRESSION](#function-declaration-vs-function-expression)
     - [a. Function DECLARATION](#a-function-declaration)
     - [b. Function EXPRESSION](#b-function-expression)
+  - [`arguments` object](#arguments-object)
   - [No Parameters vs. Default Parameters](#no-parameters-vs-default-parameters)
   - [call method of 'global Function class'](#call-method-of-global-function-class)
   - [Object Construction function](#object-construction-function)
@@ -59,9 +65,20 @@
   - [Immediately Invoked Function Expression (`IIFE`)](#immediately-invoked-function-expression-iife)
     - [Use-case of an `IIFE`](#use-case-of-an-iife)
 - [DOM (Document Object Model)](#dom-document-object-model)
+  - [What is an HTMLCollection?](#what-is-an-htmlcollection)
+    - [Creating an Array from an HTMLCollection](#creating-an-array-from-an-htmlcollection)
+  - [`window.document`](#windowdocument-1)
+    - [`document` object](#document-object)
+    - [`window.document.getElementsByTagName(<name>)`](#windowdocumentgetelementsbytagnamename)
+    - [`window.document.forms`](#windowdocumentforms)
+    - [`window.document.links`](#windowdocumentlinks)
+    - [`window.document.images`](#windowdocumentimages)
+    - [`window.document.scripts`](#windowdocumentscripts)
 - [ES6 (ECMAScript 6) Features](#es6-ecmascript-6-features)
   - [Arrow Functions](#arrow-functions)
+  - [Rest Parameters](#rest-parameters)
   - [`let` and `const` keywords](#let-and-const-keywords)
+- [TODO](#todo)
 
 # Important Information relating to Web Browsers
 
@@ -70,6 +87,23 @@
 Session refers to a visitor's time browsing a web site. 
 
 It's meant to represent the time between a visitor's first arrival at a page on the site and the time they stop using the site.
+
+## User Agent 
+
+A user agent is a computer program representing a person, for example, a browser in a Web context.
+
+Besides a browser, a user agent could be a bot scraping webpages, a download manager, or another app accessing the Web. 
+
+Along with each request they make to the server, browsers include a self-identifying User-Agent HTTP header called a [user agent (UA) string](#user-agent-string). This string often identifies the browser, its version number, and its host operating system.
+
+### User Agent string
+
+The user agent string can be accessed with JavaScript on the client side using the `NavigatorID.userAgent` property.
+
+A typical user agent string looks like this: 
+```
+Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0
+```
 
 ## Running a method in the Browser Console
 
@@ -175,7 +209,7 @@ The read-only Window property `innerWidth` returns the interior width of the win
 
 #### `window.innerHeight`
 
-The read-only `innerHeight` property of the Window interface returns the interior height of the window in pixels, including the height of the horizontal scroll bar, if present.
+The read-only `innerHeight` property of the window interface/object returns the interior height of the window in pixels, including the height of the horizontal scroll bar, if present.
 
 #### `window.scrollX`
 
@@ -320,6 +354,10 @@ the corresponding characters as values for those keys.
 - A method or statement also returns `undefined` if the variable that is being evaluated does not have an assigned value. 
 - A function returns `undefined` if a value was not returned.
 
+## Interfaces (Not available in JavaScript)
+
+TODO
+
 ## Objects
 
 Constructor function: Object()
@@ -368,11 +406,20 @@ The first statement is invalid since identifies can't begin with numbers.
 
 The second statement is valid.
 
-### Some prototype methods of the global `Array` class
+### What is an `Array`-like object?
+
+An `Array`-like object is an object that has a length property and properties indexed from zero, but it doesn't have `Array`'s built-in methods like `forEach()` or `map()`.
+
+### Some prototype/static methods of the global `Array` class
 
 #### `Array.prototype.forEach()`
 
-The `forEach()` method executes a provided function (Arrow/Callback/Inline-callback) once for each array element.
+The `forEach()` prototype method executes a provided function (Arrow/Callback/Inline-callback) once for each array element.
+
+#### `Array.from()`
+
+The `Array.from()` static method creates a new, shallow-copied Array instance from an iterable or [`Array`-like object](#what-is-an-array-like-object).
+
 
 ## Variable and Constant values
 
@@ -531,6 +578,27 @@ var calSub = function (x, y) {
 };
 console.log("Subtraction : " + calSub(7, 4));
 ```
+
+## `arguments` object
+
+`arguments` is an [`Array`-like object](#what-is-an-array-like-object) accessible inside functions that contains the values of the arguments passed to that function.
+
+For example:
+```javascript
+function func1(a, b, c) {
+  console.log(arguments[0]);
+  // expected output: 1
+
+  console.log(arguments[1]);
+  // expected output: 2
+
+  console.log(arguments[2]);
+  // expected output: 3
+}
+
+func1(1, 2, 3);
+```
+
 ## No Parameters vs. Default Parameters
 
 In JavaScript, function parameters default to [`undefined` data type](#undefined), if no parameters are provided. 
@@ -617,12 +685,101 @@ Check out [20B-IIFE.js](./workshopper-javascripting-scripts/20B-IIFE.js) for an 
 
 # DOM (Document Object Model)
 
+The Document Object Model (DOM) is the data representation of the objects that comprise the structure and content of a document on the web.
+
+As an object-oriented representation of the web page, it can be modified with a scripting language such as JavaScript.
+
+The DOM is not a programming language, but without it, the JavaScript language wouldn't have any model or notion of web pages, HTML documents, SVG documents, and their component parts. 
+
+The document as a whole, the head, tables within the document, table headers, text within the table cells, and all other elements in a document are parts of the document object model for that document. 
+
+They can all be accessed and manipulated using the DOM and a scripting language like JavaScript.
+
+## What is an HTMLCollection?
+
+The HTMLCollection interface represents a generic collection of elements in document order and offers methods and properties for selecting from the list.
+
+It is an [`Array`-like object](#what-is-an-array-like-object) similar to [arguments](#arguments-object).
+
+HTMLCollection items can be accessed by their name, id, or index number.
+
+An HTMLCollection in the HTML DOM is live; it is automatically updated when the underlying document is changed. 
+
+For this reason it is a good idea to make a copy (eg. using Array.from) to iterate over if adding, moving, or removing nodes.
+
+### Creating an Array from an HTMLCollection
+
+We can make use of the [`Array.from()`](#arrayfrom) method to create an array from an HTMLCollection.
+
+```javascript
+let htmlCollection = document.getElementsByTagName("*");
+let arr = Array.from(htmlCollection);
+```
+
+This is helpful as then we can use built-in Array methods with the data obtained. For example:
+
+```javascript
+arr.forEach(function (element) {
+  window.console.log(element);
+})
+```
+
+## `window.document`
+
+`window.document` is a property of the `window` object returns a reference to the `document` object contained in the window.
+
+### `document` object
+
+The `document` object represents any web page loaded in the browser and serves as an entry point into the web page's content, which is the DOM tree.
+
+<!-- ### `window.document.all` -->
+<!-- DEPRECATED -->
+
+### `window.document.getElementsByTagName(<name>)`
+
+The `getElementsByTagName` method of `Document` interface returns an [HTMLCollection](#what-is-an-htmlcollection) of all elements with the given tag name.
+
+`<name>` : A string representing the name of the elements. The special string `*` represents all elements.
+
+### `window.document.forms`
+
+The `forms` read-only property of the `document` interface returns an [HTMLCollection](#what-is-an-htmlcollection) object listing all of the document's forms. 
+
+Each item in the collection is a `HTMLFormElement` representing a single `<form>` element in the DOM. I
+
+It allows access to—and, in some cases, modification of—aspects of the form, as well as access to its component elements.
+
+Just like other [HTMLCollection](#what-is-an-htmlcollection)) objects, we can access each individual `HTMLFormElement` using its index position.
+
+### `window.document.links`
+
+The links read-only property of the `document` interface returns an [HTMLCollection](#what-is-an-htmlcollection)) of all `<area>` elements and `<a>` elements in a document with a value for the `href` attribute.
+
+This is useful for extracting all the links from a web page.
+
+### `window.document.images`
+
+TODO
+
+### `window.document.scripts`
+
+TODO
+
 # ES6 (ECMAScript 6) Features
 
 ## Arrow Functions
 
 TODO
 
+## Rest Parameters
+
+TODO
+
 ## `let` and `const` keywords
 
 Given under [Variable and Constant values](#variable-and-constant-values) above.
+
+# TODO
+
+Interfaces in JavaScript
+

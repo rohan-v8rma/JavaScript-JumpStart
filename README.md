@@ -35,7 +35,10 @@
       - [`window.alert(<arg>)` or `alert(<arg>)`](#windowalertarg-or-alertarg)
 - [General information about JavaScript](#general-information-about-javascript)
   - [Data types](#data-types)
-    - [`string` data-type](#string-data-type)
+  - [`string` data-type](#string-data-type)
+    - [Creating a string from other datatypes](#creating-a-string-from-other-datatypes)
+    - [Prototype and Static methods of the global `String` object](#prototype-and-static-methods-of-the-global-string-object)
+    - [`String.prototype.includes()`](#stringprototypeincludes)
   - [`undefined` data type](#undefined-data-type)
   - [Interfaces (Not available in JavaScript)](#interfaces-not-available-in-javascript)
   - [Objects](#objects)
@@ -46,7 +49,7 @@
     - [What is an `Array`-like object?](#what-is-an-array-like-object)
     - [Some prototype/static methods of the global `Array` class](#some-prototypestatic-methods-of-the-global-array-class)
       - [`Array.prototype.forEach()`](#arrayprototypeforeach)
-      - [`Array.from()`](#arrayfrom)
+      - [Creating an array from other sequences using: `Array.from()`](#creating-an-array-from-other-sequences-using-arrayfrom)
   - [Variable and Constant values](#variable-and-constant-values)
     - [`let` & `var` keywords for variables](#let--var-keywords-for-variables)
     - [`const` keyword for constants](#const-keyword-for-constants)
@@ -227,6 +230,8 @@ The `window.history` read-only property returns a reference to the `History` obj
 
 Note that the history refers to the pages visited ONLY in the tab or frame that the current page is loaded in.
 
+It is also referred to as the `History API` in sources like MDN, since `History` object is used to get the session history of the user back to the application made using JavaScript, for manipulation. 
+
 ##### `window.history.length`
 
 ##### `window.history.back()` or `window.history.forward()` or `window.history.go()`
@@ -343,10 +348,39 @@ In Javascript, there are only 6 data types defined:
 - the primitives (`boolean`, `number`, `string`, `null`, `undefined`) 
 - object (the only reference/non-primitive type)
 
-### `string` data-type
+## `string` data-type
 
-Strings in JavaScript are actually objects with indices as keys and 
-the corresponding characters as values for those keys.
+Strings in JavaScript are actually objects with indices as keys and the corresponding characters as values for those keys.
+
+### Creating a string from other datatypes
+
+The `String` constructor is used to create a new `String` object. 
+
+When called instead as a function, it performs type conversion to a **primitive string**, which is usually more useful.
+
+String function and String constructor produce different results:
+
+```javascript
+const a = new String("Hello world"); // a === "Hello world" is false
+const b = String("Hello world");     // b === "Hello world" is true
+
+a instanceof String;         // is true
+b instanceof String;         // is false
+
+typeof a // "object"
+typeof b // "string"
+```
+
+- Here, the **function** produces a string (the primitive type) as promised. 
+- However, the constructor produces an instance of the type `String` (an object wrapper) and that's why you rarely want to use the `String` constructor at all.
+
+Conversion into a string is useful for web crawling applications when we wish to convert URLs to strings and perform string manipulation methods like [`includes()`](#stringprototypeincludes) on them.
+
+### Prototype and Static methods of the global `String` object
+
+### `String.prototype.includes()`
+
+The `includes()` method performs a case-sensitive search to determine whether one string may be found within another string, returning true or false as appropriate.
 
 ## `undefined` data type
 
@@ -416,10 +450,11 @@ An `Array`-like object is an object that has a length property and properties in
 
 The `forEach()` prototype method executes a provided function (Arrow/Callback/Inline-callback) once for each array element.
 
-#### `Array.from()`
+#### Creating an array from other sequences using: `Array.from()`
 
 The `Array.from()` static method creates a new, shallow-copied Array instance from an iterable or [`Array`-like object](#what-is-an-array-like-object).
 
+This is useful for converting `Array`-like objects (e.g. HTMLCollection) into arrays, in order to use prototype methods of the global `Array` object on them.  
 
 ## Variable and Constant values
 
@@ -781,5 +816,5 @@ Given under [Variable and Constant values](#variable-and-constant-values) above.
 
 # TODO
 
-Interfaces in JavaScript
+Interfaces in TypeScript (mentioned in MDN)
 

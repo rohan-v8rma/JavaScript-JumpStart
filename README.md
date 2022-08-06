@@ -72,16 +72,19 @@
     - [Creating an Array from an HTMLCollection](#creating-an-array-from-an-htmlcollection)
   - [`window.document`](#windowdocument-1)
     - [`document` object](#document-object)
-    - [`window.document.getElementsByTagName(<name>)`](#windowdocumentgetelementsbytagnamename)
     - [`window.document.forms`](#windowdocumentforms)
     - [`window.document.links`](#windowdocumentlinks)
     - [`window.document.images`](#windowdocumentimages)
     - [`window.document.scripts`](#windowdocumentscripts)
+    - [Element Selectors](#element-selectors)
+      - [`window.document.getElementsByTagName(<name>)`](#windowdocumentgetelementsbytagnamename)
+      - [`window.document.getElementByID(<name>)`](#windowdocumentgetelementbyidname)
 - [ES6 (ECMAScript 6) Features](#es6-ecmascript-6-features)
   - [Arrow Functions](#arrow-functions)
   - [Rest Parameters](#rest-parameters)
   - [`let` and `const` keywords](#let-and-const-keywords)
 - [TODO](#todo)
+  - [Interfaces in TypeScript (mentioned in MDN)](#interfaces-in-typescript-mentioned-in-mdn)
 
 # Important Information relating to Web Browsers
 
@@ -212,17 +215,17 @@ The read-only Window property `innerWidth` returns the interior width of the win
 
 #### `window.innerHeight`
 
-The read-only `innerHeight` property of the window interface/object returns the interior height of the window in pixels, including the height of the horizontal scroll bar, if present.
+The read-only `innerHeight` property of the window [interface](#interfaces-in-typescript-mentioned-in-mdn) returns the interior height of the window in pixels, including the height of the horizontal scroll bar, if present.
 
 #### `window.scrollX`
 
-The read-only `scrollX` property of the Window **interface** returns the number of pixels that the document is currently scrolled horizontally.
+The read-only `scrollX` property of the Window **[interface](#interfaces-in-typescript-mentioned-in-mdn)** returns the number of pixels that the document is currently scrolled horizontally.
 
-TODO: Difference between Window interface and global Window object
+TODO: Difference between Window [interface](#interfaces-in-typescript-mentioned-in-mdn) and global Window object
 
 #### `window.scrollY`
 
-The read-only `scrollY` property of the Window interface returns the number of pixels that the document is currently scrolled vertically.
+The read-only `scrollY` property of the Window [interface](#interfaces-in-typescript-mentioned-in-mdn) returns the number of pixels that the document is currently scrolled vertically.
 
 #### `window.history`
 
@@ -423,7 +426,7 @@ arr = {
     length: 3
     [[Prototype]]: Array.__proto__
 }
-```# Syntax for a regular functionvalues.
+```
 
 ```javascript
 console.log(Object.keys(arr));
@@ -767,15 +770,6 @@ arr.forEach(function (element) {
 
 The `document` object represents any web page loaded in the browser and serves as an entry point into the web page's content, which is the DOM tree.
 
-<!-- ### `window.document.all` -->
-<!-- DEPRECATED -->
-
-### `window.document.getElementsByTagName(<name>)`
-
-The `getElementsByTagName` method of `Document` interface returns an [HTMLCollection](#what-is-an-htmlcollection) of all elements with the given tag name.
-
-`<name>` : A string representing the name of the elements. The special string `*` represents all elements.
-
 ### `window.document.forms`
 
 The `forms` read-only property of the `document` interface returns an [HTMLCollection](#what-is-an-htmlcollection) object listing all of the document's forms. 
@@ -800,6 +794,35 @@ TODO
 
 TODO
 
+### Element Selectors
+
+<!-- ### `window.document.all` -->
+<!-- DEPRECATED -->
+
+#### `window.document.getElementsByTagName(<name>)`
+
+The `getElementsByTagName` method of `Document` interface returns an [HTMLCollection](#what-is-an-htmlcollection) of all elements with the given tag name.
+
+`<name>` : A string representing the name of the elements. The special string `*` represents all elements.
+
+For example
+```javascript
+document.getElementsByTagName("span");
+document.getElementsByTagName("*");
+```
+
+#### `window.document.getElementByID(<name>)`
+
+The `getElementById()` method returns an element with a specific ID. If an ID isn't unique, it returns the first occurrence.
+
+The `getElementById()` method returns null if the element does not exist.
+
+The `getElementById()` method is one of the most common methods in the HTML DOM. It is used almost every time you want to read or edit an HTML element.
+
+```javascript
+document.getElementById("demo");
+```
+
 # ES6 (ECMAScript 6) Features
 
 ## Arrow Functions
@@ -816,5 +839,12 @@ Given under [Variable and Constant values](#variable-and-constant-values) above.
 
 # TODO
 
-Interfaces in TypeScript (mentioned in MDN)
+## Interfaces in TypeScript (mentioned in MDN)
 
+In TypeScript, an interface is an abstract type that tells the compiler which property names a given object can have. TypeScript creates implicit interfaces when you define an object with properties. It starts by looking at the object's property name and data type using TypeScript's type inference abilities.
+
+If we think about it in terms of OOPs, it can be considered as a class. Objects can be instantiated from this class.
+
+`Interfaces` aren't available in JavaScript but in documentation relating to DOM, `Interfaces` are mentioned since TypeScript is also a popular scripting language used nowadays.
+
+[Here](https://developer.mozilla.org/en-US/docs/Web/API/Window) is an example of the use of the word `Interface`.

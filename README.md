@@ -68,6 +68,19 @@
   - [Immediately Invoked Function Expression (`IIFE`)](#immediately-invoked-function-expression-iife)
     - [Use-case of an `IIFE`](#use-case-of-an-iife)
 - [DOM (Document Object Model)](#dom-document-object-model)
+  - [Nodes in DOM](#nodes-in-dom)
+    - [Types of Nodes (`nodeType` property)](#types-of-nodes-nodetype-property)
+      - [(`Node`.`ELEMENT_NODE`) or (`nodeType` = 1)](#nodeelement_node-or-nodetype--1)
+      - [(`Node`.`ATTRIBUTE_NODE`) or (`nodeType` = 2)](#nodeattribute_node-or-nodetype--2)
+      - [(`Node`.`TEXT_NODE`) or (`nodeType` = 3)](#nodetext_node-or-nodetype--3)
+      - [(`Node`.`COMMENT_NODE`) or (`nodeType` = 8)](#nodecomment_node-or-nodetype--8)
+    - [`childNodes` property](#childnodes-property)
+    - [`children` property](#children-property)
+  - [Interfaces in DOM](#interfaces-in-dom)
+    - [`Element` interface](#element-interface)
+    - [`Attr` interface](#attr-interface)
+    - [`Text` interface](#text-interface)
+    - [`Comment` interface](#comment-interface)
   - [What is an HTMLCollection?](#what-is-an-htmlcollection)
     - [Creating an Array from an HTMLCollection](#creating-an-array-from-an-htmlcollection)
   - [`window.document`](#windowdocument-1)
@@ -511,7 +524,6 @@ It would be better to use `let` when defining variables since both `let` and `co
 
 Values defined using `const` have block-level scope.
 
-
 If you are sure that the value of a variable won't change throughout the program, it's recommended to use `const` so as to prevent any errors later on due to changing on variables not meant to be changed. 
 
 Note that it isn't possible to declare constants without initializing them.
@@ -732,6 +744,105 @@ The DOM is not a programming language, but without it, the JavaScript language w
 The document as a whole, the head, tables within the document, table headers, text within the table cells, and all other elements in a document are parts of the document object model for that document. 
 
 They can all be accessed and manipulated using the DOM and a scripting language like JavaScript.
+
+## Nodes in DOM
+
+In the DOM, all parts of the document, such as elements, attributes, text, etc. are organized in a hierarchical tree-like structure; where each node can have a parent, a list of child nodes and a `nextSibling` and `previousSibling`.
+
+These individual parts of the document are known as nodes.
+
+![](images/nodes.png)
+
+### Types of Nodes (`nodeType` property)
+
+The read-only `nodeType` property of a `Node` interface is an integer that identifies what the node is. 
+
+It distinguishes different kind of nodes from each other, such as **elements**, **text** and **comments**.
+
+#### (`Node`.`ELEMENT_NODE`) or (`nodeType` = 1)
+
+`Node`.`ELEMENT_NODE` always returns 1.
+
+When `nodeType` of a particular node is 1, it is an [Element](#element-interface) node, like `<p>` or `<div>`.
+
+#### (`Node`.`ATTRIBUTE_NODE`) or (`nodeType` = 2)
+
+`Node`.`ATTRIBUTE_NODE` always returns 2.
+
+We know that attributes (key-value pairs) such as `padding`, `margin`, etc, are also represent as Nodes in the DOM.
+
+When `nodeType` of a particular node is 2, it is an [`Attribute`](#attr-interface) of an [`Element`](#element-interface).
+
+#### (`Node`.`TEXT_NODE`) or (`nodeType` = 3)
+
+`Node`.`TEXT_NODE` always returns 3.
+
+The actual [`Text`](#text-interface) inside an [`Element`](#element-interface) or [`Attr`](#attr-interface) or the whitespaces/line-breaks between two HTML tags.
+
+#### (`Node`.`COMMENT_NODE`) or (`nodeType` = 8)
+
+`Node`.`COMMENT_NODE` always returns 8.
+
+A Comment node, such as `<!-- … -->`.
+
+### `childNodes` property
+
+The `childNodes` property returns a collection (list) of an elements's child nodes (`nodeType`s: [1](#nodeelement_node-or-nodetype--1), [3](#nodetext_node-or-nodetype--3), [8](#nodecomment_node-or-nodetype--8)).
+
+- It returns a `NodeList` object.
+
+- It is read-only.
+
+- `childNodes[0]` is the same as `firstChild`.
+
+### `children` property
+
+`children` returns child [elements](#nodeelement_node-or-nodetype--1) (not [text](#nodetext_node-or-nodetype--3) and [comment](#nodecomment_node-or-nodetype--8) nodes).
+
+## Interfaces in DOM
+
+### `Element` interface
+
+`Element` is the most general base class from which all element objects (i.e. objects that represent elements) in a `Document` inherit. 
+
+It only has methods and properties common to all kinds of elements.
+
+For instance, elements like `<p>`, `<div>`, `<span>` when represented in the DOM, inherit from `Element`.
+
+### `Attr` interface
+
+The `Attr` interface represents one of an element's attributes as an object, which is a node in the DOM tree. 
+
+The core idea of an object of type `Attr` is the association between a **name** and a **value**. An attribute may also be part of a namespace and, in this case, it also has a URI identifying the namespace, and a prefix that is an abbreviation for the namespace.
+
+In most situations, you will directly retrieve the attribute value as a string (e.g., `Element.getAttribute()`), but certain functions (e.g., `Element.getAttributeNode()`) or means of iterating return `Attr` instances.
+
+For instance, attributes like `padding: none`, when represented in the DOM, inherit from `Attr`.
+
+### `Text` interface
+
+The `Text` interface represents a text node in a DOM tree.
+
+To understand what a text node is, consider the following document:
+```html
+<html class="e"><head><title>Aliens?</title></head>
+<body>Why yes.
+</body>
+
+</html>
+```
+In this document, there are 4 text nodes, with the following contents:
+
+- "`Aliens?`" (the contents of the `title` element)
+- "`\n`" (after the `</head>` end tag, a newline)
+- "`Why yes.\n`" (the contents of the `body` element)
+- "`\n\n`" (after the `</body>` tag)
+
+### `Comment` interface
+
+The `Comment` interface represents textual notations within markup; although it is generally not visually shown, such comments are available to be read in the source view.
+
+Comments present in HTML documents inherit from `Comment` when represented in a DOM tree.
 
 ## What is an HTMLCollection?
 

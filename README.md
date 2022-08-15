@@ -69,15 +69,21 @@
     - [Use-case of an `IIFE`](#use-case-of-an-iife)
 - [DOM (Document Object Model)](#dom-document-object-model)
   - [Nodes in DOM](#nodes-in-dom)
-    - [Types of Nodes (`nodeType` property)](#types-of-nodes-nodetype-property)
-      - [(`Node`.`ELEMENT_NODE`) or (`nodeType` = 1)](#nodeelement_node-or-nodetype--1)
-      - [(`Node`.`ATTRIBUTE_NODE`) or (`nodeType` = 2)](#nodeattribute_node-or-nodetype--2)
-      - [(`Node`.`TEXT_NODE`) or (`nodeType` = 3)](#nodetext_node-or-nodetype--3)
-      - [(`Node`.`COMMENT_NODE`) or (`nodeType` = 8)](#nodecomment_node-or-nodetype--8)
-    - [`childNodes` property](#childnodes-property)
-    - [`children` property](#children-property)
+    - [Types of Nodes (`Node.nodeType` property)](#types-of-nodes-nodenodetype-property)
+      - [(`Node.ELEMENT_NODE`) or (`nodeType` = 1)](#nodeelement_node-or-nodetype--1)
+      - [(`Node.ATTRIBUTE_NODE`) or (`nodeType` = 2)](#nodeattribute_node-or-nodetype--2)
+      - [(`Node.TEXT_NODE`) or (`nodeType` = 3)](#nodetext_node-or-nodetype--3)
+      - [(`Node.COMMENT_NODE`) or (`nodeType` = 8)](#nodecomment_node-or-nodetype--8)
+    - [`Node.nodeName`](#nodenodename)
+    - [`Node.childNodes` property](#nodechildnodes-property)
+    - [`Node.children` property](#nodechildren-property)
+    - [`Node.childElementCount` property](#nodechildelementcount-property)
+    - [Changing the text of a node](#changing-the-text-of-a-node)
+      - [`Node.innerText` vs. `Node.textContent`](#nodeinnertext-vs-nodetextcontent)
   - [Interfaces in DOM](#interfaces-in-dom)
+    - [Inheritance Tree](#inheritance-tree)
     - [`Element` interface](#element-interface)
+      - [`HTMLElement` interface](#htmlelement-interface)
     - [`Attr` interface](#attr-interface)
     - [`Text` interface](#text-interface)
     - [`Comment` interface](#comment-interface)
@@ -131,6 +137,8 @@ Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0
 As we can see, the line just below `console.log("hello");` displays the output (`hello`) of the command.
 
 The line below that shows an arrow pointing to the left and `undefined`. This is the return value of the method that was run.
+
+---
 
 # Important Objects and Methods related to Web Browsers
 
@@ -188,6 +196,8 @@ Your code took: 4.3919237898ms
 
 This clears the Browser's console.
 
+---
+
 ## `window` object and "context"
 
 `window` is a global object representing the browser window in which the script is running, typically on the **client** side. 
@@ -222,13 +232,19 @@ if( window.console ) {
 
 ### Useful properties of the `window` object
 
+---
+
 #### `window.innerWidth`
 
 The read-only Window property `innerWidth` returns the interior width of the window in pixels. This includes the width of the vertical scroll bar, if present.
 
+---
+
 #### `window.innerHeight`
 
 The read-only `innerHeight` property of the window [interface](#interfaces-in-typescript-mentioned-in-mdn) returns the interior height of the window in pixels, including the height of the horizontal scroll bar, if present.
+
+---
 
 #### `window.scrollX`
 
@@ -236,9 +252,13 @@ The read-only `scrollX` property of the Window **[interface](#interfaces-in-type
 
 TODO: Difference between Window [interface](#interfaces-in-typescript-mentioned-in-mdn) and global Window object
 
+---
+
 #### `window.scrollY`
 
 The read-only `scrollY` property of the Window [interface](#interfaces-in-typescript-mentioned-in-mdn) returns the number of pixels that the document is currently scrolled vertically.
+
+---
 
 #### `window.history`
 
@@ -247,6 +267,8 @@ The `window.history` read-only property returns a reference to the `History` obj
 Note that the history refers to the pages visited ONLY in the tab or frame that the current page is loaded in.
 
 It is also referred to as the `History API` in sources like MDN, since `History` object is used to get the session history of the user back to the application made using JavaScript, for manipulation. 
+
+
 
 ##### `window.history.length`
 
@@ -263,6 +285,9 @@ This acts exactly as if the user clicked on the `Forward` button in their browse
 - To move to a specific point in history: `window.history.go(integerVal)` loads a specific page from session history. 
   
   The current page's position is 0 and an integer value relative to the current page has to be passed. For example, we can move forward one page by passing 1.
+
+---
+
 #### `window.location`
 
 The `window.location` read-only property returns a reference to the `Location` object ((i.e., the `location` key of the `window` object has value as the `Location` object)), with information about the current location of the document.
@@ -321,9 +346,13 @@ an api is a contract
 
 An object's stringifier is any attribute or method that is defined to provide a textual representation of the object for use in situations where a string is expected.
 
+---
+
 ### `window.document`
 
 More details under [DOM (Document Object Model)](#dom-document-object-model)
+
+---
 
 ### Other methods of `window` object
 
@@ -335,13 +364,19 @@ Note that there should be no locally defined function with the same name, otherw
 
 This is why it is safer to use the methods along with the prefix of `window` to ensure selection of the correct function definition.
 
+---
+
 #### `window.prompt()` or `prompt()`
 
 TODO
 
+---
+
 #### `window.confirm()` or `confirm()`
 
 TODO
+
+---
 
 #### `window.alert(<arg>)` or `alert(<arg>)`
 
@@ -354,6 +389,8 @@ For example:
 ![](./images/javascript-alert.png)
 
 Note that this is not used nowadays. Instead, we use Bootstrap etc, to show beautified alerts.
+
+---
 
 # General information about JavaScript
 
@@ -397,6 +434,8 @@ Conversion into a string is useful for web crawling applications when we wish to
 ### `String.prototype.includes()`
 
 The `includes()` method performs a case-sensitive search to determine whether one string may be found within another string, returning true or false as appropriate.
+
+---
 
 ## `undefined` data type
 
@@ -472,6 +511,8 @@ The `Array.from()` static method creates a new, shallow-copied Array instance fr
 
 This is useful for converting `Array`-like objects (e.g. HTMLCollection) into arrays, in order to use prototype methods of the global `Array` object on them.  
 
+---
+
 ## Variable and Constant values
 
 ### `let` & `var` keywords for variables
@@ -539,6 +580,8 @@ This is correct:
 const example_2 = "yo";
 console.log(example_2);
 ```
+
+---
 
 ## Template literals and string interpolation in Javascript
 
@@ -753,53 +796,102 @@ These individual parts of the document are known as nodes.
 
 ![](images/nodes.png)
 
-### Types of Nodes (`nodeType` property)
+---
+
+### Types of Nodes (`Node.nodeType` property)
 
 The read-only `nodeType` property of a `Node` interface is an integer that identifies what the node is. 
 
 It distinguishes different kind of nodes from each other, such as **elements**, **text** and **comments**.
 
-#### (`Node`.`ELEMENT_NODE`) or (`nodeType` = 1)
+#### (`Node.ELEMENT_NODE`) or (`nodeType` = 1)
 
-`Node`.`ELEMENT_NODE` always returns 1.
+`Node.ELEMENT_NODE` always returns 1.
 
 When `nodeType` of a particular node is 1, it is an [Element](#element-interface) node, like `<p>` or `<div>`.
 
-#### (`Node`.`ATTRIBUTE_NODE`) or (`nodeType` = 2)
+#### (`Node.ATTRIBUTE_NODE`) or (`nodeType` = 2)
 
-`Node`.`ATTRIBUTE_NODE` always returns 2.
+`Node.ATTRIBUTE_NODE` always returns 2.
 
 We know that attributes (key-value pairs) such as `padding`, `margin`, etc, are also represent as Nodes in the DOM.
 
 When `nodeType` of a particular node is 2, it is an [`Attribute`](#attr-interface) of an [`Element`](#element-interface).
 
-#### (`Node`.`TEXT_NODE`) or (`nodeType` = 3)
+#### (`Node.TEXT_NODE`) or (`nodeType` = 3)
 
-`Node`.`TEXT_NODE` always returns 3.
+`Node.TEXT_NODE` always returns 3.
 
 The actual [`Text`](#text-interface) inside an [`Element`](#element-interface) or [`Attr`](#attr-interface) or the whitespaces/line-breaks between two HTML tags.
 
-#### (`Node`.`COMMENT_NODE`) or (`nodeType` = 8)
+#### (`Node.COMMENT_NODE`) or (`nodeType` = 8)
 
-`Node`.`COMMENT_NODE` always returns 8.
+`Node.COMMENT_NODE` always returns 8.
 
 A Comment node, such as `<!-- … -->`.
 
-### `childNodes` property
+---
 
-The `childNodes` property returns a collection (list) of an elements's child nodes (`nodeType`s: [1](#nodeelement_node-or-nodetype--1), [3](#nodetext_node-or-nodetype--3), [8](#nodecomment_node-or-nodetype--8)).
+### `Node.nodeName`
 
-- It returns a `NodeList` object.
+It returns the name of the `nodeType`.
 
-- It is read-only.
+---
 
-- `childNodes[0]` is the same as `firstChild`.
+### `Node.childNodes` property
 
-### `children` property
+The `childNodes` property returns a collection (list) of an elements's child nodes (`nodeType`: [1](#nodeelement_node-or-nodetype--1), [3](#nodetext_node-or-nodetype--3) and [8](#nodecomment_node-or-nodetype--8)).
+
+It returns a read-only `NodeList` object. `childNodes[0]` is the same as `firstChild`.
+
+---
+
+### `Node.children` property
 
 `children` returns child [elements](#nodeelement_node-or-nodetype--1) (not [text](#nodetext_node-or-nodetype--3) and [comment](#nodecomment_node-or-nodetype--8) nodes).
 
+It returns an `HTMLCollection` object.
+
+### `Node.childElementCount` property
+
+It returns the count of the child [elements](#nodeelement_node-or-nodetype--1).
+
+---
+
+### Changing the text of a node
+
+When you **set** the `innerText` or the `textContent` property of an element, all child nodes are removed and replaced by only one new text node.
+
+#### `Node.innerText` vs. `Node.textContent`
+
+- The `innerText` property of the `Node` interface represents the RENDERED text content of a node and its descendants.
+
+- The `textContent` property of the Node interface represents raw textual content inside a node and its descendants.
+
+```html
+<div id="t"><div>lions,
+tigers</div><div style="visibility:hidden">and bears</div></div>
+```
+
+Here, `innerText` would yield "`lions, tigers`" and `textContent` would yield "`lions,\ntigersand bears`".
+
+Notice the differences, 
+1. The elements that are not rendered are also not present in `innerText`. 
+2. The line-breaks in `innerText` follow the line breaks that were introduced by layout (not the original text we stuffed in the DOM). 
+
+The best way to think about `innerText` is that it is roughly what you would get if you selected the text and copied. 
+
+Whereas, `textContent` is just a concatenation of the values of all [Text nodes](#nodetext_node-or-nodetype--3) in the sub-tree.
+
+The key takeaway is that `innerText` requires some information from the layout system to determine how the text is being presented to the user. This is what makes `innerText` one of those properties that can cause the PERFORMANCE of your app to go off the rails.
+
+---
+
 ## Interfaces in DOM
+
+### Inheritance Tree
+
+![](images/dom-class-hierarchy.svg)
 
 ### `Element` interface
 
@@ -808,6 +900,12 @@ The `childNodes` property returns a collection (list) of an elements's child nod
 It only has methods and properties common to all kinds of elements.
 
 For instance, elements like `<p>`, `<div>`, `<span>` when represented in the DOM, inherit from `Element`.
+
+#### `HTMLElement` interface
+
+The `HTMLElement` interface represents any HTML element. 
+
+Some elements directly implement this interface, while others implement it via an interface that inherits it.
 
 ### `Attr` interface
 
@@ -873,6 +971,8 @@ arr.forEach(function (element) {
 })
 ```
 
+---
+
 ## `window.document`
 
 `window.document` is a property of the `window` object returns a reference to the `document` object contained in the window.
@@ -904,6 +1004,8 @@ TODO
 ### `window.document.scripts`
 
 TODO
+
+---
 
 ### Element Selectors
 

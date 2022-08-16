@@ -68,6 +68,17 @@
   - [Immediately Invoked Function Expression (`IIFE`)](#immediately-invoked-function-expression-iife)
     - [Use-case of an `IIFE`](#use-case-of-an-iife)
 - [DOM (Document Object Model)](#dom-document-object-model)
+  - [`window.document`](#windowdocument-1)
+    - [`document` object](#document-object)
+    - [`window.document.forms`](#windowdocumentforms)
+    - [`window.document.links`](#windowdocumentlinks)
+    - [`window.document.images`](#windowdocumentimages)
+    - [`window.document.scripts`](#windowdocumentscripts)
+    - [Element Selectors](#element-selectors)
+      - [`window.document.getElementsByTagName(<name>)`](#windowdocumentgetelementsbytagnamename)
+      - [`window.document.getElementById(<name>)`](#windowdocumentgetelementbyidname)
+  - [What is an HTMLCollection?](#what-is-an-htmlcollection)
+    - [Creating an Array from an HTMLCollection](#creating-an-array-from-an-htmlcollection)
   - [Nodes in DOM](#nodes-in-dom)
     - [Types of Nodes (`Node.nodeType` property)](#types-of-nodes-nodenodetype-property)
       - [(`Node.ELEMENT_NODE`) or (`nodeType` = 1)](#nodeelement_node-or-nodetype--1)
@@ -80,6 +91,10 @@
     - [`Node.childElementCount` property](#nodechildelementcount-property)
     - [Changing the text of a node](#changing-the-text-of-a-node)
       - [`Node.innerText` vs. `Node.textContent`](#nodeinnertext-vs-nodetextcontent)
+  - [Removing & Replacing Nodes](#removing--replacing-nodes)
+    - [`Element.replaceWith()`](#elementreplacewith)
+    - [`Node.replaceChild()`](#nodereplacechild)
+    - [`Node.removeChild()`](#noderemovechild)
   - [Interfaces in DOM](#interfaces-in-dom)
     - [Inheritance Tree](#inheritance-tree)
     - [`Element` interface](#element-interface)
@@ -87,17 +102,23 @@
     - [`Attr` interface](#attr-interface)
     - [`Text` interface](#text-interface)
     - [`Comment` interface](#comment-interface)
-  - [What is an HTMLCollection?](#what-is-an-htmlcollection)
-    - [Creating an Array from an HTMLCollection](#creating-an-array-from-an-htmlcollection)
-  - [`window.document`](#windowdocument-1)
-    - [`document` object](#document-object)
-    - [`window.document.forms`](#windowdocumentforms)
-    - [`window.document.links`](#windowdocumentlinks)
-    - [`window.document.images`](#windowdocumentimages)
-    - [`window.document.scripts`](#windowdocumentscripts)
-    - [Element Selectors](#element-selectors)
-      - [`window.document.getElementsByTagName(<name>)`](#windowdocumentgetelementsbytagnamename)
-      - [`window.document.getElementByID(<name>)`](#windowdocumentgetelementbyidname)
+  - [Creating, Removing & Replacing Elements](#creating-removing--replacing-elements)
+    - [`document.createElement()`](#documentcreateelement)
+    - [`document.createTextNode()`](#documentcreatetextnode)
+    - [`document.appendChild()`](#documentappendchild)
+  - [Working with Attributes](#working-with-attributes)
+    - [`Element.setAttribute()`](#elementsetattribute)
+    - [`Element.getAttribute()`](#elementgetattribute)
+    - [`Element.removeAttribute()`](#elementremoveattribute)
+- [Event](#event)
+  - [Event Listeners vs. Event Handlers](#event-listeners-vs-event-handlers)
+  - [`addEventListener()` method](#addeventlistener-method)
+  - [`KeyboardEvent` objects](#keyboardevent-objects)
+    - [Keyboard Event Attributes](#keyboard-event-attributes)
+    - [Handling Keyboard Events using `addEventListener()` and [`KeyboardEvent`](#keyboardevent-object) objects' properties](#handling-keyboard-events-using-addeventlistener-and-keyboardevent-objects-properties)
+  - [`MouseEvent` objects](#mouseevent-objects)
+    - [Mouse Event Attributes](#mouse-event-attributes)
+    - [Handling Mouse Events using `addEventListener()` and [`MouseEvent`](#keyboardevent-object) objects' properties](#handling-mouse-events-using-addeventlistener-and-mouseevent-objects-properties)
 - [ES6 (ECMAScript 6) Features](#es6-ecmascript-6-features)
   - [Arrow Functions](#arrow-functions)
   - [Rest Parameters](#rest-parameters)
@@ -788,6 +809,104 @@ The document as a whole, the head, tables within the document, table headers, te
 
 They can all be accessed and manipulated using the DOM and a scripting language like JavaScript.
 
+---
+
+## `window.document`
+
+`window.document` is a property of the `window` object returns a reference to the `document` object contained in the window.
+
+### `document` object
+
+The `document` object represents any web page loaded in the browser and serves as an entry point into the web page's content, which is the DOM tree.
+
+### `window.document.forms`
+
+The `forms` read-only property of the `document` interface returns an [HTMLCollection](#what-is-an-htmlcollection) object listing all of the document's forms. 
+
+Each item in the collection is a `HTMLFormElement` representing a single `<form>` element in the DOM. I
+
+It allows access to—and, in some cases, modification of—aspects of the form, as well as access to its component elements.
+
+Just like other [HTMLCollection](#what-is-an-htmlcollection)) objects, we can access each individual `HTMLFormElement` using its index position.
+
+### `window.document.links`
+
+The links read-only property of the `document` interface returns an [HTMLCollection](#what-is-an-htmlcollection)) of all `<area>` elements and `<a>` elements in a document with a value for the `href` attribute.
+
+This is useful for extracting all the links from a web page.
+
+### `window.document.images`
+
+TODO
+
+### `window.document.scripts`
+
+TODO
+
+---
+
+### Element Selectors
+
+<!-- ### `window.document.all` -->
+<!-- DEPRECATED -->
+
+#### `window.document.getElementsByTagName(<name>)`
+
+The `getElementsByTagName` method of `Document` interface returns an [HTMLCollection](#what-is-an-htmlcollection) of all elements with the given tag name.
+
+`<name>` : A string representing the name of the elements. The special string `*` represents all elements.
+
+For example
+```javascript
+document.getElementsByTagName("span");
+document.getElementsByTagName("*");
+```
+
+#### `window.document.getElementById(<name>)`
+
+The `getElementById()` method returns an element with a specific ID. If an ID isn't unique, it returns the first occurrence.
+
+The `getElementById()` method returns null if the element does not exist.
+
+The `getElementById()` method is one of the most common methods in the HTML DOM. It is used almost every time you want to read or edit an HTML element.
+
+```javascript
+document.getElementById("demo");
+```
+
+---
+
+## What is an HTMLCollection?
+
+The HTMLCollection interface represents a generic collection of elements in document order and offers methods and properties for selecting from the list.
+
+It is an [`Array`-like object](#what-is-an-array-like-object) similar to [arguments](#arguments-object).
+
+HTMLCollection items can be accessed by their name, id, or index number.
+
+An HTMLCollection in the HTML DOM is live; it is automatically updated when the underlying document is changed. 
+
+For this reason it is a good idea to make a copy (eg. using Array.from) to iterate over if adding, moving, or removing nodes.
+
+### Creating an Array from an HTMLCollection
+
+We can make use of the [`Array.from()`](#arrayfrom) method to create an array from an HTMLCollection.
+
+```javascript
+let htmlCollection = document.getElementsByTagName("*");
+let arr = Array.from(htmlCollection);
+```
+
+This is helpful as then we can use built-in Array methods with the data obtained. For example:
+
+```javascript
+arr.forEach(function (element) {
+  window.console.log(element);
+})
+```
+
+---
+
 ## Nodes in DOM
 
 In the DOM, all parts of the document, such as elements, attributes, text, etc. are organized in a hierarchical tree-like structure; where each node can have a parent, a list of child nodes and a `nextSibling` and `previousSibling`.
@@ -887,6 +1006,45 @@ The key takeaway is that `innerText` requires some information from the layout s
 
 ---
 
+## Removing & Replacing Nodes
+
+### `Element.replaceWith()`
+
+The `replaceWith()` method replaces the ChildNode in the children list of its parent with another Node or string objects. 
+
+Here is an example:
+```javascript
+let element1 = document.getElementById("myId");
+let element2 = document.createElement("h1");
+let content = document.createTextNode("Added Content");
+element2.appendChild(content); 
+element1.replaceWith(element2);
+```
+
+- We are getting and element using its id `myId`. 
+
+- Then we are creating a new heading element.
+  
+- In the next step, we are adding the content to the `element2` and finally, we are replacing the old element, with the newly created element. 
+  
+  TODO: Is element with ID 'myId' stored as a reference?
+
+### `Node.replaceChild()`
+
+The `replaceChild()` method replaces a child node with a new node. 
+
+We can create a new node, or the new node could be an existing node in the document or the new node could be an existing node in the document.
+
+### `Node.removeChild()`
+
+This method removes a specified child node of the specified element. 
+
+It will return the removed node as a [Node](#nodes-in-dom) object, or null if the node does not exist. 
+
+Remember that the removed child node is no longer part of the DOM. 
+
+---
+
 ## Interfaces in DOM
 
 ### Inheritance Tree
@@ -942,99 +1100,235 @@ The `Comment` interface represents textual notations within markup; although it 
 
 Comments present in HTML documents inherit from `Comment` when represented in a DOM tree.
 
-## What is an HTMLCollection?
+---
 
-The HTMLCollection interface represents a generic collection of elements in document order and offers methods and properties for selecting from the list.
+## Creating, Removing & Replacing Elements
 
-It is an [`Array`-like object](#what-is-an-array-like-object) similar to [arguments](#arguments-object).
+### `document.createElement()`
 
-HTMLCollection items can be accessed by their name, id, or index number.
+The `document.createElement()` is a method used to create an HTML element. 
 
-An HTMLCollection in the HTML DOM is live; it is automatically updated when the underlying document is changed. 
-
-For this reason it is a good idea to make a copy (eg. using Array.from) to iterate over if adding, moving, or removing nodes.
-
-### Creating an Array from an HTMLCollection
-
-We can make use of the [`Array.from()`](#arrayfrom) method to create an array from an HTMLCollection.
+For instance, this creates a new `<div>` element:
 
 ```javascript
-let htmlCollection = document.getElementsByTagName("*");
-let arr = Array.from(htmlCollection);
+let div = document.createElement('div');
 ```
 
-This is helpful as then we can use built-in Array methods with the data obtained. For example:
+### `document.createTextNode()`
+
+This method creates a [Text Node](#nodetext_node-or-nodetype--3) with the specified text. 
+
+### `document.appendChild()`
+
+Appending in JavaScript is a way to insert content to the end of already existing elements. 
+
+To append in Javascript, we use the `appendChild()` method. 
+
+---
+
+Using the last 3 commands in combination:
+
+We use the `createElement()` method to create an element Node with the specified name. 
+
+We also create a text node using `createTextNode()`, which we append to the created element using the `element.appendChild()`.
 
 ```javascript
-arr.forEach(function (element) {
-  window.console.log(element);
-})
+var paragraph = document.createElement("p");                
+var text = document.createTextNode("This is a paragraph.");       
+paragraph.appendChild(text);  
 ```
 
 ---
 
-## `window.document`
+## Working with Attributes
 
-`window.document` is a property of the `window` object returns a reference to the `document` object contained in the window.
+JavaScript provides us with several methods for adding, removing or changing an HTML [`Element`](#element-interface) attribute. 
 
-### `document` object
+### `Element.setAttribute()`
 
-The `document` object represents any web page loaded in the browser and serves as an entry point into the web page's content, which is the DOM tree.
+The `setAttribute()` method is used to set an attribute on the specified element. 
 
-### `window.document.forms`
+Using this method, a new attribute is added with the specified name and value. If the attribute already exists on the element, the value is updated. 
 
-The `forms` read-only property of the `document` interface returns an [HTMLCollection](#what-is-an-htmlcollection) object listing all of the document's forms. 
+Here is an example:
 
-Each item in the collection is a `HTMLFormElement` representing a single `<form>` element in the DOM. I
+```javascript
+document.getElementById("myAnchor").setAttribute("href", "https://codewithharry.com/");
+```
+### `Element.getAttribute()`
 
-It allows access to—and, in some cases, modification of—aspects of the form, as well as access to its component elements.
+The `getAttribute()` method is used to get the current value of a attribute on the specified element. 
 
-Just like other [HTMLCollection](#what-is-an-htmlcollection)) objects, we can access each individual `HTMLFormElement` using its index position.
+If the attribute does not exist on the element, it will return null. 
 
-### `window.document.links`
+This method returns a Boolean value that indicates if the element has the specified attribute. If the element contains an attribute, it will return true; otherwise, it will return false. Here is an example:
 
-The links read-only property of the `document` interface returns an [HTMLCollection](#what-is-an-htmlcollection)) of all `<area>` elements and `<a>` elements in a document with a value for the `href` attribute.
+In this example, we find that if the `<button>` element has an `onclick` attribute:
 
-This is useful for extracting all the links from a web page.
+```javascript
+var h = document.getElementById("Btn").hasAttribute("onclick");
+```
 
-### `window.document.images`
+### `Element.removeAttribute()`
 
-TODO
+The `removeAttribute()` method is used to remove an attribute from the specified element. 
 
-### `window.document.scripts`
+The difference between this method and the `removeAttributeNode()` method is that the `removeAttributeNode()` method removes the specified [Attr](#attr-interface) object, while this method removes the attribute with the specified name. 
 
-TODO
+The result will be the same. 
+
+BUT, this method has no return value, while the `removeAttributeNode()` method returns the removed attribute as an [Attr](#attr-interface) object.
+
+Remove the href attribute from an `<a>` element:
+
+```javascript
+document.getElementById("myAnchor").removeAttribute("href");
+```
 
 ---
 
-### Element Selectors
+# Event
 
-<!-- ### `window.document.all` -->
-<!-- DEPRECATED -->
+`Event` interface represents an event which takes place in the DOM. 
 
-#### `window.document.getElementsByTagName(<name>)`
+There are many types of events, some of which use other interfaces based on the main `Event` interface. 
 
-The `getElementsByTagName` method of `Document` interface returns an [HTMLCollection](#what-is-an-htmlcollection) of all elements with the given tag name.
+![](images/event-inheritance.jpg)
 
-`<name>` : A string representing the name of the elements. The special string `*` represents all elements.
+`Event` itself contains the properties and methods which are common to all events.
 
-For example
-```javascript
-document.getElementsByTagName("span");
-document.getElementsByTagName("*");
+In simple words, HTML events are "things" that happen to HTML elements.
+
+When JavaScript is used in HTML pages, JavaScript can "react" on these events.
+
+## Event Listeners vs. Event Handlers
+
+- Event listener listens out for the event happening.
+- Event handler is the code that is run in response to it happening.
+
+## `addEventListener()` method
+
+The `addEventListener()` method attaches an event handler to the specified element. The `addEventListener()` method can have multiple event handlers applied to the same element. It doesn’t overwrite other event handlers.
+
+## `KeyboardEvent` objects
+
+`KeyboardEvent` objects describe a user interaction with the keyboard; each event describes a single interaction between the user and a key (or combination of a key with modifier keys) on the keyboard.
+
+### Keyboard Event Attributes
+
+The following event **Attributes** can be added to HTML elements to define actions for events related to the keyboard.
+
+- (`Key` = *Value*) - Attribute Description
+- (`onkeydown` = *script*/*function*) - Fires when a user is pressing a key.
+
+  The `keydown` event fires multiple times if a user presses and holds a key.
+
+- (`onkeyup` = *script*/*function*) - Fires when a user releases a key.
+
+  The `keyup` event fires only once when user releases the key.
+
+For instance,
+
+```html
+<input type="text" onkeydown="myFunction()">
 ```
 
-#### `window.document.getElementByID(<name>)`
-
-The `getElementById()` method returns an element with a specific ID. If an ID isn't unique, it returns the first occurrence.
-
-The `getElementById()` method returns null if the element does not exist.
-
-The `getElementById()` method is one of the most common methods in the HTML DOM. It is used almost every time you want to read or edit an HTML element.
+OR (in javascript)
 
 ```javascript
-document.getElementById("demo");
+document.body.input.onkeydown = function(event) {
+    console.log(event);
+  };
 ```
+
+---
+
+### Handling Keyboard Events using [`addEventListener()`](#addeventlistener-method) and [`KeyboardEvent`](#keyboardevent-object) objects' properties
+
+Note that simply removing the prefix `on` from the HTML event attribute values, gives us events which we can use with `addEventListener()` method. For example: `onkeydown` -> `keydown`.
+
+We mainly use two properties of the `KeyboardEvent` objects:
+
+---
+
+- `KeyboardEvent.key` : This property of the event object allows to get the character. 
+  
+  This will be useful in the cases like differentiating between `F` and `f`, as well as detecting when we press the `=` key in combination with shift, which would make it `+`.
+
+  However, `ShiftLeft` and `ShiftRight` would both have `key`property as `Shift`.
+
+  ```javascript
+  document.addEventListener("keydown", function(event) {
+      if (event.key === " ") {
+        console.log("Space bar pressed.");
+      }
+      else if (event.key === "F") {
+        console.log("Uppercase F.");
+      }
+      else if (event.key === "ArrowLeft") {
+        console.log("Left arrow key pressed.");
+      }
+  } )
+  ```
+
+---
+
+- `KeyboardEvent.code` : This property of the event object allows to get the physical key code. 
+  
+  This will be useful in the cases where we want to differentiate between `ShiftLeft` and `ShiftRight`. 
+  
+  But this won't allow us to differentiate between `F` and `f`, because both of them would have `code` property as `KeyF`.
+
+  ```javascript
+  document.addEventListener("keyup", function(event) {
+      if (event.code === "ShiftLeft") {
+        console.log("Left shift pressed.");
+      }
+      else if (event.key === "AltRight") {
+        console.log("Right alt pressed.");
+      }
+      else if (event.key === "f") {
+        console.log("Lowercase F");
+      }
+  } )
+  ```
+
+---
+
+## `MouseEvent` objects
+
+The `MouseEvent` interface represents events that occur due to the user interacting with a pointing device (such as a mouse). Common events using this interface include click, dblclick, mouseup, mousedown
+
+### Mouse Event Attributes
+
+The following are some of the event **Attributes** can be added to HTML elements to define actions for events related to the keyboard. A comprehensive list can be accessed over [here](https://www.w3schools.com/tags/ref_eventattributes.asp).
+
+- (`Key` = *Value*) - Attribute Description
+- (`onclick` = *script*/*function*) - Fires on a mouse click on the element.
+- (`ondblclick` = *script*/*function*) - Fires on a mouse double-click on the element.
+- (`onwheel` = *script*/*function*) - Fires when the mouse wheel rolls up or down over an element
+
+For instance,
+
+```html
+<button type="text" onclick="myFunction()">
+```
+
+OR (in javascript)
+
+```javascript
+button.onclick = function(event) {
+    if (event.altKey && event.shiftKey) {
+      alert('Hooray!');
+    }
+  };
+```
+
+---
+
+### Handling Mouse Events using [`addEventListener()`](#addeventlistener-method) and [`MouseEvent`](#keyboardevent-object) objects' properties
+
+Note that simply removing the prefix on from the HTML event attribute values, gives us events which we can use with `addEventListener()` method. For example: `onwheel` -> `wheel`.
 
 # ES6 (ECMAScript 6) Features
 

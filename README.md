@@ -45,6 +45,7 @@
     - [Displaying an `Object`](#displaying-an-object)
     - [Object Construction function](#object-construction-function)
     - [Primitive Wrapper Objects](#primitive-wrapper-objects)
+      - [`Number` wrapper object](#number-wrapper-object)
   - [Arrays](#arrays)
     - [Structure of created array objects](#structure-of-created-array-objects)
     - [Accessing elements at specific indices of an array](#accessing-elements-at-specific-indices-of-an-array)
@@ -57,6 +58,7 @@
 - [Variable and Constant values](#variable-and-constant-values)
   - [`let` & `var` keywords for variables](#let--var-keywords-for-variables)
   - [`const` keyword for constants](#const-keyword-for-constants)
+- [Values vs. References in Javascript](#values-vs-references-in-javascript)
 - [General information about Javascript](#general-information-about-javascript)
   - [Template literals and string interpolation in Javascript](#template-literals-and-string-interpolation-in-javascript)
   - [Ending statements with semi-colons](#ending-statements-with-semi-colons)
@@ -499,8 +501,26 @@ TODO
 
 ### Primitive Wrapper Objects
 
+#### `Number` wrapper object
+
+`Number` is a primitive wrapper object used to represent and manipulate numbers like 37 or -9.25.
 
 
+Also, values of other types can be converted to **primitive** numbers, not `Number` objects, using the `Number()` function.
+
+```javascript
+let num1 = new Number(100);
+let num2 = new Number('100');
+
+let num3 = Number('100');
+let num4 = Number(100);
+```
+
+`num1` and `num2` are `Number` objects.
+
+`num3` and `num4` are primitive numbers.
+
+---
 
 ## Arrays
 
@@ -639,6 +659,14 @@ console.log(example_2);
 ```
 
 ---
+
+# Values vs. References in Javascript
+
+Javascript has 5 data types that are passed by **value**: `Boolean`, `null`, undefined, String, and Number. We’ll call these primitive types.
+
+Javascript has 3 data types that are passed by **reference**: Array, Function, and Object. These are all technically Objects, so we’ll refer to them collectively as Objects.
+
+TODO : Complete
 
 # General information about Javascript
 
@@ -896,9 +924,9 @@ JavaScript `Date` objects represent a single moment in time in a platform-indepe
 
   When no parameters are provided, the newly-created `Date` object represents the current date and time as of the time of instantiation.
 
-- Calling the `Date()` function (without the `new` keyword) returns a string representation of the current date and time, exactly as `new Date().toString()` does. 
+- Calling the `Date()` function (without the `new` keyword) returns a `string` representation of the current date and time, exactly as `new Date().toString()` does. 
 
-  Any arguments given in a `Date()` function call (without the `new` keyword) are ignored; regardless of whether it's called with an invalid date string — or even called wth any arbitrary object or other primitive as an argument — it always returns a string representation of the current date and time.
+  Any arguments given in a `Date()` function call (without the `new` keyword) are **IGNORED**; regardless of whether it's called with an invalid date string — or even called wth any arbitrary object or other primitive as an argument — it always returns a string representation of the CURRENT date and time.
 
 ## Displaying dates using `Date.prototype.toString()`
 
@@ -1145,7 +1173,9 @@ element1.replaceWith(element2);
   
 - In the next step, we are adding the content to the `element2` and finally, we are replacing the old element, with the newly created element. 
   
-  TODO: Is element with ID 'myId' stored as a reference?
+The element with ID `myId` is stored as a [**reference**](#values-vs-references-in-javascript) in `element1` which is we are able to manipulate it using the `element1` identifier. 
+
+TODO : If in case we wished to stored the [**value**](#values-vs-references-in-javascript) of the element.
 
 ### `Node.replaceChild()`
 

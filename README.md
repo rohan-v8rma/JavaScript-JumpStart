@@ -2,13 +2,14 @@
   - [What is a Session?](#what-is-a-session)
   - [User Agent](#user-agent)
     - [User Agent string](#user-agent-string)
+    - [State and Identity of User Agent](#state-and-identity-of-user-agent)
   - [Running a method in the Browser Console](#running-a-method-in-the-browser-console)
 - [Important Objects and Methods related to Web Browsers](#important-objects-and-methods-related-to-web-browsers)
   - [`console` object](#console-object)
     - [`console.log(<arg>)` method](#consolelogarg-method)
     - [`console.table(<arg>)` method](#consoletablearg-method)
     - [`console.warn(<arg>)` and `console.error(<arg>)` method](#consolewarnarg-and-consoleerrorarg-method)
-    - [`console.time(<arg>)` and `console.timeEnd(<arg>)`;](#consoletimearg-and-consoletimeendarg)
+    - [`console.time(<arg>)` and `console.timeEnd(<arg>)`](#consoletimearg-and-consoletimeendarg)
     - [`console.clear()` method](#consoleclear-method)
   - [`window` object and "context"](#window-object-and-context)
     - [Usage of `window.console` object](#usage-of-windowconsole-object)
@@ -33,16 +34,17 @@
       - [`window.prompt()` or `prompt()`](#windowprompt-or-prompt)
       - [`window.confirm()` or `confirm()`](#windowconfirm-or-confirm)
       - [`window.alert(<arg>)` or `alert(<arg>)`](#windowalertarg-or-alertarg)
-- [General information about JavaScript](#general-information-about-javascript)
-  - [Data types](#data-types)
+- [Data types in Javascript](#data-types-in-javascript)
   - [`string` data-type](#string-data-type)
     - [Creating a string from other datatypes](#creating-a-string-from-other-datatypes)
     - [Prototype and Static methods of the global `String` object](#prototype-and-static-methods-of-the-global-string-object)
     - [`String.prototype.includes()`](#stringprototypeincludes)
   - [`undefined` data type](#undefined-data-type)
-  - [Interfaces (Not available in JavaScript)](#interfaces-not-available-in-javascript)
   - [Objects](#objects)
-  - [Prototypes](#prototypes)
+    - [Converting an `Object` to `string` type using `toString()`](#converting-an-object-to-string-type-using-tostring)
+    - [Displaying an `Object`](#displaying-an-object)
+    - [Object Construction function](#object-construction-function)
+    - [Primitive Wrapper Objects](#primitive-wrapper-objects)
   - [Arrays](#arrays)
     - [Structure of created array objects](#structure-of-created-array-objects)
     - [Accessing elements at specific indices of an array](#accessing-elements-at-specific-indices-of-an-array)
@@ -50,9 +52,12 @@
     - [Some prototype/static methods of the global `Array` class](#some-prototypestatic-methods-of-the-global-array-class)
       - [`Array.prototype.forEach()`](#arrayprototypeforeach)
       - [Creating an array from other sequences using: `Array.from()`](#creating-an-array-from-other-sequences-using-arrayfrom)
-  - [Variable and Constant values](#variable-and-constant-values)
-    - [`let` & `var` keywords for variables](#let--var-keywords-for-variables)
-    - [`const` keyword for constants](#const-keyword-for-constants)
+- [Interfaces (Not available in JavaScript)](#interfaces-not-available-in-javascript)
+- [Prototypes](#prototypes)
+- [Variable and Constant values](#variable-and-constant-values)
+  - [`let` & `var` keywords for variables](#let--var-keywords-for-variables)
+  - [`const` keyword for constants](#const-keyword-for-constants)
+- [General information about Javascript](#general-information-about-javascript)
   - [Template literals and string interpolation in Javascript](#template-literals-and-string-interpolation-in-javascript)
   - [Ending statements with semi-colons](#ending-statements-with-semi-colons)
 - [Functions in Javascript](#functions-in-javascript)
@@ -61,12 +66,16 @@
     - [b. Function EXPRESSION](#b-function-expression)
   - [`arguments` object](#arguments-object)
   - [No Parameters vs. Default Parameters](#no-parameters-vs-default-parameters)
+  - [Function Overriding in Javascript](#function-overriding-in-javascript)
   - [call method of 'global Function class'](#call-method-of-global-function-class)
-  - [Object Construction function](#object-construction-function)
   - [Callback functions](#callback-functions)
   - [`this` object of functions](#this-object-of-functions)
   - [Immediately Invoked Function Expression (`IIFE`)](#immediately-invoked-function-expression-iife)
     - [Use-case of an `IIFE`](#use-case-of-an-iife)
+- [`Date` objects in Javascript](#date-objects-in-javascript)
+  - [`new Date()` constructor vs. `Date()` function](#new-date-constructor-vs-date-function)
+  - [Displaying dates using `Date.prototype.toString()`](#displaying-dates-using-dateprototypetostring)
+  - [Methods of `Date` objects](#methods-of-date-objects)
 - [DOM (Document Object Model)](#dom-document-object-model)
   - [`window.document`](#windowdocument-1)
     - [`document` object](#document-object)
@@ -151,6 +160,8 @@ A typical user agent string looks like this:
 Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0
 ```
 
+### State and Identity of User Agent
+
 ## Running a method in the Browser Console
 
 ![](images/console-function-output-and-return-value.png)
@@ -193,7 +204,7 @@ This method displays the keys and values of the object passed to it in tabular f
 An example of both is shown below. 
 ![](images/browser-console-warning-error.png)
 
-### `console.time(<arg>)` and `console.timeEnd(<arg>)`;
+### `console.time(<arg>)` and `console.timeEnd(<arg>)`
 
 The `console.time()` method starts a timer we can use to track how long an operation takes.
 
@@ -413,9 +424,7 @@ Note that this is not used nowadays. Instead, we use Bootstrap etc, to show beau
 
 ---
 
-# General information about JavaScript
-
-## Data types
+# Data types in Javascript
 
 In Javascript, there are only 6 data types defined:
 
@@ -464,17 +473,34 @@ The `includes()` method performs a case-sensitive search to determine whether on
 - A method or statement also returns `undefined` if the variable that is being evaluated does not have an assigned value. 
 - A function returns `undefined` if a value was not returned.
 
-## Interfaces (Not available in JavaScript)
-
-TODO
-
 ## Objects
 
 Constructor function: Object()
 
 This creates an empty instance of the global Object class.
 
-## Prototypes
+### Converting an `Object` to `string` type using `toString()`
+
+The JavaScript system invokes an object's `toString()` method to convert an object to a string whenever the object is used in a string context. 
+
+For example, an object is converted to a string when it is passed to a function that expects a string argument.
+
+When you define a custom object in JavaScript, it is good practice to [**override**](#function-overriding-in-javascript) the prototype `toString()` method, that the custom object inherits from `Object`, so that appropriate information about that object is conveyed. 
+
+If we do not, the object remains with the default `toString()` method from `Object`.
+
+### Displaying an `Object`
+
+We can pass any object to the [`console.log()`](#consolelogarg-method) method, which also expects a [`string`](#string-data-type) as argument. So, `console.log()` implicitly calls an object's version of `Object.toString()` method to
+
+### Object Construction function
+
+TODO
+
+### Primitive Wrapper Objects
+
+
+
 
 ## Arrays
 
@@ -534,9 +560,19 @@ This is useful for converting `Array`-like objects (e.g. HTMLCollection) into ar
 
 ---
 
-## Variable and Constant values
+# Interfaces (Not available in JavaScript)
 
-### `let` & `var` keywords for variables
+TODO
+
+# Prototypes
+
+TODO
+
+---
+
+# Variable and Constant values
+
+## `let` & `var` keywords for variables
 
 ```javascript
 let example_1;
@@ -582,7 +618,7 @@ console.log(example_2);
   ```
 It would be better to use `let` when defining variables since both `let` and `const` have block-level scope, so resolving scopes would be easier and consistent.
 
-### `const` keyword for constants
+## `const` keyword for constants
 
 Values defined using `const` have block-level scope.
 
@@ -603,6 +639,8 @@ console.log(example_2);
 ```
 
 ---
+
+# General information about Javascript
 
 ## Template literals and string interpolation in Javascript
 
@@ -738,11 +776,60 @@ function functionName(param = defVal) {
 ```
 Here `defVal` is the default value for the argument `param`.
 
+## Function Overriding in Javascript
+
+JavaScript supports overriding, not overloading. 
+
+When you define multiple functions that have the same name, the last one defined will override all the previously defined ones and every time when you invoke a function, the last defined one will get executed.
+
+- Here is an example of overriding a user-defined function:
+ 
+  ```javascript
+  <script type="text/javascript">  
+      function multiplyNum(x, y, z) {  
+          return x * y * z;  
+      }  
+    
+      function multiplyNum(x, y) {  
+          return x * y;  
+      }  
+      var result = multiplyNum(1, 2, 3);  
+      document.write(result);  
+  ```
+
+  Output
+  ```
+  2
+  ```
+
+  Looking at the above example, the value of multiplication will be equal to 2 instead of 6.
+  
+  In this case, the only function available is `multiplyNum(x, y)`. So if we think we are making a call to `multiplyNum(x, y, z)`, it's actually calling `multiplyNum(x, y)`. 
+
+  The remaining parameter(s) will be ignored.
+
+- Here is an example of overriding the in-built `alert()` function:
+
+  ```html
+  <script type="text/javascript">  
+      var alert = function(message) {  
+          document.write(message);  
+      }  
+      // The following calls will invoke the overridden alert() function  
+      alert("Learn ");  
+      alert("JavaScript");  
+  </script> 
+  ```
+
+  Output:
+
+  ```
+  Learn JavaScript
+  ```
+
+  By default, `alert()` function displays the message in the alert box. But here we have overridden it. Now it is displaying the message in the [`document`](#document-object).
+
 ## call method of 'global Function class'
-
-TODO
-
-## Object Construction function
 
 TODO
 
@@ -796,6 +883,37 @@ Check out [20B-IIFE.js](./workshopper-javascripting-scripts/20B-IIFE.js) for an 
     However, we can still name it (use function declaration) in order to organize our code.
 
 * It is a common pattern for creating local scopes.  
+
+# `Date` objects in Javascript
+
+JavaScript `Date` objects represent a single moment in time in a platform-independent format. 
+
+`Date` objects contain a Number that represents milliseconds since 1 January 1970 UTC.
+
+## `new Date()` constructor vs. `Date()` function
+
+- Calling `new Date()` (the `Date()` constructor) returns a `Date` object.
+
+  When no parameters are provided, the newly-created `Date` object represents the current date and time as of the time of instantiation.
+
+- Calling the `Date()` function (without the `new` keyword) returns a string representation of the current date and time, exactly as `new Date().toString()` does. 
+
+  Any arguments given in a `Date()` function call (without the `new` keyword) are ignored; regardless of whether it's called with an invalid date string — or even called wth any arbitrary object or other primitive as an argument — it always returns a string representation of the current date and time.
+
+## Displaying dates using `Date.prototype.toString()`
+
+The Date object overrides the `toString()` method of `Object`. 
+
+`Date.prototype.toString()` returns a string representation of the Date as interpreted in the local timezone, containing both the date and the time.
+
+## Methods of `Date` objects
+
+- `Date.prototype.getFullYear()` – Provides current year like 2022.
+- `Date.prototype.getMonth()` – Provides current month values 0-11. Where 0 for Jan and 11 for Dec. So add +1 to get the result.
+- `Date.prototype.getDate()` – Provides day of the month values 1-31.
+- `Date.prototype.getHours()` – Provides current hour between 0-23.
+- `Date.prototype.getMinutes()` – Provides current minutes between 0-59.
+- `Date.prototype.getSeconds()` – Provides current seconds between 0-59.
 
 # DOM (Document Object Model)
 

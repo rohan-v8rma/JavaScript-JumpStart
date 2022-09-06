@@ -1,9 +1,12 @@
-- [Important Information relating to Web Browsers](#important-information-relating-to-web-browsers)
+- [Important Information relating to Web Development](#important-information-relating-to-web-development)
   - [What is a Session?](#what-is-a-session)
   - [User Agent](#user-agent)
     - [User Agent string](#user-agent-string)
     - [State and Identity of User Agent](#state-and-identity-of-user-agent)
   - [Running a method in the Browser Console](#running-a-method-in-the-browser-console)
+  - [Execution Environments in the case of Multiple Tabs](#execution-environments-in-the-case-of-multiple-tabs)
+  - [Server-side vs. client-side code](#server-side-vs-client-side-code)
+  - [Dynamic vs. Static code](#dynamic-vs-static-code)
 - [Important Objects and Methods related to Web Browsers](#important-objects-and-methods-related-to-web-browsers)
   - [`console` object](#console-object)
     - [`console.log(<arg>)` method](#consolelogarg-method)
@@ -18,7 +21,7 @@
       - [`window.innerHeight`](#windowinnerheight)
       - [`window.scrollX`](#windowscrollx)
       - [`window.scrollY`](#windowscrolly)
-      - [`window.history`](#windowhistory)
+      - [`window.history` OR `History API`](#windowhistory-or-history-api)
         - [`window.history.length`](#windowhistorylength)
         - [`window.history.back()` or `window.history.forward()` or `window.history.go()`](#windowhistoryback-or-windowhistoryforward-or-windowhistorygo)
       - [`window.location`](#windowlocation)
@@ -28,7 +31,6 @@
           - [`window.location.replace()` method](#windowlocationreplace-method)
         - [`window.location.reload()`](#windowlocationreload)
         - [`window.location.toString()`](#windowlocationtostring)
-          - [What is a stringifier method?](#what-is-a-stringifier-method)
     - [`window.document`](#windowdocument)
     - [Other methods of `window` object](#other-methods-of-window-object)
       - [`window.prompt()` or `prompt()`](#windowprompt-or-prompt)
@@ -43,6 +45,7 @@
   - [Objects](#objects)
     - [Converting an `Object` to `string` type using `toString()`](#converting-an-object-to-string-type-using-tostring)
     - [Displaying an `Object`](#displaying-an-object)
+    - [Retrieving a reference to an `Object` from READ-ONLY properties of other objects](#retrieving-a-reference-to-an-object-from-read-only-properties-of-other-objects)
     - [Object Construction function](#object-construction-function)
     - [Primitive Wrapper Objects](#primitive-wrapper-objects)
       - [`Number` wrapper object](#number-wrapper-object)
@@ -53,7 +56,12 @@
     - [Some prototype/static methods of the global `Array` class](#some-prototypestatic-methods-of-the-global-array-class)
       - [`Array.prototype.forEach()`](#arrayprototypeforeach)
       - [Creating an array from other sequences using: `Array.from()`](#creating-an-array-from-other-sequences-using-arrayfrom)
+- [APIs in Javascript](#apis-in-javascript)
 - [Interfaces (Not available in JavaScript)](#interfaces-not-available-in-javascript)
+  - [`History` Interface](#history-interface)
+  - [`Navigator` Interface](#navigator-interface)
+    - [`Clipboard` API](#clipboard-api)
+  - [`Clipboard` Interface](#clipboard-interface)
 - [Prototypes](#prototypes)
 - [Variable and Constant values](#variable-and-constant-values)
   - [`let` & `var` keywords for variables](#let--var-keywords-for-variables)
@@ -126,10 +134,10 @@
   - [`addEventListener()` method](#addeventlistener-method)
   - [`KeyboardEvent` objects](#keyboardevent-objects)
     - [Keyboard Event Attributes](#keyboard-event-attributes)
-    - [Handling Keyboard Events using `addEventListener()` and [`KeyboardEvent`](#keyboardevent-object) objects' properties](#handling-keyboard-events-using-addeventlistener-and-keyboardevent-objects-properties)
+    - [Handling Keyboard Events using `addEventListener()` and `KeyboardEvent` objects' properties](#handling-keyboard-events-using-addeventlistener-and-keyboardevent-objects-properties)
   - [`MouseEvent` objects](#mouseevent-objects)
     - [Mouse Event Attributes](#mouse-event-attributes)
-    - [Handling Mouse Events using `addEventListener()` and [`MouseEvent`](#keyboardevent-object) objects' properties](#handling-mouse-events-using-addeventlistener-and-mouseevent-objects-properties)
+    - [Handling Mouse Events using `addEventListener()` and `MouseEvent` objectss properties](#handling-mouse-events-using-addeventlistener-and-mouseevent-objectss-properties)
 - [ES6 (ECMAScript 6) Features](#es6-ecmascript-6-features)
   - [Arrow Functions](#arrow-functions)
   - [Rest Parameters](#rest-parameters)
@@ -137,13 +145,15 @@
 - [TODO](#todo)
   - [Interfaces in TypeScript (mentioned in MDN)](#interfaces-in-typescript-mentioned-in-mdn)
 
-# Important Information relating to Web Browsers
+# Important Information relating to Web Development
 
 ## What is a Session?
 
 Session refers to a visitor's time browsing a web site. 
 
 It's meant to represent the time between a visitor's first arrival at a page on the site and the time they stop using the site.
+
+---
 
 ## User Agent 
 
@@ -164,6 +174,10 @@ Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0
 
 ### State and Identity of User Agent
 
+TODO
+
+---
+
 ## Running a method in the Browser Console
 
 ![](images/console-function-output-and-return-value.png)
@@ -173,6 +187,42 @@ As we can see, the line just below `console.log("hello");` displays the output (
 The line below that shows an arrow pointing to the left and `undefined`. This is the return value of the method that was run.
 
 ---
+
+## Execution Environments in the case of Multiple Tabs
+
+Each browser tab has its own separate bucket for running code in i.e., **execution environments**. 
+
+This means that in most cases the code in each tab is run completely separately, and the code in one tab cannot directly affect the code in another tab — or on another website.
+
+This is a good SECURITY measure — if this were not the case, then bad actors could start writing code to steal information from other websites, and other such bad things.
+
+---
+
+## Server-side vs. client-side code
+
+The terms server-side and client-side code, are frequently heard especially in the context of web development. 
+
+- **Client-side code** is code that is run on the user's computer — when a web page is viewed, the page's client-side code is downloaded, then run and displayed by the browser.
+
+- **Server-side code** on the other hand is run on the server, then its results are downloaded and displayed in the browser. 
+  
+  Examples of popular server-side web languages include PHP, Python, Ruby, ASP.NET. 
+  
+  JavaScript can also be used as a server-side language, for example in the popular Node.js environment.
+
+--- 
+
+## Dynamic vs. Static code
+
+The word **dynamic** is used to describe both client-side JavaScript, and server-side languages — it refers to the ability to update the display of a web page/app to show different things in different circumstances, generating new content as required. 
+
+- Server-side code dynamically generates new content on the server, e.g. pulling data from a database.
+   
+- Client-side JavaScript dynamically generates new content inside the browser on the client, e.g. creating a new HTML table, filling it with data requested from the server, then displaying the table in a web page shown to the user. 
+ 
+The meaning is slightly different in the two contexts, but related, and both approaches (server-side and client-side) usually work together.
+
+A web page with no dynamically updating content is referred to as **static** — it just shows the same content all the time
 
 # Important Objects and Methods related to Web Browsers
 
@@ -294,13 +344,13 @@ The read-only `scrollY` property of the Window [interface](#interfaces-in-typesc
 
 ---
 
-#### `window.history`
+#### `window.history` OR `History API`
 
-The `window.history` read-only property returns a reference to the `History` object (i.e., the `history` key of the `window` object has value as the `History` object), which provides an interface for manipulating the browser [session](#what-is-a-session) history.
+The `window.history` read-only property returns a reference to the [`History`](#history-interface) object (i.e., the `history` key of the `window` object has value as the reference to the `History` object), which provides an interface for manipulating the browser [session](#what-is-a-session) history.
 
 Note that the history refers to the pages visited ONLY in the tab or frame that the current page is loaded in.
 
-It is also referred to as the `History API` in sources like MDN, since `History` object is used to get the session history of the user back to the application made using JavaScript, for manipulation. 
+It is also referred to as the `History` [API](#apis-in-javascript) in sources like MDN, since `History` object is used to get the session history of the user back to the application made using JavaScript, for manipulation. 
 
 
 
@@ -372,13 +422,7 @@ The `reload()` method reloads the current document. It is the same as clicking t
 
 ##### `window.location.toString()`
 
-The `window.location.toString()` [stringifier method](#what-is-a-stringifier-method) of the Location interface returns a string containing the whole URL. It is a read-only version of `window.location.href`.
-
-an api is a contract 
-
-###### What is a stringifier method?
-
-An object's stringifier is any attribute or method that is defined to provide a textual representation of the object for use in situations where a string is expected.
+The `window.location.toString()` [OVERRIDEN](#function-overriding-in-javascript) definition of `Object.prototype.toString` of the Location interface returns a string containing the whole URL. It is a read-only version of `window.location.href`.
 
 ---
 
@@ -483,7 +527,8 @@ This creates an empty instance of the global Object class.
 
 ### Converting an `Object` to `string` type using `toString()`
 
-The JavaScript system invokes an object's `toString()` method to convert an object to a string whenever the object is used in a string context. 
+The JavaScript system invokes an object's `toString()` method, also referred to as its **stringifier**, to convert an object to a string whenever the object is used in a string context. 
+
 
 For example, an object is converted to a string when it is passed to a function that expects a string argument.
 
@@ -494,6 +539,16 @@ If we do not, the object remains with the default `toString()` method from `Obje
 ### Displaying an `Object`
 
 We can pass any object to the [`console.log()`](#consolelogarg-method) method, which also expects a [`string`](#string-data-type) as argument. So, `console.log()` implicitly calls an object's version of `Object.toString()` method to
+
+### Retrieving a reference to an `Object` from READ-ONLY properties of other objects
+
+Properties of objects can store references to other objects. 
+
+Now, these properties can also be READ-ONLY, to ensure that the reference of the same object stays stored, preventing accidental manipulation of the reference.
+
+For example, a `Navigator` object can be retrieved using the READ-ONLY `window.navigator` property.
+
+BUT, this doesn't mean that the `Object` itself is immutable. We can make changes to the `Object` using its reference.
 
 ### Object Construction function
 
@@ -580,9 +635,47 @@ This is useful for converting `Array`-like objects (e.g. HTMLCollection) into ar
 
 ---
 
+# APIs in Javascript
+
+The functionality built on top of the client-side JavaScript language are *so-called* **Application Programming Interfaces** (APIs) provide you with extra powers to use in your JavaScript code.
+
+They are ready-made sets of code building blocks that allow a developer to implement programs that would otherwise be hard or impossible to implement.
+
+There are two types of APIs:
+
+- **Browser APIs** are built into your web browser, and are able to expose data from the surrounding computer environment, or do useful complex things. 
+  
+  For example: [`History` API](#windowhistory-or-history-api), [`Clipboard` API](#clipboard-api), etc.
+- **Third party APIs** are not built into the browser by default, and you generally have to grab their code and information from somewhere on the Web.
+
+  For example: Twitter API
 # Interfaces (Not available in JavaScript)
 
-TODO
+## `History` Interface
+
+The `History` interface allows manipulation of the browser session history (that is, the pages visited in the tab or frame that the current page is loaded in).
+
+## `Navigator` Interface
+
+The `Navigator` interface represents the state and the identity of the user agent. 
+
+It allows scripts to query it and to register themselves to carry on some activities.
+
+A `Navigator` object can be retrieved using the read-only `window.navigator` property.
+
+### `Clipboard` API
+
+The `Clipboard` [API](#apis-in-javascript) adds to the `Navigator` interface, the read-only clipboard property, which returns the [`Clipboard`](#clipboard-interface) object used to read and write the clipboard's contents.
+
+## `Clipboard` Interface
+
+The `Clipboard` interface implements the Clipboard [API](#apis-in-javascript), providing—if the user grants permission—both read and write access to the contents of the system clipboard. 
+
+The Clipboard [API](#apis-in-javascript) can be used to implement cut, copy, and paste features within a web application.
+
+The system clipboard is exposed through the GLOBAL `Navigator.clipboard` property.
+
+
 
 # Prototypes
 
@@ -1391,7 +1484,7 @@ document.body.input.onkeydown = function(event) {
 
 ---
 
-### Handling Keyboard Events using [`addEventListener()`](#addeventlistener-method) and [`KeyboardEvent`](#keyboardevent-object) objects' properties
+### Handling Keyboard Events using `addEventListener()` and `KeyboardEvent` objects' properties
 
 Note that simply removing the prefix `on` from the HTML event attribute values, gives us events which we can use with `addEventListener()` method. For example: `onkeydown` -> `keydown`.
 
@@ -1474,7 +1567,7 @@ button.onclick = function(event) {
 
 ---
 
-### Handling Mouse Events using [`addEventListener()`](#addeventlistener-method) and [`MouseEvent`](#keyboardevent-object) objects' properties
+### Handling Mouse Events using `addEventListener()` and `MouseEvent` objectss properties
 
 Note that simply removing the prefix on from the HTML event attribute values, gives us events which we can use with `addEventListener()` method. For example: `onwheel` -> `wheel`.
 

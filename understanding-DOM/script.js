@@ -1,12 +1,26 @@
 
-let currentTime = new Date(); // An empty constructor of the Date object
+let num0 = Number('123');
+let num1 = Number(123);
+
+let num2 = 123;
+
+let num3 = new Number('123');
+let num4 = new Number(123);
 
 
-console.log(currentTime.getFullYear()); // Logging the year from the newly created Date object
+// fo(currentTime);
 
-let originalDate = new Date(2000, 1, 1); // Date from which we need to calculate difference.
+console.log(typeof(num0));
+console.log(num0);
 
-let timeDomObject = document.getElementById("time"); // DOM object whose text we need to change.
+console.log(typeof(num1));
+console.log(num1);
 
-timeDomObject.innerText = currentTime.getFullYear() - originalDate.getFullYear(); // Changing the text
+console.log(typeof(num2));
+console.log(num2);
 
+console.log(typeof(num3));
+console.log(num3);
+
+console.log(typeof(num4));
+console.log(num4);

@@ -518,7 +518,7 @@ let num4 = Number(100);
 
 `num1` and `num2` are `Number` objects.
 
-`num3` and `num4` are primitive numbers.
+`num3` and `num4`, created without using the `new` keyword, are primitive numbers.
 
 ---
 

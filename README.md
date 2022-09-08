@@ -70,6 +70,7 @@
 - [General information about Javascript](#general-information-about-javascript)
   - [Template literals and string interpolation in Javascript](#template-literals-and-string-interpolation-in-javascript)
   - [Ending statements with semi-colons](#ending-statements-with-semi-colons)
+  - [Understanding the behaviour of `for of` loop](#understanding-the-behaviour-of-for-of-loop)
 - [Functions in Javascript](#functions-in-javascript)
   - [Function DECLARATION vs Function EXPRESSION](#function-declaration-vs-function-expression)
     - [a. Function DECLARATION](#a-function-declaration)
@@ -129,7 +130,7 @@
     - [`Element.setAttribute()`](#elementsetattribute)
     - [`Element.getAttribute()`](#elementgetattribute)
     - [`Element.removeAttribute()`](#elementremoveattribute)
-- [Event](#event)
+- [Events in Javascript](#events-in-javascript)
   - [Event Listeners vs. Event Handlers](#event-listeners-vs-event-handlers)
   - [`addEventListener()` method](#addeventlistener-method)
   - [`KeyboardEvent` objects](#keyboardevent-objects)
@@ -142,6 +143,8 @@
   - [Arrow Functions](#arrow-functions)
   - [Rest Parameters](#rest-parameters)
   - [`let` and `const` keywords](#let-and-const-keywords)
+- [Unexpected Behaviors in Javascript](#unexpected-behaviors-in-javascript)
+  - [Increasing the length of an `Array`](#increasing-the-length-of-an-array)
 - [TODO](#todo)
   - [Interfaces in TypeScript (mentioned in MDN)](#interfaces-in-typescript-mentioned-in-mdn)
 
@@ -770,6 +773,104 @@ TODO
 ## Ending statements with semi-colons
 
 Although ending statements (NOT BLOCKS of code like if-else) with semi-colons is optional in JavaScript, it is best practice to do so in order to avoid any edge-case behaviour where statements place on two different lines are interpreted together.
+
+## Understanding the behaviour of `for of` loop
+ 
+The `for of` loop of Javascript allows looping over iterable data structures such as `Arrays`, `Strings`, `Maps`, `NodeLists`, etcetera.
+
+Let us take two examples to understand how the `for of` loop works.
+
+Taking a look at the first example:
+
+```javascript
+
+let cats_list_1 = ['Leopard', 'Serval', 'Jaguar', 'Tiger', 'Caracal', 'Lion'];
+
+let index1 = 0;
+
+for (let cat of cats_list_1) { 
+
+    console.log((index1+1) + ". " + cats_list_1[index1]);
+    
+    if(index1 < cats_list_1.length) {
+        cats_list_1[index1] = 'Mannn';        
+    }
+    index1++;
+
+    console.log(cat); 
+    // See how this is same as the original array
+}
+
+console.log(cats_list_1); 
+// As we can see, all elements of `cats_list_1` have been changed to 'Mann'
+```
+
+Since `cat` is assigned a copy of an element of `cats_list_1`, even if we modify the element at the same index position as assigned to `cat`, the variable `cat` will remain unchanged, unless we modify `cat` itself.
+
+Output:
+```
+1. Leopard
+Leopard
+2. Serval
+Serval
+3. Jaguar
+Jaguar
+4. Tiger
+Tiger
+5. Caracal
+Caracal
+6. Lion
+Lion
+[ 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn' ]
+```
+
+Taking a look at the second example:
+
+```javascript
+
+let cats_list_2 = ['Leopard', 'Serval', 'Jaguar', 'Tiger', 'Caracal', 'Lion'];
+
+let index2 = 0;
+
+for (let cat of cats_list_2) { 
+
+    console.log((index2+1) + ". " + cats_list_2[index2]);
+    
+    // The below IF condition is important to ensure the array is NOT extended.
+    if(index2 < cats_list_2.length - 1) {
+        cats_list_2[index2 + 1] = 'Mannn';   
+        console.log(cats_list_2);
+  
+    }
+    index2++;
+
+    console.log(cat); 
+    // Notice how we can see 'Mann' the second element onwards.
+}
+```
+
+Here, we assign the value `Mann` to the second element onwards in the iteration before the value of `cat` is set using that index of the array, which is why see `Mann` as the output from the second iteration of the `for of` loop.
+
+Output:
+```
+1. Leopard
+[ 'Leopard', 'Mannn', 'Jaguar', 'Tiger', 'Caracal', 'Lion' ]
+Leopard
+2. Mannn
+[ 'Leopard', 'Mannn', 'Mannn', 'Tiger', 'Caracal', 'Lion' ]
+Mannn
+3. Mannn
+[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Caracal', 'Lion' ]
+Mannn
+4. Mannn
+[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Lion' ]
+Mannn
+5. Mannn
+[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn' ]
+Mannn
+6. Mannn
+Mannn
+```
 
 # Functions in Javascript
 
@@ -1428,9 +1529,11 @@ document.getElementById("myAnchor").removeAttribute("href");
 
 ---
 
-# Event
+# Events in Javascript
 
-`Event` interface represents an event which takes place in the DOM. 
+Events are actions or occurrences that happen in the system you are programming, which the system tells you about so your code can react to them.
+
+The `Event` interface represents an event which takes place in the DOM. 
 
 There are many types of events, some of which use other interfaces based on the main `Event` interface. 
 
@@ -1450,6 +1553,12 @@ When JavaScript is used in HTML pages, JavaScript can "react" on these events.
 ## `addEventListener()` method
 
 The `addEventListener()` method attaches an event handler to the specified element. The `addEventListener()` method can have multiple event handlers applied to the same element. It doesn’t overwrite other event handlers.
+
+The recommended mechanism for adding event handlers in **web-pages** is the `addEventListener()` method.
+
+Inside the `addEventListener()` function, we specify two parameters: 
+- the name of the event we want to register this handler for.
+- the code that comprises the handler function we want to run in response to it.
 
 ## `KeyboardEvent` objects
 
@@ -1584,6 +1693,52 @@ TODO
 ## `let` and `const` keywords
 
 Given under [Variable and Constant values](#variable-and-constant-values) above.
+
+# Unexpected Behaviors in Javascript
+
+## Increasing the length of an `Array`
+
+Suppose we run the following code:
+```javascript
+let array = [1, 2, 3];
+
+let index = 0;
+while(true) {
+  array[index] = index;
+  
+  console.log(array[index]);
+  
+  index++;
+}
+```
+
+In other strongly-types languages, for example C++, this would throw a segmentation fault error once we went out of the range of the memory allocated to `array`.
+
+However, in Javascript, this would trigger an infinite loop, **endlessly increasing the number of elements** in `array`.
+
+The output of this snippet would be something like this:
+```
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+...
+...
+... until manual interruption
+```
+
+In order to prevent this, we should ALWAYS set an upper bound of the number of elements.
 
 # TODO
 

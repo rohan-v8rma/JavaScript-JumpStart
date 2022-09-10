@@ -7,35 +7,6 @@
   - [Execution Environments in the case of Multiple Tabs](#execution-environments-in-the-case-of-multiple-tabs)
   - [Server-side vs. client-side code](#server-side-vs-client-side-code)
   - [Dynamic vs. Static code](#dynamic-vs-static-code)
-- [Important Objects and Methods related to Web Browsers](#important-objects-and-methods-related-to-web-browsers)
-  - [`console` object](#console-object)
-    - [`console.log(<arg>)` method](#consolelogarg-method)
-    - [`console.table(<arg>)` method](#consoletablearg-method)
-    - [`console.warn(<arg>)` and `console.error(<arg>)` method](#consolewarnarg-and-consoleerrorarg-method)
-    - [`console.time(<arg>)` and `console.timeEnd(<arg>)`](#consoletimearg-and-consoletimeendarg)
-    - [`console.clear()` method](#consoleclear-method)
-  - [`window` object and "context"](#window-object-and-context)
-    - [Usage of `window.console` object](#usage-of-windowconsole-object)
-    - [Useful properties of the `window` object](#useful-properties-of-the-window-object)
-      - [`window.innerWidth`](#windowinnerwidth)
-      - [`window.innerHeight`](#windowinnerheight)
-      - [`window.scrollX`](#windowscrollx)
-      - [`window.scrollY`](#windowscrolly)
-      - [`window.history` OR `History API`](#windowhistory-or-history-api)
-        - [`window.history.length`](#windowhistorylength)
-        - [`window.history.back()` or `window.history.forward()` or `window.history.go()`](#windowhistoryback-or-windowhistoryforward-or-windowhistorygo)
-      - [`window.location`](#windowlocation)
-        - [`window.location.href` vs. `window.location.assign` vs. `window.location.replace()`](#windowlocationhref-vs-windowlocationassign-vs-windowlocationreplace)
-          - [`window.location.href` property](#windowlocationhref-property)
-          - [`window.location.assign()` method](#windowlocationassign-method)
-          - [`window.location.replace()` method](#windowlocationreplace-method)
-        - [`window.location.reload()`](#windowlocationreload)
-        - [`window.location.toString()`](#windowlocationtostring)
-    - [`window.document`](#windowdocument)
-    - [Other methods of `window` object](#other-methods-of-window-object)
-      - [`window.prompt()` or `prompt()`](#windowprompt-or-prompt)
-      - [`window.confirm()` or `confirm()`](#windowconfirm-or-confirm)
-      - [`window.alert(<arg>)` or `alert(<arg>)`](#windowalertarg-or-alertarg)
 - [Data types in Javascript](#data-types-in-javascript)
   - [`string` data-type](#string-data-type)
     - [Creating a string from other datatypes](#creating-a-string-from-other-datatypes)
@@ -56,7 +27,35 @@
     - [Some prototype/static methods of the global `Array` class](#some-prototypestatic-methods-of-the-global-array-class)
       - [`Array.prototype.forEach()`](#arrayprototypeforeach)
       - [Creating an array from other sequences using: `Array.from()`](#creating-an-array-from-other-sequences-using-arrayfrom)
-- [APIs in Javascript](#apis-in-javascript)
+- [Web APIs in Javascript](#web-apis-in-javascript)
+  - [`Console` API](#console-api)
+    - [`console.log(<arg>)` method](#consolelogarg-method)
+    - [`console.table(<arg>)` method](#consoletablearg-method)
+    - [`console.warn(<arg>)` and `console.error(<arg>)` method](#consolewarnarg-and-consoleerrorarg-method)
+    - [`console.time(<arg>)` and `console.timeEnd(<arg>)`](#consoletimearg-and-consoletimeendarg)
+    - [`console.clear()` method](#consoleclear-method)
+  - [`Window` API](#window-api)
+    - [Usage of `window.console` object](#usage-of-windowconsole-object)
+    - [Useful properties of the `window` object](#useful-properties-of-the-window-object)
+      - [`window.innerWidth`](#windowinnerwidth)
+      - [`window.innerHeight`](#windowinnerheight)
+      - [`window.scrollX`](#windowscrollx)
+      - [`window.scrollY`](#windowscrolly)
+    - [`window.document`](#windowdocument)
+    - [Other methods of `window` object](#other-methods-of-window-object)
+      - [`window.prompt()` or `prompt()`](#windowprompt-or-prompt)
+      - [`window.confirm()` or `confirm()`](#windowconfirm-or-confirm)
+      - [`window.alert(<arg>)` or `alert(<arg>)`](#windowalertarg-or-alertarg)
+  - [`History` API](#history-api)
+    - [`window.history.length`](#windowhistorylength)
+    - [`window.history.back()` or `window.history.forward()` or `window.history.go()`](#windowhistoryback-or-windowhistoryforward-or-windowhistorygo)
+  - [`Location` API](#location-api)
+    - [`window.location.href` vs. `window.location.assign` vs. `window.location.replace()`](#windowlocationhref-vs-windowlocationassign-vs-windowlocationreplace)
+      - [`window.location.href` property](#windowlocationhref-property)
+      - [`window.location.assign()` method](#windowlocationassign-method)
+      - [`window.location.replace()` method](#windowlocationreplace-method)
+    - [`window.location.reload()`](#windowlocationreload)
+    - [`window.location.toString()`](#windowlocationtostring)
 - [Interfaces (Not available in JavaScript)](#interfaces-not-available-in-javascript)
   - [`History` Interface](#history-interface)
   - [`Navigator` Interface](#navigator-interface)
@@ -70,7 +69,13 @@
 - [General information about Javascript](#general-information-about-javascript)
   - [Template literals and string interpolation in Javascript](#template-literals-and-string-interpolation-in-javascript)
   - [Ending statements with semi-colons](#ending-statements-with-semi-colons)
+  - [Javascript Engines](#javascript-engines)
+  - [Execution Contexts in Javascript](#execution-contexts-in-javascript)
+    - [Global Execution Context](#global-execution-context)
+    - [Functional Execution Context](#functional-execution-context)
+  - [Working of Execution Stack in Javascript](#working-of-execution-stack-in-javascript)
   - [Understanding the behaviour of `for of` loop](#understanding-the-behaviour-of-for-of-loop)
+  - [Synchronous vs. Asynchronous Programming](#synchronous-vs-asynchronous-programming)
 - [Functions in Javascript](#functions-in-javascript)
   - [Function DECLARATION vs Function EXPRESSION](#function-declaration-vs-function-expression)
     - [a. Function DECLARATION](#a-function-declaration)
@@ -226,252 +231,6 @@ The word **dynamic** is used to describe both client-side JavaScript, and server
 The meaning is slightly different in the two contexts, but related, and both approaches (server-side and client-side) usually work together.
 
 A web page with no dynamically updating content is referred to as **static** — it just shows the same content all the time
-
-# Important Objects and Methods related to Web Browsers
-
-## `console` object
-
-- In the case of node, `console` is a defined object, which is why we can execute its methods along with the prefix `console` in node locally.
-- In web browsers, it is a property of the [global `window` object](#window-object-and-context). This is why we can directly access it in web browsers, since they have `window` [context](#window-object-and-context).
-
-
-A console traditionally refers to a computer terminal where a user may input commands and view output such as the results of inputted commands or status messages from the computer.
-
-All modern browsers have a web console for debugging.
-
-### `console.log(<arg>)` method
-
-The `console.log()` method is used to write messages to this console. For example:
-```javascript
-let greeting = "hello";
-console.log(greeting);
-```
-`console.log()` makes it easier to see the value inside a variable. That's why it's commonly used for testing/debugging code.
-
-### `console.table(<arg>)` method
-
-This method displays the keys and values of the object passed to it in tabular form.
-
-### `console.warn(<arg>)` and `console.error(<arg>)` method
-
-- `console.warn()` method outputs a warning message to the Web browser's console.
-- `console.error()` method output an error message to the Web browser's console.
-An example of both is shown below. 
-![](images/browser-console-warning-error.png)
-
-### `console.time(<arg>)` and `console.timeEnd(<arg>)`
-
-The `console.time()` method starts a timer we can use to track how long an operation takes.
-
-Each timer is given a unique name. 
-
-When we call `console.timeEnd()` with the same name, the browser will output the time, in milliseconds, that elapsed since the timer was started.
-
-Input:
-```javascript
-console.time("Your code took");
-console.log("Hello World");
-console.timeEnd("Your code took");
-```
-
-Output:
-```
-Your code took: 4.3919237898ms
-```
-
-### `console.clear()` method
-
-This clears the Browser's console.
-
----
-
-## `window` object and "context"
-
-`window` is a global object representing the browser window in which the script is running, typically on the **client** side. 
-
-Javascript code has access to global variables based on where it's running - browser engine or node. 
-
-I'm calling this global state **context**.
-
-Since `window` is a global object on the client side (web browsers), we can directly use the methods of `window` in our scripts as they will be running in `window` context. 
-
-We can also say that the `window` object is at the top of the scope chain.
-
-It only works in browsers and not in regular scripts running locally using node, because only browsers have window context.
-
-In node, accessing window is meaningless because there's no browser window.
-
-### Usage of `window.console` object
-
-`window.console` returns a reference to the console object which provides access to the browser's debugging console.
-
-In simple words, it checks if the console is available(truthy value) so that we can log next.
-
-In the case of mobile browsers or general code editors, they don't support debugger/console).
-
-Try running this in your browser's console:
-
-```javascript
-if( window.console ) {
-    window.console.log( open_date );
-};
-```
-
-### Useful properties of the `window` object
-
----
-
-#### `window.innerWidth`
-
-The read-only Window property `innerWidth` returns the interior width of the window in pixels. This includes the width of the vertical scroll bar, if present.
-
----
-
-#### `window.innerHeight`
-
-The read-only `innerHeight` property of the window [interface](#interfaces-in-typescript-mentioned-in-mdn) returns the interior height of the window in pixels, including the height of the horizontal scroll bar, if present.
-
----
-
-#### `window.scrollX`
-
-The read-only `scrollX` property of the Window **[interface](#interfaces-in-typescript-mentioned-in-mdn)** returns the number of pixels that the document is currently scrolled horizontally.
-
-TODO: Difference between Window [interface](#interfaces-in-typescript-mentioned-in-mdn) and global Window object
-
----
-
-#### `window.scrollY`
-
-The read-only `scrollY` property of the Window [interface](#interfaces-in-typescript-mentioned-in-mdn) returns the number of pixels that the document is currently scrolled vertically.
-
----
-
-#### `window.history` OR `History API`
-
-The `window.history` read-only property returns a reference to the [`History`](#history-interface) object (i.e., the `history` key of the `window` object has value as the reference to the `History` object), which provides an interface for manipulating the browser [session](#what-is-a-session) history.
-
-Note that the history refers to the pages visited ONLY in the tab or frame that the current page is loaded in.
-
-It is also referred to as the `History` [API](#apis-in-javascript) in sources like MDN, since `History` object is used to get the session history of the user back to the application made using JavaScript, for manipulation. 
-
-
-
-##### `window.history.length`
-
-##### `window.history.back()` or `window.history.forward()` or `window.history.go()`
-
-Moving backward and forward through the user's history is done using the `back()`, `forward()`, and `go()` methods.
-
-- To move backward through history: `window.history.back()`.
-This acts exactly as if the user clicked on the `Back` button in their browser toolbar.
-
-- To move forward: `window.history.forward()`.
-This acts exactly as if the user clicked on the `Forward` button in their browser toolbar.
-
-- To move to a specific point in history: `window.history.go(integerVal)` loads a specific page from session history. 
-  
-  The current page's position is 0 and an integer value relative to the current page has to be passed. For example, we can move forward one page by passing 1.
-
----
-
-#### `window.location`
-
-The `window.location` read-only property returns a reference to the `Location` object ((i.e., the `location` key of the `window` object has value as the `Location` object)), with information about the current location of the document.
-
-It represents the current **URL** of the document being displayed in that window.
-
-Though `window.location` is a read-only `Location` object, we can also assign a string to it. 
-
-This means that you can work with `location` as if it were a string in most cases: `location = http://www.example.com` is a synonym of `location.href = http://www.example.com`. But the latter is preferred.
-
-##### `window.location.href` vs. `window.location.assign` vs. `window.location.replace()`
-
-All three commands are used to redirect the page to another page/website but differ in terms of their impact on the browser history, safety and return values.
-
-###### `window.location.href` property 
-
-It is a property of `window.location` that stores the URL of the current webpage.
-
-On changing the value of `href` property, a user would be navigated to a new URL, i.e. sent to a new webpage. 
-  
-It adds an item to the history list, so that the user can return to the current page upon clicking the `Back` button. 
-
-It is faster than using the `assign()` method as calling a function is slower than changing the value of the property.
-
-###### `window.location.assign()` method
-
-It is a property of `window.location` that stores a function expression. 
-
-The `assign` function is also used to navigate to a new URL. But it is preferred over updating the `href` property as calling a function is considered safer and more readable.
-
-However, it does not show the current location, it is only used to go to a new location.
-
-The `assign()` method is also preferred over `href` as it allows the user to mock the function and check the URL input parameters while testing, instead of directly assigning a faulty URL to the `href` property.
-
-Unlike the `replace` method, the `assign` method adds a new record to history so that the user can return to the current page upon clicking the `Back` button.
-
-###### `window.location.replace()` method 
-
-It is a property of `window.location` that stores a function expression. 
-  
-It is used to navigate to a new URL without adding a new record to the history. 
-
-The user won't be able to navigate back to the current page upon clicking the `Back` button.
-
-##### `window.location.reload()`
-
-The `reload()` method reloads the current document. It is the same as clicking the reload button in your browser.
-
-##### `window.location.toString()`
-
-The `window.location.toString()` [OVERRIDEN](#function-overriding-in-javascript) definition of `Object.prototype.toString` of the Location interface returns a string containing the whole URL. It is a read-only version of `window.location.href`.
-
----
-
-### `window.document`
-
-More details under [DOM (Document Object Model)](#dom-document-object-model)
-
----
-
-### Other methods of `window` object
-
-These methods only work on browsers since only browsers have the pre-existing global `window` object.
-
-We can choose to use these methods without the `window` prefix because, as mentioned previously, browsers have `window` [context](#window-object-and-context).
-
-Note that there should be no locally defined function with the same name, otherwise just using the method name would lead to the local function being called.
-
-This is why it is safer to use the methods along with the prefix of `window` to ensure selection of the correct function definition.
-
----
-
-#### `window.prompt()` or `prompt()`
-
-TODO
-
----
-
-#### `window.confirm()` or `confirm()`
-
-TODO
-
----
-
-#### `window.alert(<arg>)` or `alert(<arg>)`
-
-The alert() method displays an alert box with a message and an OK button.
-
-The alert box takes the focus away from the current window, and forces the user to read the message.
-
-For example:
-
-![](./images/javascript-alert.png)
-
-Note that this is not used nowadays. Instead, we use Bootstrap etc, to show beautified alerts.
-
----
 
 # Data types in Javascript
 
@@ -638,11 +397,15 @@ This is useful for converting `Array`-like objects (e.g. HTMLCollection) into ar
 
 ---
 
-# APIs in Javascript
+# Web APIs in Javascript
 
 The functionality built on top of the client-side JavaScript language are *so-called* **Application Programming Interfaces** (APIs) provide you with extra powers to use in your JavaScript code.
 
 They are ready-made sets of code building blocks that allow a developer to implement programs that would otherwise be hard or impossible to implement.
+
+Taking the example of introducing a delay in the execution of a particular piece of Javascript code, it is NOT possible using just Javascript this because the [Execution Stack](#working-of-execution-stack-in-javascript) of any [JS engine](#javascript-engines) instantly executes code contained within any [Execution Context](#execution-contexts-in-javascript) in the stack. 
+
+For this, we would use the `window.setTimeout()` or `setTimeout()` method (because `window` is the global object in the case of browsers) accessible to us through the [`Window`](#window-api) API, which would keep track of the time passed.
 
 There are two types of APIs:
 
@@ -652,6 +415,256 @@ There are two types of APIs:
 - **Third party APIs** are not built into the browser by default, and you generally have to grab their code and information from somewhere on the Web.
 
   For example: Twitter API
+
+Let us now take a look at some **Browser APIs**.
+
+## `Console` API
+
+A console traditionally refers to a computer terminal where a user may input commands and view output such as the results of inputted commands or status messages from the computer.
+
+The `Console` API provides functionality to allow developers to perform debugging tasks, such as logging messages or the values of variables at set points in your code, or timing how long an operation takes to complete.
+
+All modern browsers have a web console for debugging.
+
+- In the case of node, `console` is a defined object, which is why we can execute its methods along with the prefix `console` in node locally.
+- In web browsers, it is a property of the [global `window` object](#window-object-and-context). 
+
+  This is why we can use the prefix `window` like `window.console` or directly access it in web browsers, since they have `window` [context](#window-object-and-context).
+
+### `console.log(<arg>)` method
+
+The `console.log()` method is used to write messages to this console. For example:
+```javascript
+let greeting = "hello";
+console.log(greeting);
+```
+`console.log()` makes it easier to see the value inside a variable. That's why it's commonly used for testing/debugging code.
+
+### `console.table(<arg>)` method
+
+This method displays the keys and values of the object passed to it in tabular form.
+
+### `console.warn(<arg>)` and `console.error(<arg>)` method
+
+- `console.warn()` method outputs a warning message to the Web browser's console.
+- `console.error()` method output an error message to the Web browser's console.
+An example of both is shown below. 
+![](images/browser-console-warning-error.png)
+
+### `console.time(<arg>)` and `console.timeEnd(<arg>)`
+
+The `console.time()` method starts a timer we can use to track how long an operation takes.
+
+Each timer is given a unique name. 
+
+When we call `console.timeEnd()` with the same name, the browser will output the time, in milliseconds, that elapsed since the timer was started.
+
+Input:
+```javascript
+console.time("Your code took");
+console.log("Hello World");
+console.timeEnd("Your code took");
+```
+
+Output:
+```
+Your code took: 4.3919237898ms
+```
+
+### `console.clear()` method
+
+This clears the Browser's console.
+
+---
+
+## `Window` API 
+
+The `Window` API is used to obtain information about and manipulate the browser-window.
+
+In the case of browsers, the [Global Execution Context](#global-execution-context) has its global/`this` object as `window`, which represents the browser window in which the script is running, typically on the **client** side. 
+
+Since it is a global object, its methods and properties can be directly accessed, without having to use the prefix `window`.
+
+It only works in browsers and not in regular scripts running locally using node, because only browsers have `window` context.
+
+In node, accessing window is meaningless because there's no browser window.
+
+### Usage of `window.console` object
+
+`window.console` returns a reference to the console object which provides access to the browser's debugging console.
+
+In simple words, it checks if the console is available(truthy value) so that we can log next.
+
+In the case of mobile browsers or general code editors, they don't support debugger/console).
+
+Try running this in your browser's console:
+
+```javascript
+if( window.console ) {
+    window.console.log( open_date );
+};
+```
+
+### Useful properties of the `window` object
+
+#### `window.innerWidth`
+
+The read-only Window property `innerWidth` returns the interior width of the window in pixels. This includes the width of the vertical scroll bar, if present.
+
+---
+
+#### `window.innerHeight`
+
+The read-only `innerHeight` property of the window [interface](#interfaces-in-typescript-mentioned-in-mdn) returns the interior height of the window in pixels, including the height of the horizontal scroll bar, if present.
+
+---
+
+#### `window.scrollX`
+
+The read-only `scrollX` property of the Window **[interface](#interfaces-in-typescript-mentioned-in-mdn)** returns the number of pixels that the document is currently scrolled horizontally.
+
+TODO: Difference between Window [interface](#interfaces-in-typescript-mentioned-in-mdn) and global Window object
+
+---
+
+#### `window.scrollY`
+
+The read-only `scrollY` property of the Window [interface](#interfaces-in-typescript-mentioned-in-mdn) returns the number of pixels that the document is currently scrolled vertically.
+
+---
+
+### `window.document`
+
+More details under [DOM (Document Object Model)](#dom-document-object-model)
+
+---
+
+### Other methods of `window` object
+
+These methods only work on browsers since only browsers have the pre-existing global `window` object.
+
+We can choose to use these methods without the `window` prefix because, as mentioned previously, browsers have `window` [context](#window-object-and-context).
+
+Note that there should be no locally defined function with the same name, otherwise just using the method name would lead to the local function being called.
+
+This is why it is safer to use the methods along with the prefix of `window` to ensure selection of the correct function definition.
+
+---
+
+#### `window.prompt()` or `prompt()`
+
+TODO
+
+---
+
+#### `window.confirm()` or `confirm()`
+
+TODO
+
+---
+
+#### `window.alert(<arg>)` or `alert(<arg>)`
+
+The alert() method displays an alert box with a message and an OK button.
+
+The alert box takes the focus away from the current window, and forces the user to read the message.
+
+For example:
+
+![](./images/javascript-alert.png)
+
+Note that this is not used nowadays. Instead, we use Bootstrap etc, to show beautified alerts.
+
+---
+
+## `History` API
+
+The `History` API exposes useful methods and properties that let you navigate back and forth through the user's history, and manipulate the contents of the history stack.
+
+We are given access to it through the [`Window`](#window-api) API. 
+
+the `window.history` read-only property returns a reference to the [`History`](#history-interface) object (i.e., the `history` key of the `window` object has value as the reference to the `History` object), which provides an interface for manipulating the browser [session](#what-is-a-session) history.
+
+Note that the history refers to the pages visited ONLY in the tab or frame that the current page is loaded in.
+
+It is also referred to as the `History` [API](#apis-in-javascript) in sources like MDN, since `History` object is used to get the session history of the user back to the application made using JavaScript, for manipulation. 
+
+### `window.history.length`
+
+### `window.history.back()` or `window.history.forward()` or `window.history.go()`
+
+Moving backward and forward through the user's history is done using the `back()`, `forward()`, and `go()` methods.
+
+- To move backward through history: `window.history.back()`.
+This acts exactly as if the user clicked on the `Back` button in their browser toolbar.
+
+- To move forward: `window.history.forward()`.
+This acts exactly as if the user clicked on the `Forward` button in their browser toolbar.
+
+- To move to a specific point in history: `window.history.go(integerVal)` loads a specific page from session history. 
+  
+  The current page's position is 0 and an integer value relative to the current page has to be passed. For example, we can move forward one page by passing 1.
+
+---
+
+## `Location` API
+
+The `Location` API is used to access various details about the current page such as host, hostname, URL, pathname, etcetera.
+
+We are given access to it through the [`Window`](#window-api) API. 
+
+The `window.location` read-only property returns a reference to the `Location` object ((i.e., the `location` key of the `window` object has value as the `Location` object)), with information about the current location of the document.
+
+It represents the current **URL** of the document being displayed in that window.
+
+Though `window.location` is a read-only `Location` object, we can also assign a string to it. 
+
+This means that you can work with `location` as if it were a string in most cases: `location = http://www.example.com` is a synonym of `location.href = http://www.example.com`. But the latter is preferred.
+
+### `window.location.href` vs. `window.location.assign` vs. `window.location.replace()`
+
+All three commands are used to redirect the page to another page/website but differ in terms of their impact on the browser history, safety and return values.
+
+#### `window.location.href` property 
+
+It is a property of `window.location` that stores the URL of the current webpage.
+
+On changing the value of `href` property, a user would be navigated to a new URL, i.e. sent to a new webpage. 
+  
+It adds an item to the history list, so that the user can return to the current page upon clicking the `Back` button. 
+
+It is faster than using the `assign()` method as calling a function is slower than changing the value of the property.
+
+#### `window.location.assign()` method
+
+It is a property of `window.location` that stores a function expression. 
+
+The `assign` function is also used to navigate to a new URL. But it is preferred over updating the `href` property as calling a function is considered safer and more readable.
+
+However, it does not show the current location, it is only used to go to a new location.
+
+The `assign()` method is also preferred over `href` as it allows the user to mock the function and check the URL input parameters while testing, instead of directly assigning a faulty URL to the `href` property.
+
+Unlike the `replace` method, the `assign` method adds a new record to history so that the user can return to the current page upon clicking the `Back` button.
+
+#### `window.location.replace()` method 
+
+It is a property of `window.location` that stores a function expression. 
+  
+It is used to navigate to a new URL without adding a new record to the history. 
+
+The user won't be able to navigate back to the current page upon clicking the `Back` button.
+
+### `window.location.reload()`
+
+The `reload()` method reloads the current document. It is the same as clicking the reload button in your browser.
+
+### `window.location.toString()`
+
+The `window.location.toString()` [OVERRIDEN](#function-overriding-in-javascript) definition of `Object.prototype.toString` of the Location interface returns a string containing the whole URL. It is a read-only version of `window.location.href`.
+
+---
+
 # Interfaces (Not available in JavaScript)
 
 ## `History` Interface
@@ -774,6 +787,54 @@ TODO
 
 Although ending statements (NOT BLOCKS of code like if-else) with semi-colons is optional in JavaScript, it is best practice to do so in order to avoid any edge-case behaviour where statements place on two different lines are interpreted together.
 
+## Javascript Engines
+
+A JavaScript engine is a software component that executes JavaScript code. 
+
+The first JavaScript engines were mere interpreters, but all relevant modern engines use just-in-time compilation for improved performance.
+
+JavaScript engines are typically developed by web browser vendors, and every major browser has one. 
+
+In a browser, the JavaScript engine runs in concert with the rendering engine via the Document Object Model.
+
+The use of JavaScript engines is not limited to browsers. For example, the V8 engine is a core component of the Node.js and Deno runtime systems.
+
+## Execution Contexts in Javascript
+
+Simply put, an **execution context** is an abstract concept of an environment where the Javascript code is evaluated and executed. 
+
+Whenever any code is run in JavaScript, it’s run inside an **execution context**.
+
+### Global Execution Context
+ 
+This is the default or base execution context. The code that is not inside any function is in the **global execution context**. 
+
+It performs two things: 
+- it creates a global object which is a `window` object (in the case of browsers) 
+- sets the value of `this` to equal to the global object. 
+
+There can only be one **global execution context** in a program.
+
+### Functional Execution Context
+
+Every time a function is invoked, a brand new execution context is created for that function. 
+
+Each function has its own execution context, but it’s created when the function is invoked or called. 
+
+There can be any number of **function execution contexts**.
+
+## Working of Execution Stack in Javascript
+
+Execution stack, also known as “calling stack” in other programming languages, is a stack which is used to store all the [execution contexts](#execution-contexts-in-javascript) created during the code execution.
+
+When the [JavaScript engine](#javascript-engines) first encounters your script, it creates a [global execution context](#global-execution-context) and pushes it to the current **execution stack**. 
+
+Whenever the engine finds a function invocation, it creates a new execution context for that function ([function execution context](#functional-execution-context)) and pushes it to the top of the stack.
+
+The engine executes the function whose execution context is at the top of the stack, line-by-line. 
+
+When this function completes, its execution context is popped off from the stack, and the control reaches to the context below it in the current stack.
+
 ## Understanding the behaviour of `for of` loop
  
 The `for of` loop of Javascript allows looping over iterable data structures such as `Arrays`, `Strings`, `Maps`, `NodeLists`, etcetera.
@@ -871,6 +932,16 @@ Mannn
 6. Mannn
 Mannn
 ```
+
+## Synchronous vs. Asynchronous Programming
+
+- In **synchronous** programming model, things happen one at a time. 
+
+  So, when you call a function that performs a long action, it returns the result only when the action has finished.
+
+  This stops your program for the time the action takes.
+
+- An **asynchronous** model allows multiple things to happen at the same time. 
 
 # Functions in Javascript
 

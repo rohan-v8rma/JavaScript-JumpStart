@@ -66,16 +66,6 @@
   - [`let` & `var` keywords for variables](#let--var-keywords-for-variables)
   - [`const` keyword for constants](#const-keyword-for-constants)
 - [Values vs. References in Javascript](#values-vs-references-in-javascript)
-- [General information about Javascript](#general-information-about-javascript)
-  - [Template literals and string interpolation in Javascript](#template-literals-and-string-interpolation-in-javascript)
-  - [Ending statements with semi-colons](#ending-statements-with-semi-colons)
-  - [Javascript Engines](#javascript-engines)
-  - [Execution Contexts in Javascript](#execution-contexts-in-javascript)
-    - [Global Execution Context](#global-execution-context)
-    - [Functional Execution Context](#functional-execution-context)
-  - [Working of Execution Stack in Javascript](#working-of-execution-stack-in-javascript)
-  - [Understanding the behaviour of `for of` loop](#understanding-the-behaviour-of-for-of-loop)
-  - [Synchronous vs. Asynchronous Programming](#synchronous-vs-asynchronous-programming)
 - [Functions in Javascript](#functions-in-javascript)
   - [Function DECLARATION vs Function EXPRESSION](#function-declaration-vs-function-expression)
     - [a. Function DECLARATION](#a-function-declaration)
@@ -83,11 +73,28 @@
   - [`arguments` object](#arguments-object)
   - [No Parameters vs. Default Parameters](#no-parameters-vs-default-parameters)
   - [Function Overriding in Javascript](#function-overriding-in-javascript)
-  - [call method of 'global Function class'](#call-method-of-global-function-class)
-  - [Callback functions](#callback-functions)
+  - [Hoisting](#hoisting)
+  - [`call` method of 'global Function class'](#call-method-of-global-function-class)
   - [`this` object of functions](#this-object-of-functions)
   - [Immediately Invoked Function Expression (`IIFE`)](#immediately-invoked-function-expression-iife)
     - [Use-case of an `IIFE`](#use-case-of-an-iife)
+- [General information about Javascript](#general-information-about-javascript)
+  - [Template literals and string interpolation in Javascript](#template-literals-and-string-interpolation-in-javascript)
+  - [Ending statements with semi-colons](#ending-statements-with-semi-colons)
+  - [Javascript Engines](#javascript-engines)
+  - [Execution Contexts in Javascript](#execution-contexts-in-javascript)
+    - [Working of Execution Stack in Javascript](#working-of-execution-stack-in-javascript)
+    - [Global Execution Context](#global-execution-context)
+    - [Functional Execution Context](#functional-execution-context)
+      - [Asynchronous Calls in Function Execution Contexts](#asynchronous-calls-in-function-execution-contexts)
+      - [In Browsers, (Global Execution Context) is a (Function Execution Context)](#in-browsers-global-execution-context-is-a-function-execution-context)
+  - [Understanding the behaviour of for-of loop](#understanding-the-behaviour-of-for-of-loop)
+- [Asynchronous Programming in Javasript](#asynchronous-programming-in-javasript)
+  - [Synchronous vs. Asynchronous Programming](#synchronous-vs-asynchronous-programming)
+  - [Callback functions](#callback-functions)
+  - [Event Loop](#event-loop)
+  - [Microtask Queue](#microtask-queue)
+  - [Callback Queue](#callback-queue)
 - [`Date` objects in Javascript](#date-objects-in-javascript)
   - [`new Date()` constructor vs. `Date()` function](#new-date-constructor-vs-date-function)
   - [Displaying dates using `Date.prototype.toString()`](#displaying-dates-using-dateprototypetostring)
@@ -198,7 +205,7 @@ The line below that shows an arrow pointing to the left and `undefined`. This is
 
 ## Execution Environments in the case of Multiple Tabs
 
-Each browser tab has its own separate bucket for running code in i.e., **execution environments**. 
+Each browser tab has its separate execution environment i.e., separate [Execution Stacks](#working-of-execution-stack-in-javascript) containing separate [Global Execution Contexts](#global-execution-context).
 
 This means that in most cases the code in each tab is run completely separately, and the code in one tab cannot directly affect the code in another tab — or on another website.
 
@@ -777,172 +784,6 @@ Javascript has 3 data types that are passed by **reference**: Array, Function, a
 
 TODO : Complete
 
-# General information about Javascript
-
-## Template literals and string interpolation in Javascript
-
-TODO
-
-## Ending statements with semi-colons
-
-Although ending statements (NOT BLOCKS of code like if-else) with semi-colons is optional in JavaScript, it is best practice to do so in order to avoid any edge-case behaviour where statements place on two different lines are interpreted together.
-
-## Javascript Engines
-
-A JavaScript engine is a software component that executes JavaScript code. 
-
-The first JavaScript engines were mere interpreters, but all relevant modern engines use just-in-time compilation for improved performance.
-
-JavaScript engines are typically developed by web browser vendors, and every major browser has one. 
-
-In a browser, the JavaScript engine runs in concert with the rendering engine via the Document Object Model.
-
-The use of JavaScript engines is not limited to browsers. For example, the V8 engine is a core component of the Node.js and Deno runtime systems.
-
-## Execution Contexts in Javascript
-
-Simply put, an **execution context** is an abstract concept of an environment where the Javascript code is evaluated and executed. 
-
-Whenever any code is run in JavaScript, it’s run inside an **execution context**.
-
-### Global Execution Context
- 
-This is the default or base execution context. The code that is not inside any function is in the **global execution context**. 
-
-It performs two things: 
-- it creates a global object which is a `window` object (in the case of browsers) 
-- sets the value of `this` to equal to the global object. 
-
-There can only be one **global execution context** in a program.
-
-### Functional Execution Context
-
-Every time a function is invoked, a brand new execution context is created for that function. 
-
-Each function has its own execution context, but it’s created when the function is invoked or called. 
-
-There can be any number of **function execution contexts**.
-
-## Working of Execution Stack in Javascript
-
-Execution stack, also known as “calling stack” in other programming languages, is a stack which is used to store all the [execution contexts](#execution-contexts-in-javascript) created during the code execution.
-
-When the [JavaScript engine](#javascript-engines) first encounters your script, it creates a [global execution context](#global-execution-context) and pushes it to the current **execution stack**. 
-
-Whenever the engine finds a function invocation, it creates a new execution context for that function ([function execution context](#functional-execution-context)) and pushes it to the top of the stack.
-
-The engine executes the function whose execution context is at the top of the stack, line-by-line. 
-
-When this function completes, its execution context is popped off from the stack, and the control reaches to the context below it in the current stack.
-
-## Understanding the behaviour of `for of` loop
- 
-The `for of` loop of Javascript allows looping over iterable data structures such as `Arrays`, `Strings`, `Maps`, `NodeLists`, etcetera.
-
-Let us take two examples to understand how the `for of` loop works.
-
-Taking a look at the first example:
-
-```javascript
-
-let cats_list_1 = ['Leopard', 'Serval', 'Jaguar', 'Tiger', 'Caracal', 'Lion'];
-
-let index1 = 0;
-
-for (let cat of cats_list_1) { 
-
-    console.log((index1+1) + ". " + cats_list_1[index1]);
-    
-    if(index1 < cats_list_1.length) {
-        cats_list_1[index1] = 'Mannn';        
-    }
-    index1++;
-
-    console.log(cat); 
-    // See how this is same as the original array
-}
-
-console.log(cats_list_1); 
-// As we can see, all elements of `cats_list_1` have been changed to 'Mann'
-```
-
-Since `cat` is assigned a copy of an element of `cats_list_1`, even if we modify the element at the same index position as assigned to `cat`, the variable `cat` will remain unchanged, unless we modify `cat` itself.
-
-Output:
-```
-1. Leopard
-Leopard
-2. Serval
-Serval
-3. Jaguar
-Jaguar
-4. Tiger
-Tiger
-5. Caracal
-Caracal
-6. Lion
-Lion
-[ 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn' ]
-```
-
-Taking a look at the second example:
-
-```javascript
-
-let cats_list_2 = ['Leopard', 'Serval', 'Jaguar', 'Tiger', 'Caracal', 'Lion'];
-
-let index2 = 0;
-
-for (let cat of cats_list_2) { 
-
-    console.log((index2+1) + ". " + cats_list_2[index2]);
-    
-    // The below IF condition is important to ensure the array is NOT extended.
-    if(index2 < cats_list_2.length - 1) {
-        cats_list_2[index2 + 1] = 'Mannn';   
-        console.log(cats_list_2);
-  
-    }
-    index2++;
-
-    console.log(cat); 
-    // Notice how we can see 'Mann' the second element onwards.
-}
-```
-
-Here, we assign the value `Mann` to the second element onwards in the iteration before the value of `cat` is set using that index of the array, which is why see `Mann` as the output from the second iteration of the `for of` loop.
-
-Output:
-```
-1. Leopard
-[ 'Leopard', 'Mannn', 'Jaguar', 'Tiger', 'Caracal', 'Lion' ]
-Leopard
-2. Mannn
-[ 'Leopard', 'Mannn', 'Mannn', 'Tiger', 'Caracal', 'Lion' ]
-Mannn
-3. Mannn
-[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Caracal', 'Lion' ]
-Mannn
-4. Mannn
-[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Lion' ]
-Mannn
-5. Mannn
-[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn' ]
-Mannn
-6. Mannn
-Mannn
-```
-
-## Synchronous vs. Asynchronous Programming
-
-- In **synchronous** programming model, things happen one at a time. 
-
-  So, when you call a function that performs a long action, it returns the result only when the action has finished.
-
-  This stops your program for the time the action takes.
-
-- An **asynchronous** model allows multiple things to happen at the same time. 
-
 # Functions in Javascript
 
 In javascript, functions are also objects.
@@ -1122,13 +963,16 @@ When you define multiple functions that have the same name, the last one defined
 
   By default, `alert()` function displays the message in the alert box. But here we have overridden it. Now it is displaying the message in the [`document`](#document-object).
 
-## call method of 'global Function class'
+
+## Hoisting 
 
 TODO
 
-## Callback functions
+## `call` method of 'global Function class'
 
-A callback function is a function passed into another function as an argument, which is then invoked inside the outer function to do some kind of routine or action.
+TODO
+
+
 
 ## `this` object of functions
 
@@ -1176,6 +1020,284 @@ Check out [20B-IIFE.js](./workshopper-javascripting-scripts/20B-IIFE.js) for an 
     However, we can still name it (use function declaration) in order to organize our code.
 
 * It is a common pattern for creating local scopes.  
+
+# General information about Javascript
+
+## Template literals and string interpolation in Javascript
+
+TODO
+
+## Ending statements with semi-colons
+
+Although ending statements (NOT BLOCKS of code like if-else) with semi-colons is optional in JavaScript, it is best practice to do so in order to avoid any edge-case behaviour where statements place on two different lines are interpreted together.
+
+## Javascript Engines
+
+A JavaScript engine is a software component that executes JavaScript code. 
+
+The first JavaScript engines were mere interpreters, but all relevant modern engines use just-in-time compilation for improved performance.
+
+JavaScript engines are typically developed by web browser vendors, and every major browser has one. 
+
+In a browser, the JavaScript engine runs in concert with the rendering engine via the Document Object Model.
+
+The use of JavaScript engines is not limited to browsers. For example, the V8 engine is a core component of the Node.js and Deno runtime systems.
+
+## Execution Contexts in Javascript
+
+Simply put, an **Execution Context** is an abstract concept of an environment where the Javascript code is evaluated and executed. 
+
+Whenever any code is run in JavaScript, it’s run inside an **Execution Context**.
+
+There are two types of Execution Contexts in Javascript:
+- Global Execution Context
+- Functional Execution Context
+
+But, before looking at these in detail, we must understand how the Execution Stack works in Javascript:
+
+### Working of Execution Stack in Javascript
+
+Execution stack, also known as “calling stack” in other programming languages, is a stack which is used to store all the [execution contexts](#execution-contexts-in-javascript) created during the code execution.
+
+When the [JavaScript engine](#javascript-engines) first encounters your script, it creates a [global execution context](#global-execution-context) and pushes it to the current **execution stack**. 
+
+Whenever the engine finds a function invocation, it creates a new execution context for that function ([function execution context](#functional-execution-context)).
+
+HOWEVER, note that all the execution contexts of functions also have access to the execution context inside which they are DEFINED (not inside which they are CALLED).
+
+The engine executes the function whose execution context is at the top of the stack, line-by-line. 
+
+When this function completes, its execution context is popped off from the stack, and the control reaches to the context below it in the current stack.
+
+---
+
+### Global Execution Context
+ 
+This is the default or base execution context. The code that is not inside any function is in the **global execution context**. 
+
+It performs two things: 
+- it creates a global object which is a `window` object (in the case of browsers) 
+- sets the value of `this` to equal to the global object. 
+
+There can only be one **global execution context** in a program.
+
+
+
+In the case of execution of asynchronous functions, the callback queue waits for all contexts (except for the context in which the asynchronous call was made) to be popped from the [Execution Stack](#working-of-execution-stack-in-javascript), before executing the asynchronous function calls present in the callback queue.
+
+Take a look at this code snippet:
+
+```javascript
+var n = 10;
+
+function callBackfunc() {
+    console.log(n);
+}
+
+
+setTimeout(callBackfunc, 0);
+```
+
+The output is:
+
+```
+10
+```
+
+This is possible since the asynchronous call was made in the **global execution context** of the file, so the callback queue doesn't wait for the **global execution context** to be popped from the Execution Stack.
+
+If the **global execution context** had ACTUALLY been popped from the Execution Stack, we would have got a `ReferenceError` saying that `n` is not defined.
+
+---
+
+### Functional Execution Context
+
+Every time a function is invoked, a brand new execution context is created for that function. 
+
+Each function has its own execution context, but it’s created when the function is invoked or called. 
+
+There can be any number of **function execution contexts**.
+
+---
+
+#### Asynchronous Calls in Function Execution Contexts
+
+Note that if an asynchronous call to a function `func`  is made inside an outer function `main` (provided `func` is actually accessible in the scope of `main`), the whole body of `main` would be executed first, along with the popping of the execution contexts of any synchronous calls made in `main`.
+
+After that, once all execution contexts, except for the context in which the asynchronous call was made along with outer contexts (which means the context of `main`, along with its outer contexts), are popped, the callback queue executes the call to `func`.
+
+After all this, the context of `main` is popped from the Execution Stack.
+
+This is an example code snippet in which this behaviour is witnessed:
+
+```javascript
+function func() {
+    console.log(n);
+}
+
+function main() {
+    var n = 10;    
+
+    func();
+    setTimeout(func, 0);
+    
+    console.log("Hello");
+}
+
+main();
+```
+
+---
+
+#### In Browsers, (Global Execution Context) is a (Function Execution Context)
+
+In the case of Browser [JS engines](#javascript-engines), the **global execution context** is also a **function execution context**.
+
+This is confirmed by executing the `console.trace()` method in the global scope of a Javascript file running in a Browser. 
+
+The following output is shown in the Browser console:
+
+![](./images/global-execution-context-trace.png)
+
+See how there is an **anonymous** function listed. This is the **main execution thread** of the page. 
+
+So, we can conclude that Javascript files are put inside **anonymous** functions in the case of browser JS engines and those functions are called instead.
+
+---
+
+## Understanding the behaviour of for-of loop
+ 
+The `for of` loop of Javascript allows looping over iterable data structures such as `Arrays`, `Strings`, `Maps`, `NodeLists`, etcetera.
+
+Let us take two examples to understand how the `for of` loop works.
+
+Taking a look at the first example:
+
+```javascript
+
+let cats_list_1 = ['Leopard', 'Serval', 'Jaguar', 'Tiger', 'Caracal', 'Lion'];
+
+let index1 = 0;
+
+for (let cat of cats_list_1) { 
+
+    console.log((index1+1) + ". " + cats_list_1[index1]);
+    
+    if(index1 < cats_list_1.length) {
+        cats_list_1[index1] = 'Mannn';        
+    }
+    index1++;
+
+    console.log(cat); 
+    // See how this is same as the original array
+}
+
+console.log(cats_list_1); 
+// As we can see, all elements of `cats_list_1` have been changed to 'Mann'
+```
+
+Since `cat` is assigned a copy of an element of `cats_list_1`, even if we modify the element at the same index position as assigned to `cat`, the variable `cat` will remain unchanged, unless we modify `cat` itself.
+
+Output:
+```
+1. Leopard
+Leopard
+2. Serval
+Serval
+3. Jaguar
+Jaguar
+4. Tiger
+Tiger
+5. Caracal
+Caracal
+6. Lion
+Lion
+[ 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn' ]
+```
+
+Taking a look at the second example:
+
+```javascript
+
+let cats_list_2 = ['Leopard', 'Serval', 'Jaguar', 'Tiger', 'Caracal', 'Lion'];
+
+let index2 = 0;
+
+for (let cat of cats_list_2) { 
+
+    console.log((index2+1) + ". " + cats_list_2[index2]);
+    
+    // The below IF condition is important to ensure the array is NOT extended.
+    if(index2 < cats_list_2.length - 1) {
+        cats_list_2[index2 + 1] = 'Mannn';   
+        console.log(cats_list_2);
+  
+    }
+    index2++;
+
+    console.log(cat); 
+    // Notice how we can see 'Mann' the second element onwards.
+}
+```
+
+Here, we assign the value `Mann` to the second element onwards in the iteration before the value of `cat` is set using that index of the array, which is why see `Mann` as the output from the second iteration of the `for of` loop.
+
+Output:
+```
+1. Leopard
+[ 'Leopard', 'Mannn', 'Jaguar', 'Tiger', 'Caracal', 'Lion' ]
+Leopard
+2. Mannn
+[ 'Leopard', 'Mannn', 'Mannn', 'Tiger', 'Caracal', 'Lion' ]
+Mannn
+3. Mannn
+[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Caracal', 'Lion' ]
+Mannn
+4. Mannn
+[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Lion' ]
+Mannn
+5. Mannn
+[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn' ]
+Mannn
+6. Mannn
+Mannn
+```
+
+# Asynchronous Programming in Javasript
+
+## Synchronous vs. Asynchronous Programming
+
+- In **synchronous** programming model, things happen one at a time. 
+
+  So, when you call a function that performs a long action, it returns the result only when the action has finished.
+
+  This stops your program for the time the action takes.
+
+- An **asynchronous** model allows multiple things to happen at the same time. 
+
+## Callback functions
+
+A callback function is a function passed into another function as an argument, which is then invoked inside the outer function to do some kind of routine or action:
+  - either synchronously, where it is executed instantaneously upon reaching its call, 
+  - or asynchronously, where it waits for a specific event to occur or a task to complete, before getting called and executed.
+
+## Event Loop
+
+The event loop concept is very simple. There’s an endless loop, where the JavaScript engine waits for tasks, executes them and then sleeps, waiting for more tasks.
+
+The general algorithm of the engine:
+  1. While there are tasks:
+      - execute them, starting with the oldest task.
+  2. Sleep until a task appears, then go to 1.
+
+## Microtask Queue
+
+
+
+## Callback Queue
+
+
+
 
 # `Date` objects in Javascript
 

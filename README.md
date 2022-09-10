@@ -5,7 +5,7 @@
     - [State and Identity of User Agent](#state-and-identity-of-user-agent)
   - [Running a method in the Browser Console](#running-a-method-in-the-browser-console)
   - [Execution Environments in the case of Multiple Tabs](#execution-environments-in-the-case-of-multiple-tabs)
-  - [Server-side vs. client-side code](#server-side-vs-client-side-code)
+  - [Server-side vs. Client-side code](#server-side-vs-client-side-code)
   - [Dynamic vs. Static code](#dynamic-vs-static-code)
 - [Data types in Javascript](#data-types-in-javascript)
   - [`string` data-type](#string-data-type)
@@ -81,14 +81,18 @@
 - [General information about Javascript](#general-information-about-javascript)
   - [Template literals and string interpolation in Javascript](#template-literals-and-string-interpolation-in-javascript)
   - [Ending statements with semi-colons](#ending-statements-with-semi-colons)
+  - [Understanding the behaviour of for-of loop](#understanding-the-behaviour-of-for-of-loop)
   - [Javascript Engines](#javascript-engines)
   - [Execution Contexts in Javascript](#execution-contexts-in-javascript)
-    - [Working of Execution Stack in Javascript](#working-of-execution-stack-in-javascript)
-    - [Global Execution Context](#global-execution-context)
-    - [Functional Execution Context](#functional-execution-context)
-      - [Asynchronous Calls in Function Execution Contexts](#asynchronous-calls-in-function-execution-contexts)
-      - [In Browsers, (Global Execution Context) is a (Function Execution Context)](#in-browsers-global-execution-context-is-a-function-execution-context)
-  - [Understanding the behaviour of for-of loop](#understanding-the-behaviour-of-for-of-loop)
+    - [Phases of Execution Contexts](#phases-of-execution-contexts)
+      - [Creation Phase](#creation-phase)
+      - [Execution Phase](#execution-phase)
+    - [Types of Execution Contexts](#types-of-execution-contexts)
+      - [Working of Execution Stack in Javascript](#working-of-execution-stack-in-javascript)
+      - [Global Execution Context](#global-execution-context)
+      - [Function Execution Context](#function-execution-context)
+        - [Asynchronous Calls in Function Execution Contexts](#asynchronous-calls-in-function-execution-contexts)
+        - [In Browsers, (Global Execution Context) is a (Function Execution Context)](#in-browsers-global-execution-context-is-a-function-execution-context)
 - [Asynchronous Programming in Javasript](#asynchronous-programming-in-javasript)
   - [Synchronous vs. Asynchronous Programming](#synchronous-vs-asynchronous-programming)
   - [Callback functions](#callback-functions)
@@ -213,7 +217,7 @@ This is a good SECURITY measure — if this were not the case, then bad actors c
 
 ---
 
-## Server-side vs. client-side code
+## Server-side vs. Client-side code
 
 The terms server-side and client-side code, are frequently heard especially in the context of web development. 
 
@@ -966,7 +970,7 @@ When you define multiple functions that have the same name, the last one defined
 
 ## Hoisting 
 
-TODO
+
 
 ## `call` method of 'global Function class'
 
@@ -1030,140 +1034,6 @@ TODO
 ## Ending statements with semi-colons
 
 Although ending statements (NOT BLOCKS of code like if-else) with semi-colons is optional in JavaScript, it is best practice to do so in order to avoid any edge-case behaviour where statements place on two different lines are interpreted together.
-
-## Javascript Engines
-
-A JavaScript engine is a software component that executes JavaScript code. 
-
-The first JavaScript engines were mere interpreters, but all relevant modern engines use just-in-time compilation for improved performance.
-
-JavaScript engines are typically developed by web browser vendors, and every major browser has one. 
-
-In a browser, the JavaScript engine runs in concert with the rendering engine via the Document Object Model.
-
-The use of JavaScript engines is not limited to browsers. For example, the V8 engine is a core component of the Node.js and Deno runtime systems.
-
-## Execution Contexts in Javascript
-
-Simply put, an **Execution Context** is an abstract concept of an environment where the Javascript code is evaluated and executed. 
-
-Whenever any code is run in JavaScript, it’s run inside an **Execution Context**.
-
-There are two types of Execution Contexts in Javascript:
-- Global Execution Context
-- Functional Execution Context
-
-But, before looking at these in detail, we must understand how the Execution Stack works in Javascript:
-
-### Working of Execution Stack in Javascript
-
-Execution stack, also known as “calling stack” in other programming languages, is a stack which is used to store all the [execution contexts](#execution-contexts-in-javascript) created during the code execution.
-
-When the [JavaScript engine](#javascript-engines) first encounters your script, it creates a [global execution context](#global-execution-context) and pushes it to the current **execution stack**. 
-
-Whenever the engine finds a function invocation, it creates a new execution context for that function ([function execution context](#functional-execution-context)).
-
-HOWEVER, note that all the execution contexts of functions also have access to the execution context inside which they are DEFINED (not inside which they are CALLED).
-
-The engine executes the function whose execution context is at the top of the stack, line-by-line. 
-
-When this function completes, its execution context is popped off from the stack, and the control reaches to the context below it in the current stack.
-
----
-
-### Global Execution Context
- 
-This is the default or base execution context. The code that is not inside any function is in the **global execution context**. 
-
-It performs two things: 
-- it creates a global object which is a `window` object (in the case of browsers) 
-- sets the value of `this` to equal to the global object. 
-
-There can only be one **global execution context** in a program.
-
-
-
-In the case of execution of asynchronous functions, the callback queue waits for all contexts (except for the context in which the asynchronous call was made) to be popped from the [Execution Stack](#working-of-execution-stack-in-javascript), before executing the asynchronous function calls present in the callback queue.
-
-Take a look at this code snippet:
-
-```javascript
-var n = 10;
-
-function callBackfunc() {
-    console.log(n);
-}
-
-
-setTimeout(callBackfunc, 0);
-```
-
-The output is:
-
-```
-10
-```
-
-This is possible since the asynchronous call was made in the **global execution context** of the file, so the callback queue doesn't wait for the **global execution context** to be popped from the Execution Stack.
-
-If the **global execution context** had ACTUALLY been popped from the Execution Stack, we would have got a `ReferenceError` saying that `n` is not defined.
-
----
-
-### Functional Execution Context
-
-Every time a function is invoked, a brand new execution context is created for that function. 
-
-Each function has its own execution context, but it’s created when the function is invoked or called. 
-
-There can be any number of **function execution contexts**.
-
----
-
-#### Asynchronous Calls in Function Execution Contexts
-
-Note that if an asynchronous call to a function `func`  is made inside an outer function `main` (provided `func` is actually accessible in the scope of `main`), the whole body of `main` would be executed first, along with the popping of the execution contexts of any synchronous calls made in `main`.
-
-After that, once all execution contexts, except for the context in which the asynchronous call was made along with outer contexts (which means the context of `main`, along with its outer contexts), are popped, the callback queue executes the call to `func`.
-
-After all this, the context of `main` is popped from the Execution Stack.
-
-This is an example code snippet in which this behaviour is witnessed:
-
-```javascript
-function func() {
-    console.log(n);
-}
-
-function main() {
-    var n = 10;    
-
-    func();
-    setTimeout(func, 0);
-    
-    console.log("Hello");
-}
-
-main();
-```
-
----
-
-#### In Browsers, (Global Execution Context) is a (Function Execution Context)
-
-In the case of Browser [JS engines](#javascript-engines), the **global execution context** is also a **function execution context**.
-
-This is confirmed by executing the `console.trace()` method in the global scope of a Javascript file running in a Browser. 
-
-The following output is shown in the Browser console:
-
-![](./images/global-execution-context-trace.png)
-
-See how there is an **anonymous** function listed. This is the **main execution thread** of the page. 
-
-So, we can conclude that Javascript files are put inside **anonymous** functions in the case of browser JS engines and those functions are called instead.
-
----
 
 ## Understanding the behaviour of for-of loop
  
@@ -1262,6 +1132,186 @@ Mannn
 6. Mannn
 Mannn
 ```
+
+---
+
+## Javascript Engines
+
+A JavaScript engine is a software component that executes JavaScript code. 
+
+The first JavaScript engines were mere interpreters, but all relevant modern engines use just-in-time compilation for improved performance.
+
+JavaScript engines are typically developed by web browser vendors, and every major browser has one. 
+
+In a browser, the JavaScript engine runs in concert with the rendering engine via the Document Object Model.
+
+The use of JavaScript engines is not limited to browsers. For example, the V8 engine is a core component of the Node.js and Deno runtime systems.
+
+## Execution Contexts in Javascript
+
+Simply put, an **Execution Context** is an abstract concept of an environment where the Javascript code is evaluated and executed. 
+
+Whenever any code is run in JavaScript, it’s run inside an **Execution Context**.
+
+---
+
+### Phases of Execution Contexts
+
+Each **Execution Context** has two phases: creation phase and execution phase.
+
+Read a summary of both below or for more in-depth understanding, check out an example [here](https://www.javascripttutorial.net/javascript-execution-context/#:~:text=When%20the%20JavaScript%20engine%20executes,phase%20and%20the%20execution%20phase.).
+
+---
+
+#### Creation Phase
+
+During the creation phase, the JavaScript engine performs the following tasks:
+
+1. Setup a memory heap for storing variables and function references.
+
+2. Store the function declarations in the memory heap.
+
+    So, the function declarations are already in the memory even before the code is executed.
+
+3. Also, store variables within the global execution context with the initial values as `undefined`.
+
+Steps 2 and 3 are practical examples of [Hoisting](#hoisting).
+
+---
+
+#### Execution Phase
+
+After the Creation Phase, the execution context moves to the **Execution Phase**. 
+
+During the execution phase, the JS engine executes the code line-by-line, assigns the values to variables, and executes the function calls.
+
+For each function call, the JS engine creates a new function execution context.
+
+---
+
+### Types of Execution Contexts
+
+There are two types of **Execution Contexts** in Javascript:
+- Global Execution Context
+- Functional Execution Context
+
+But, before looking at these in detail, we must understand how the Execution Stack works in Javascript:
+
+---
+
+#### Working of Execution Stack in Javascript
+
+Execution stack, also known as “calling stack” in other programming languages, is a stack which is used to store all the [execution contexts](#execution-contexts-in-javascript) created during the code execution.
+
+When the [JavaScript engine](#javascript-engines) first encounters your script, it creates a [global execution context](#global-execution-context) and pushes it to the current **execution stack**. 
+
+Whenever the engine finds a function invocation, it creates a new execution context for that function ([function execution context](#functional-execution-context)).
+
+HOWEVER, note that all the execution contexts of functions also have access to the execution context inside which they are DEFINED (not inside which they are CALLED).
+
+The engine executes the function whose execution context is at the top of the stack, line-by-line. 
+
+When this function completes, its execution context is popped off from the stack, and the control reaches to the context below it in the current stack.
+
+---
+
+#### Global Execution Context
+ 
+This is the default or base execution context. The code that is not inside any function is in the **global execution context**. 
+
+It performs two things: 
+- it creates a global object i.e., `window` in the web browser or `global` in `Node.js`.
+- sets the value of `this` to equal to the global object. 
+
+There can only be one **global execution context** in a program.
+
+In the case of execution of asynchronous functions, the callback queue waits for all contexts (except for the context in which the asynchronous call was made) to be popped from the [Execution Stack](#working-of-execution-stack-in-javascript), before executing the asynchronous function calls present in the callback queue.
+
+Take a look at this code snippet:
+
+```javascript
+var n = 10;
+
+function callBackfunc() {
+    console.log(n);
+}
+
+
+setTimeout(callBackfunc, 0);
+```
+
+The output is:
+
+```
+10
+```
+
+This is possible since the asynchronous call was made in the **global execution context** of the file, so the callback queue doesn't wait for the **global execution context** to be popped from the Execution Stack.
+
+If the **global execution context** had ACTUALLY been popped from the Execution Stack, we would have got a `ReferenceError` saying that `n` is not defined.
+
+---
+
+#### Function Execution Context
+
+Every time a function is invoked, a brand new execution context is created for that function. 
+
+- The **function execution context** is similar to the global execution context. 
+
+  But instead of creating the global object, the JavaScript engine creates the `arguments` object as the **function execution context**'s global object.
+
+  So, instead of having to access the values of the parameters/arguments of the function call with the prefix `arguments` like `arguments.parameter1`, we can directly access `parameter1` because `arguments` is the global object.
+
+- But, just like the global execution context, the `this` object of the **function execution context** is set to the global object of the global execution context.
+
+There can be any number of **function execution contexts**.
+
+---
+
+##### Asynchronous Calls in Function Execution Contexts
+
+Note that if an asynchronous call to a function `func`  is made inside an outer function `main` (provided `func` is actually accessible in the scope of `main`), the whole body of `main` would be executed first, along with the popping of the execution contexts of any synchronous calls made in `main`.
+
+After that, once all execution contexts, except for the context in which the asynchronous call was made along with outer contexts (which means the context of `main`, along with its outer contexts), are popped, the callback queue executes the call to `func`.
+
+After all this, the context of `main` is popped from the Execution Stack.
+
+This is an example code snippet in which this behaviour is witnessed:
+
+```javascript
+function func() {
+    console.log(n);
+}
+
+function main() {
+    var n = 10;    
+
+    func();
+    setTimeout(func, 0);
+    
+    console.log("Hello");
+}
+
+main();
+```
+
+---
+
+##### In Browsers, (Global Execution Context) is a (Function Execution Context)
+
+In the case of Browser [JS engines](#javascript-engines), the **global execution context** is also a **function execution context**.
+
+This is confirmed by executing the `console.trace()` method in the global scope of a Javascript file running in a Browser. 
+
+The following output is shown in the Browser console:
+
+![](./images/global-execution-context-trace.png)
+
+See how there is an **anonymous** function listed. This is the **main execution thread** of the page. 
+
+So, we can conclude that Javascript files are put inside **anonymous** functions in the case of browser JS engines and those functions are called instead.
+
+---
 
 # Asynchronous Programming in Javasript
 

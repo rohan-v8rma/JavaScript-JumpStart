@@ -30,9 +30,10 @@
 - [Web APIs in Javascript](#web-apis-in-javascript)
   - [`Console` API](#console-api)
     - [`console.log(<arg>)` method](#consolelogarg-method)
-    - [`console.table(<arg>)` method](#consoletablearg-method)
+    - [`console.trace()` method](#consoletrace-method)
     - [`console.warn(<arg>)` and `console.error(<arg>)` method](#consolewarnarg-and-consoleerrorarg-method)
     - [`console.time(<arg>)` and `console.timeEnd(<arg>)`](#consoletimearg-and-consoletimeendarg)
+    - [`console.table(<arg>)` method](#consoletablearg-method)
     - [`console.clear()` method](#consoleclear-method)
   - [`Window` API](#window-api)
     - [Usage of `window.console` object](#usage-of-windowconsole-object)
@@ -65,6 +66,8 @@
 - [Variable and Constant values](#variable-and-constant-values)
   - [`let` & `var` keywords for variables](#let--var-keywords-for-variables)
   - [`const` keyword for constants](#const-keyword-for-constants)
+  - [Accessing global variables of the same name as local variables](#accessing-global-variables-of-the-same-name-as-local-variables)
+    - [Variables created using `var` keyword](#variables-created-using-var-keyword)
 - [Values vs. References in Javascript](#values-vs-references-in-javascript)
 - [Functions in Javascript](#functions-in-javascript)
   - [Function DECLARATION vs Function EXPRESSION](#function-declaration-vs-function-expression)
@@ -73,7 +76,6 @@
   - [`arguments` object](#arguments-object)
   - [No Parameters vs. Default Parameters](#no-parameters-vs-default-parameters)
   - [Function Overriding in Javascript](#function-overriding-in-javascript)
-  - [Hoisting](#hoisting)
   - [`call` method of 'global Function class'](#call-method-of-global-function-class)
   - [`this` object of functions](#this-object-of-functions)
   - [Immediately Invoked Function Expression (`IIFE`)](#immediately-invoked-function-expression-iife)
@@ -81,9 +83,11 @@
 - [General information about Javascript](#general-information-about-javascript)
   - [Template literals and string interpolation in Javascript](#template-literals-and-string-interpolation-in-javascript)
   - [Ending statements with semi-colons](#ending-statements-with-semi-colons)
+  - [Hoisting](#hoisting)
   - [Understanding the behaviour of for-of loop](#understanding-the-behaviour-of-for-of-loop)
   - [Javascript Engines](#javascript-engines)
   - [Execution Contexts in Javascript](#execution-contexts-in-javascript)
+    - [Lexical Environment & Scope Chain](#lexical-environment--scope-chain)
     - [Phases of Execution Contexts](#phases-of-execution-contexts)
       - [Creation Phase](#creation-phase)
       - [Execution Phase](#execution-phase)
@@ -451,9 +455,16 @@ console.log(greeting);
 ```
 `console.log()` makes it easier to see the value inside a variable. That's why it's commonly used for testing/debugging code.
 
-### `console.table(<arg>)` method
+### `console.trace()` method
 
-This method displays the keys and values of the object passed to it in tabular form.
+The `console.trace()` method outputs a stack trace to the Web console.
+
+It gives a list of the [Execution Contexts](#execution-contexts-in-javascript) in the [Execution Stack](#working-of-execution-stack-in-javascript), as well as a record of asynchronous calls already placed / yet to be placed in the [Callback Queue](#callback-queue).
+
+The output is similar to this:
+
+![](images/console-trace.png)
+
 
 ### `console.warn(<arg>)` and `console.error(<arg>)` method
 
@@ -481,6 +492,10 @@ Output:
 ```
 Your code took: 4.3919237898ms
 ```
+
+### `console.table(<arg>)` method
+
+This method displays the keys and values of the object passed to it in tabular form.
 
 ### `console.clear()` method
 
@@ -780,6 +795,64 @@ console.log(example_2);
 
 ---
 
+## Accessing global variables of the same name as local variables
+
+> **_NOTE:_**  The creation of GLOBAL variables in Node JS is slightly different from Browser JS Engines. 
+
+- When we create any variable in the global execution context of browsers, it automatically becomes a member of the `window` object. These GLOBAL variables can be accessed even by prefixing `window` or without prefixing `window`, as discussed in the [Window API](#window-api).
+
+  ```javascript
+  var globVar = 1; // Browser JS Engine
+
+  console.log(globVar);
+  console.log(window.globVar); // Both work
+  ```
+
+- In order to create GLOBAL variables in Node, we need to use the `global` prefix. Although after creation, they can even be used without the `global` prefix. However, it is BAD PRACTICE to use `global` variables so we don't use these often.
+
+  ```javascript
+  global.globVar = 1; // Node JS
+
+  console.log(globVar);
+  console.log(global.globVar); // Both work
+  ```
+
+### Variables created using `var` keyword
+
+Variables created using `var` keyword are function-scoped.
+
+We know that scripts are placed in **ANONYMOUS** functions before calling them to make them run. So, the global execution context in Browser JS Engines or Node is actually a function scope.
+
+So, the variables declared using `var` in the global execution context are available everywhere for the entire run-time of the program, since the global **ANONYMOUS** function scope is everywhere.
+
+Take a look at this code-snippet for Browser JS Engines:
+
+```javascript
+var x = 1;
+
+console.log(x);
+
+function funcA() {
+    var x = 10;
+    console.log(x);
+    console.log(window.x);
+}
+
+funcA();
+```
+
+Output:
+```
+10
+1
+```
+
+As mentioned above, GLOBAL scope variables in Browsers are automatically properties of the GLOBAL object `window` of the global execution context of a particular script, which is why we are able to access the global variable `x` using `window.x`, instead of the local variable `x`.
+
+A somewhat similar logic would also apply for **Node**.
+
+---
+
 # Values vs. References in Javascript
 
 Javascript has 5 data types that are passed by **value**: `Boolean`, `null`, undefined, String, and Number. We’ll call these primitive types.
@@ -967,16 +1040,9 @@ When you define multiple functions that have the same name, the last one defined
 
   By default, `alert()` function displays the message in the alert box. But here we have overridden it. Now it is displaying the message in the [`document`](#document-object).
 
-
-## Hoisting 
-
-
-
 ## `call` method of 'global Function class'
 
 TODO
-
-
 
 ## `this` object of functions
 
@@ -1034,6 +1100,27 @@ TODO
 ## Ending statements with semi-colons
 
 Although ending statements (NOT BLOCKS of code like if-else) with semi-colons is optional in JavaScript, it is best practice to do so in order to avoid any edge-case behaviour where statements place on two different lines are interpreted together.
+
+## Hoisting 
+
+**Hoisting** in JavaScript refers to the process whereby the interpreter **APPEARS** to move the declaration of functions, variables of type `var`, or classes to the top of their scope, prior to execution of the code. 
+
+Note, JavaScript only hoists declarations, not initializations! 
+
+This means that initialization doesn't happen until the associated line of code is executed, even if the variable was originally initialized then declared, or declared and initialized in the same line.
+
+Until that point in the execution is reached the variable has its default initialization (`undefined` for a variable declared using `var`, otherwise uninitialized).
+
+To summarize...
+
+- function declarations are already in memory, ready to be called, before the execution of the code starts.
+- variables of type `var` are allocated memory and assigned the spatial placeholder value of `undefined`.
+- variables of type `let` and `const` are uninitialized.
+- TODO: <!-- class hoisting https://developer.mozilla.org/en-US/docs/Glossary/Hoisting#class_hoisting -->
+
+However, this seems like quite an abstract concept.
+
+A practical explanation of how **Hoisting** works can be obtained by reading about [Phases of Execution Contexts](#phases-of-execution-contexts)
 
 ## Understanding the behaviour of for-of loop
  
@@ -1147,11 +1234,61 @@ In a browser, the JavaScript engine runs in concert with the rendering engine vi
 
 The use of JavaScript engines is not limited to browsers. For example, the V8 engine is a core component of the Node.js and Deno runtime systems.
 
+---
+
 ## Execution Contexts in Javascript
 
 Simply put, an **Execution Context** is an abstract concept of an environment where the Javascript code is evaluated and executed. 
 
 Whenever any code is run in JavaScript, it’s run inside an **Execution Context**.
+
+---
+
+### Lexical Environment & Scope Chain
+
+Every execution context has a **reference** to its outer execution context, and that outer execution context is called Lexical Environment.
+
+JavaScript cares about the Lexical Environment when you ask for a variable while running a line of code inside any particular execution context if it can’t find that variable in its block, it will go to the outer **reference** and look for variables there.
+
+So we can say that whenever a execution context is created, along with it a lexical environment is created. 
+
+Suppose a function is called. Now, any other functions called within THAT function will have access to the lexical environment of THAT function through a **reference**.
+
+If a chain of **references** to Lexical Environments is formed, it is known as **Scope Chain**.
+
+Consider the following code-snippet:
+
+```javascript
+function two(){
+  console.log(a);
+}
+
+function one(){
+  var a = 2;
+  console.log(a);
+  two();
+}
+
+var a = 1;
+console.log(a);
+one();
+```
+
+Due to hoisting, the functions `one` and `two` will have their definitions stored during the creation phase, and the declaration of the variable `a` will also be present.
+
+During the code execution phase:
+
+1. `a` will get the value `1`.
+2. The `log` method will try to display `a`. The global execution context has the variable `a` with value `1`, so _`1` will be logged_.
+3. The function `one` will be called.
+   1. Within the execution context of `one`, a local variable with name `a` will get value `2`.
+   2. The `log` method will try to display `a`. The execution context of `one` has the variable `a` with value `2`, so _`2` will be logged_.
+   3. The function `two` will be called.
+      1. The `log` method will try to display `a`. 
+       
+        Since the execution context of `two` doesn't have the variable `a`, it will check the **reference** to the Lexical Environment of its parent, which is the global execution context.
+
+        Since the global execution context has the variable `a` with value `1`, _`1` will be logged_.
 
 ---
 
@@ -1171,7 +1308,7 @@ During the creation phase, the JavaScript engine performs the following tasks:
 
 2. Store the function declarations in the memory heap.
 
-    So, the function declarations are already in the memory even before the code is executed.
+    So, the function declarations are already in the memory even, ready to be called, even before the code is executed.
 
 3. Also, store variables within the global execution context with the initial values as `undefined`.
 
@@ -1207,7 +1344,7 @@ When the [JavaScript engine](#javascript-engines) first encounters your script, 
 
 Whenever the engine finds a function invocation, it creates a new execution context for that function ([function execution context](#functional-execution-context)).
 
-HOWEVER, note that all the execution contexts of functions also have access to the execution context inside which they are DEFINED (not inside which they are CALLED).
+HOWEVER, note that all the execution contexts of functions also have access to the [Lexical Environment](#lexical-environment) of the execution context inside which they are DEFINED (not inside which they are CALLED).
 
 The engine executes the function whose execution context is at the top of the stack, line-by-line. 
 
@@ -1220,10 +1357,21 @@ When this function completes, its execution context is popped off from the stack
 This is the default or base execution context. The code that is not inside any function is in the **global execution context**. 
 
 It performs two things: 
-- it creates a global object i.e., `window` in the web browser or `global` in `Node.js`.
-- sets the value of `this` to equal to the global object. 
+- it creates a global object 
+  -  `window` in case of Browser JS Engine.
+  -   `global` in case of Node JS.
+- sets the value of `this`
+  - Equal to `window` in case of Browser JS Engine.
+  - Equal to `module.exports` in case of Node JS. 
+  
+    `module.exports` can be used to export functions, objects, and their references from one JS file and can use them in other JS files by importing them by `require()` method.
 
-There can only be one **global execution context** in a program.
+    The object `global` can be accessed using `globalThis` keyword or `global` itself.
+
+
+There can only be one **global execution context** in a program. 
+
+> ***NOTE:*** The global execution context has a reference to the [Lexical Environment](#lexical-environment) outside it, pointing to **NULL**.
 
 In the case of execution of asynchronous functions, the callback queue waits for all contexts (except for the context in which the asynchronous call was made) to be popped from the [Execution Stack](#working-of-execution-stack-in-javascript), before executing the asynchronous function calls present in the callback queue.
 

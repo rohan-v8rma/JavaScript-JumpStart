@@ -65,7 +65,10 @@
 - [Prototypes](#prototypes)
 - [Variable and Constant values](#variable-and-constant-values)
   - [`let` & `var` keywords for variables](#let--var-keywords-for-variables)
-  - [`const` keyword for constants](#const-keyword-for-constants)
+    - [Example for understanding the difference between `let` and `var`](#example-for-understanding-the-difference-between-let-and-var)
+  - [`const` keyword for CONSTANT variables](#const-keyword-for-constant-variables)
+  - [Temporal Dead Zone](#temporal-dead-zone)
+  - [Different Storage Location for `let` and `const` variables](#different-storage-location-for-let-and-const-variables)
   - [Accessing global variables of the same name as local variables](#accessing-global-variables-of-the-same-name-as-local-variables)
     - [Variables created using `var` keyword](#variables-created-using-var-keyword)
 - [Values vs. References in Javascript](#values-vs-references-in-javascript)
@@ -162,7 +165,7 @@
 - [ES6 (ECMAScript 6) Features](#es6-ecmascript-6-features)
   - [Arrow Functions](#arrow-functions)
   - [Rest Parameters](#rest-parameters)
-  - [`let` and `const` keywords](#let-and-const-keywords)
+  - [`let`, `const` keywords & **Temporal Dead Zones**](#let-const-keywords--temporal-dead-zones)
 - [Unexpected Behaviors in Javascript](#unexpected-behaviors-in-javascript)
   - [Increasing the length of an `Array`](#increasing-the-length-of-an-array)
 - [TODO](#todo)
@@ -729,38 +732,10 @@ TODO
 
 ## `let` & `var` keywords for variables
 
-```javascript
-let example_1;
-example_1 = "example string 1";
-console.log(example_1);
-
-var example_2;
-example_2 = "example string 2";
-console.log(example_2);
-```
 - `let` is block-scoped, sa variable declared with `let` can only be access inside a block of code.
   
   `var` is function-scoped, so a variable declared inside a function with `var` can be used anywhere within a function.
-  ```javascript
-  // program to print the text
-  // variable `funcScope` cannot be used here
-  function greet() {
-      var funcScope = 'hello';
-
-      // variable `blockScope` cannot be used here
-      if(funcScope == 'hello'){
-          // variable `blockScope` can be used here
-          let blockScope = 'world';
-          console.log(funcScope + ' ' + blockScope);
-      }
-
-      // variable `blockScope` cannot be used here
-      console.log(funcScope + ' ' + blockScope); // error
-  }
-  // variable `funcScope` cannot be used here
-
-  greet();
-  ```
+  
 - `let` does not allow to redeclare variables
   
   `var` allows to redeclare variables.
@@ -771,9 +746,95 @@ console.log(example_2);
   var funcScope = 5; // 5
   var funcScope = 3; // 3
   ```
+
 It would be better to use `let` when defining variables since both `let` and `const` have block-level scope, so resolving scopes would be easier and consistent.
 
-## `const` keyword for constants
+Note that there are also differences in how `let` and `const` variables are [Hoisted](#hoisting). The concept of [Temporal Dead Zones](#temporal-dead-zone) is also important in differentiating these. 
+
+`let` and `const` also [aren't automatically members of the `window` object](#different-storage-location-for-let-and-const-variables) in Browser JS Engines, which is the case in variables declared using `var`.
+
+---
+
+### Example for understanding the difference between `let` and `var`
+
+1. The following code-snippet uses the `var` keyword.
+
+    ```javascript
+    var a = 0;
+    if(true){
+        var a = 1; 
+        // `a = 1` would have yielded the same result.
+
+        console.log(a);
+    }
+    console.log(a);
+    ```
+    We know that `var` variables are function-scoped, so the entire snippet belongs to the same scope.
+
+    Also, `var` allows for re-declarations of variables, which is why no error is thrown in re-declaring `a` within the if-statement, which is in actuality the same scope.
+
+    So, when we assign value for `a` as `1` within the if-statement, `a` is changed for the entire function-scope, which is why the output has two 1s.
+
+    Output:
+    ```
+    1
+    1
+    ```
+
+2. The following code-snippet uses the `let` keyword.
+
+    ```javascript
+    let b = 0;
+    if(true){
+        let b = 1;
+        console.log(b);
+    }
+    console.log(b);
+    ```
+
+    We know that `let` variables are block-scoped, so the scope is different INSIDE & OUTSIDE the if-condition.
+
+    So, the declaration of `b` INSIDE the if-condition is local to that block and it is destroyed upon exiting the block, which is why the first value is 1 and the second value is 0.
+
+    Note that we could also have considered the outside block as the main block, with the whole code being considered as ONE block.
+
+    Output:
+    ```
+    1
+    0
+    ```
+
+Note that C & C++ are block-scoped. The following C++ code-snippets replicate this behavior:
+
+1. Replicating behavior of `var`
+   ```cpp
+    int main() {
+      int a = 0;
+      if(true){
+          a = 1; 
+          // `a` from the OUTER scope is modified.
+          printf("%d\n", a);
+      }
+      printf("%d\n", a);
+    }
+   ```
+2. Replicating behavior of `let`
+   ```cpp
+    int main() {
+      int a = 0;
+      if(true){
+          int a = 1; 
+          // new `a` created, which has scope within 'if'.
+          // It is destroyed as soon as scope of 'if' gets over
+          printf("%d\n", a);
+      }
+      printf("%d\n", a);
+    }
+   ```
+
+--- 
+
+## `const` keyword for CONSTANT variables
 
 Values defined using `const` have block-level scope.
 
@@ -792,6 +853,48 @@ This is correct:
 const example_2 = "yo";
 console.log(example_2);
 ```
+
+---
+
+## Temporal Dead Zone
+
+The `let` and `const` variables are Hoisted but they aren't even initialized with the `undefined` spatial placeholder like `var` is, so trying to access them before they are initialized, in the code execution phase throws an error of this sort:
+
+```
+Uncaught ReferenceError: Cannot access 'a' before initialization
+```
+
+The phase between the starting of the execution of block in which the `let` or `const` variable is declared till that variable is being initialized is called **Temporal Dead Zone** for the variable.
+
+So, it is BEST PRACTICE to keep variable declarations and initializations at the TOP of blocks to avoid unwanted Errors.
+
+---
+
+## Different Storage Location for `let` and `const` variables
+
+The variables declared using `let` and `const` keywords aren't automatically members of the GLOBAL `window` object in Browser JS Engines, like variables declared using `var` are.
+
+Considering the following code-snippet:
+
+```javascript
+var a = 10;
+
+let b = 10;
+
+if(true) {
+    let c = 20;
+}
+```
+
+If we take a look at the Browser Console while the control is inside the if-block, we see something like this:
+
+![](images/block-script-global.png)
+
+- Note how `a` is stored under the GLOBAL `window` object, represented as `Global`.
+- The variable declared using `let` OUTSIDE if-block, which is `b` is under something called `Script` scope.
+- The variable declared using `let` INSIDE if-block, which is `c` is under something called `Block` scope, representing the fact that its scope lies inside an if-BLOCK.
+
+This is a practical explanation of why `a`, declared using `var` keyword, can be accessed using `window.a`, and why `b` and `c`, which were declared using `let` keyword, CANNOT.
 
 ---
 
@@ -1115,7 +1218,10 @@ To summarize...
 
 - function declarations are already in memory, ready to be called, before the execution of the code starts.
 - variables of type `var` are allocated memory and assigned the spatial placeholder value of `undefined`.
-- variables of type `let` and `const` are uninitialized.
+- variables of type `let` and `const` are **uninitialized** (NOT even the spatial placeholder value of `undefined`). 
+  
+  Read about [Temporal Dead Zones](#temporal-dead-zone) for in-depth understanding of these cases.
+
 - TODO: <!-- class hoisting https://developer.mozilla.org/en-US/docs/Glossary/Hoisting#class_hoisting -->
 
 However, this seems like quite an abstract concept.
@@ -1246,7 +1352,10 @@ Whenever any code is run in JavaScript, it’s run inside an **Execution Context
 
 ### Lexical Environment & Scope Chain
 
-Every execution context has a **reference** to its outer execution context, and that outer execution context is called Lexical Environment.
+Every execution context has a **reference** to its outer environment, and that outer environment is called Lexical Environment.
+
+> ***NOTE:*** The Lexical Environment of a function is the combination of the function's Execution Context and the **reference** to the Lexical Environment of its PARENT.
+> Also, by PARENT, we mean the Lexical PARENT i.e., the location where the function declaration sits, NOT where the function was CALLED from.
 
 JavaScript cares about the Lexical Environment when you ask for a variable while running a line of code inside any particular execution context if it can’t find that variable in its block, it will go to the outer **reference** and look for variables there.
 
@@ -1289,6 +1398,46 @@ During the code execution phase:
         Since the execution context of `two` doesn't have the variable `a`, it will check the **reference** to the Lexical Environment of its parent, which is the global execution context.
 
         Since the global execution context has the variable `a` with value `1`, _`1` will be logged_.
+
+So, the output of the code-snippet is:
+
+```
+1
+2
+1
+```
+
+Note that the following C++ code also behaves in a similar manner. It has some slight changes since any phenomenon similar to Hoisting isn't available in C++.
+
+```cpp
+int a = 1;
+
+// two() will print 1 since that is in its outer scope and no local 'a' variable.
+void two(){
+  cout << a << endl;
+}
+
+// one() will print 2 since that is in it scope.
+void one(){
+  int a = 2;
+  cout << a << endl;
+  two();
+}
+
+// main() will print 1 since that is in its outer scope and no local 'a' variable.
+int main() {
+    cout << a << endl;
+    one();    
+    return 0;
+}
+```
+
+Output:
+```
+1
+2
+1
+```
 
 ---
 
@@ -2081,7 +2230,7 @@ TODO
 
 TODO
 
-## `let` and `const` keywords
+## `let`, `const` keywords & **Temporal Dead Zones**
 
 Given under [Variable and Constant values](#variable-and-constant-values) above.
 

@@ -57,11 +57,13 @@
       - [`window.location.replace()` method](#windowlocationreplace-method)
     - [`window.location.reload()`](#windowlocationreload)
     - [`window.location.toString()`](#windowlocationtostring)
+  - [`Clipboard` API](#clipboard-api)
+  - [Mutation Observer API](#mutation-observer-api)
 - [Interfaces (Not available in JavaScript)](#interfaces-not-available-in-javascript)
   - [`History` Interface](#history-interface)
   - [`Navigator` Interface](#navigator-interface)
-    - [`Clipboard` API](#clipboard-api)
   - [`Clipboard` Interface](#clipboard-interface)
+  - [`MutationObserver` Interface](#mutationobserver-interface)
 - [Prototypes](#prototypes)
 - [Variable and Constant values](#variable-and-constant-values)
   - [`let` & `var` keywords for variables](#let--var-keywords-for-variables)
@@ -104,8 +106,14 @@
   - [Synchronous vs. Asynchronous Programming](#synchronous-vs-asynchronous-programming)
   - [Callback functions](#callback-functions)
   - [Event Loop](#event-loop)
-  - [Microtask Queue](#microtask-queue)
+    - [Run to completion](#run-to-completion)
   - [Callback Queue](#callback-queue)
+  - [Microtask Queue](#microtask-queue)
+    - [Starvation of Callback Queue because of Microtask Queue](#starvation-of-callback-queue-because-of-microtask-queue)
+  - [Registering of Functions in Web API environment](#registering-of-functions-in-web-api-environment)
+    - [`setTimeout` Web API Event](#settimeout-web-api-event)
+    - [`DOM` Web API Event](#dom-web-api-event)
+  - [Promises](#promises)
 - [`Date` objects in Javascript](#date-objects-in-javascript)
   - [`new Date()` constructor vs. `Date()` function](#new-date-constructor-vs-date-function)
   - [Displaying dates using `Date.prototype.toString()`](#displaying-dates-using-dateprototypetostring)
@@ -436,6 +444,10 @@ There are two types of APIs:
 
 Let us now take a look at some **Browser APIs**.
 
+> NOTE: Some these APIs like `console` and `setTimeout` are also present in the Node JS runtime environment. 
+>
+> Although these APIs might provide the same functionality in Node and the browser, their internal implementation might be very different.
+
 ## `Console` API
 
 A console traditionally refers to a computer terminal where a user may input commands and view output such as the results of inputted commands or status messages from the computer.
@@ -694,6 +706,18 @@ The `window.location.toString()` [OVERRIDEN](#function-overriding-in-javascript)
 
 ---
 
+## `Clipboard` API
+
+The `Clipboard` [API](#apis-in-javascript) adds to the `Navigator` interface, the read-only clipboard property, which returns the [`Clipboard`](#clipboard-interface) object used to read and write the clipboard's contents.
+
+---
+
+## Mutation Observer API
+
+This API is implemented by the [`MutationObserver` interface](#mutationobserver-interface), and it provides the facility of invoking a callback function in reaction to the changes being made to the DOM tree.
+
+---
+
 # Interfaces (Not available in JavaScript)
 
 ## `History` Interface
@@ -708,18 +732,17 @@ It allows scripts to query it and to register themselves to carry on some activi
 
 A `Navigator` object can be retrieved using the read-only `window.navigator` property.
 
-### `Clipboard` API
-
-The `Clipboard` [API](#apis-in-javascript) adds to the `Navigator` interface, the read-only clipboard property, which returns the [`Clipboard`](#clipboard-interface) object used to read and write the clipboard's contents.
-
 ## `Clipboard` Interface
 
-The `Clipboard` interface implements the Clipboard [API](#apis-in-javascript), providing—if the user grants permission—both read and write access to the contents of the system clipboard. 
+The `Clipboard` interface implements the Clipboard [API](#apis-in-javascript), by providing—if the user grants permission—both read and write access to the contents of the system clipboard. 
 
 The Clipboard [API](#apis-in-javascript) can be used to implement cut, copy, and paste features within a web application.
 
 The system clipboard is exposed through the GLOBAL `Navigator.clipboard` property.
 
+## `MutationObserver` Interface
+
+The MutationObserver interface implements the [Mutation Observer API](#mutation-observer-api) by providing the ability to watch for changes being made to the DOM tree. 
 
 
 # Prototypes
@@ -1355,6 +1378,7 @@ Whenever any code is run in JavaScript, it’s run inside an **Execution Context
 Every execution context has a **reference** to its outer environment, and that outer environment is called Lexical Environment.
 
 > ***NOTE:*** The Lexical Environment of a function is the combination of the function's Execution Context and the **reference** to the Lexical Environment of its PARENT.
+> 
 > Also, by PARENT, we mean the Lexical PARENT i.e., the location where the function declaration sits, NOT where the function was CALLED from.
 
 JavaScript cares about the Lexical Environment when you ask for a variable while running a line of code inside any particular execution context if it can’t find that variable in its block, it will go to the outer **reference** and look for variables there.
@@ -1625,25 +1649,137 @@ So, we can conclude that Javascript files are put inside **anonymous** functions
 ## Callback functions
 
 A callback function is a function passed into another function as an argument, which is then invoked inside the outer function to do some kind of routine or action:
-  - either synchronously, where it is executed instantaneously upon reaching its call, 
+  - either synchronously, where it is executed instantaneously upon reaching its call. 
   - or asynchronously, where it waits for a specific event to occur or a task to complete, before getting called and executed.
 
 ## Event Loop
 
-The event loop concept is very simple. There’s an endless loop, where the JavaScript engine waits for tasks, executes them and then sleeps, waiting for more tasks.
+The event loop concept is very simple. 
+
+
+
+There’s an endless loop, where the JavaScript engine waits for a "message", dequeues the "message" and calls the associated [Callback Function](#callback-functions), and once the Callback Function finishes processing, it begins to wait for more "messages".
+
+The increment that the event loop moves in is called a 'tick', and every time it 'ticks' it checks if the [Execution Stack](#working-of-execution-stack-in-javascript) is empty, and if it is, it dequeues the top-most "message" in the event queue (combination of [Microtask Queue](#microtask-queue) & [Callback Queue](#callback-queue)) to the call stack and executes it. 
+
+Once it is finished processing this function, it starts ticking again.
 
 The general algorithm of the engine:
-  1. While there are tasks:
-      - execute them, starting with the oldest task.
-  2. Sleep until a task appears, then go to 1.
+  1. While there are "messages" in the [callback queue](#callback-queue):
+      - dequeue them and call the associated callback function, one-by-one, starting with the oldest task.
+  2. Sleep until another "message" appears, then go to 1.
 
-## Microtask Queue
+Explaining this algorithm....
 
+At some point during the event loop, the runtime starts handling the messages in the [callback queue](#callback-queue), starting with the oldest one. 
 
+To do so, the message is removed from the queue and its corresponding callback function is called with the message as an input parameter. 
+
+As always, calling a function creates a new stack frame for that function's use.
+
+The processing of the function continues until the stack is once again empty. 
+
+Then, the event loop will process the next message in the queue (if there is one).
+
+### Run to completion
+
+As hinted by this algorithm, each message is processed completely before any other message is processed.
+
+A downside of this model is that if a message takes too long to complete, the web application is unable to process user interactions like `click` or `scroll`. 
+
+The browser mitigates this with the **"a script is taking too long to run"** dialog. 
+
+A good practice to follow is to make message processing short and if possible cut down **one** message **into several** messages.
 
 ## Callback Queue
 
+The queue of "messages" we are talking about above is referred to as Callback Queue.
 
+Note there is a need of Callback QUEUE instead of the Event Loop directly handling messages because there can be multiple messages waiting to be processed, in which case they need to be stored somewhere.
+
+## Microtask Queue
+
+Alongside the Callback Queue, there is another queue monitored by the Event Loop known as the **Microtask Queue**.
+
+[Promises](#promises) and the [Mutation Observer API](#mutation-observer-api) both use the **Microtask Queue** to run their callbacks.
+
+### Starvation of Callback Queue because of Microtask Queue
+
+If suppose the Microtasks within the **Microtask Queue** recursively create more Microtasks, the "messages" in the Callback Queue won't every get a chance to get de-queued.
+
+This phenomenon known as **Starvation of Functions in Callback Queue**.
+
+---
+
+## Registering of Functions in Web API environment
+
+### `setTimeout` Web API Event
+
+Let us take an example code-snippet:
+
+```javascript
+console.log("Hello");
+
+setTimeout(function callbackFn() {
+  console.log("setTimeout callback executed");
+}, 0);
+
+console.log("World");
+```
+
+Suppose we run this code using a Browser's JS Engine.
+
+- We will get access to the Browser's console using the [`console` Web API](#console-api).
+- We get access to a timer through the `setTimeout()` function which is also a Web API. 
+
+1. The first call is a synchronous call, so it is directly pushed into the [Execution Stack](#working-of-execution-stack-in-javascript) and executed directly, without anything getting registered in the Web API environment.
+
+2. Since the second command is an attempt to asynchronously call the function `callbackFn` using a Web API meant to keep track of time. 
+
+  So, in this case, `callbackFn` will be registed in the Web API environment, so that it can be pushed into the Event Queue of the Event Loop upon COMPLETION of the Event linked to the Web API (which, in this case, is the passing of **0ms**).
+
+  Once, the Event is completed and the "message" along with its associated callback is pushed into the Event Queue, `callbackFn` is de-registered from the Web API environment.
+
+3. The last call is also a synchronous call, so it is directly pushed into the [Execution Stack](#working-of-execution-stack-in-javascript) and executed directly, without anything getting registered in the Web API environment.
+
+4. Even if the `setTimeout` event gets completed before the last synchronous call, the [Event Loop](#event-loop) waits for the Execution Stack to get empty, and then dequeues the "message" from the Event Queue, and pushes `callbackFn` into the Execution Stack.
+
+So, the output of the code-snippet is:
+```
+Hello
+World
+setTimeout callback executed
+```
+
+From this, we understand that synchronous Web API calls don't register anything in the Web API environment, but asynchronous Web API calls do.
+
+---
+
+### `DOM` Web API Event
+
+Taking another example code-snippet:
+
+```javascript
+console.log("Hello");
+
+document.addEventListener("click", function callbackFn() {
+    console.log("Callback executed");
+})
+
+console.log("World");
+```
+
+1. The first and last call are similar to the above case.
+
+2. The call in-between is an attempt to asynchronously call to `callbackFn` through the `DOM` Web API.
+
+  The `addEventListener` method of the `DOM` API registers the callback function (or event-handler in this case) `callbackFn` in the Web API environment, so that it can be pushed into the Event Queue of the Event Loop upon OCCURRENCE of the Event linked to the Web API (which, in this case, is a `click` event occurring in the HTML Document).
+
+  > NOTICE the use of the word OCCURRENCE, instead of COMPLETION, since the event-handler function will be pushed into the Event Queue of the Event Loop every time the Event occurs, until we EXPLICITLY remove the Event Listener.
+
+  The `callbackFn` will be de-registered from the Web API environment, only when we use the `removeEventListener` method of the `DOM` API, to remove the event listener waiting for the `click` event to happen.
+
+## Promises
 
 
 # `Date` objects in Javascript

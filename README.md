@@ -75,9 +75,11 @@
     - [Variables created using `var` keyword](#variables-created-using-var-keyword)
 - [Values vs. References in Javascript](#values-vs-references-in-javascript)
 - [Functions in Javascript](#functions-in-javascript)
+  - [First-class Functions](#first-class-functions)
   - [Function DECLARATION vs Function EXPRESSION](#function-declaration-vs-function-expression)
     - [a. Function DECLARATION](#a-function-declaration)
     - [b. Function EXPRESSION](#b-function-expression)
+      - [Trying to call the function definition of a Named Function Expression](#trying-to-call-the-function-definition-of-a-named-function-expression)
   - [`arguments` object](#arguments-object)
   - [No Parameters vs. Default Parameters](#no-parameters-vs-default-parameters)
   - [Function Overriding in Javascript](#function-overriding-in-javascript)
@@ -89,6 +91,11 @@
   - [Template literals and string interpolation in Javascript](#template-literals-and-string-interpolation-in-javascript)
   - [Ending statements with semi-colons](#ending-statements-with-semi-colons)
   - [Hoisting](#hoisting)
+  - [Closures](#closures)
+    - [Uses of Closures](#uses-of-closures)
+    - [Examples for understanding Closures](#examples-for-understanding-closures)
+      - [**First Example**](#first-example)
+      - [**Second Example**](#second-example)
   - [Understanding the behaviour of for-of loop](#understanding-the-behaviour-of-for-of-loop)
   - [Javascript Engines](#javascript-engines)
   - [Execution Contexts in Javascript](#execution-contexts-in-javascript)
@@ -312,6 +319,10 @@ The `includes()` method performs a case-sensitive search to determine whether on
 Constructor function: Object()
 
 This creates an empty instance of the global Object class.
+
+Objects created are stored in Heap memory and they are accessed using **references** pointing to them.
+
+An object persists in heap memory and is not garbage-collected, as long as there is a **reference** pointing to it.
 
 ### Converting an `Object` to `string` type using `toString()`
 
@@ -987,14 +998,30 @@ Javascript has 3 data types that are passed by **reference**: Array, Function, a
 
 TODO : Complete
 
-# Functions in Javascript
+# Functions in Javascript 
 
 In javascript, functions are also objects.
 
 There is a global `Function` class which has static as well as prototype methods.
 
+We know that an object persists in heap memory and is not garbage-collected as long as there is a reference to it. 
+
+> **NOTE:** This is the concept seen in [Closures](#closures), where a function defined inside another function is still able to access the variables of the outer function, even when the scope of the outer function is over.
+>
+> This is due to the fact that the closure of the inner function stores a **reference** to its lexical environment (which is the outer function).
+
+## First-class Functions
+
+A programming language is said to have **First-class functions** when functions in that language are treated like any other variable.
+
+For example, Javascript is said to have First-class functions since:
+- functions can be passed as an argument to other functions.
+- can be return by another function
+- can be assigned as a value to a variable.
 
 ## Function DECLARATION vs Function EXPRESSION
+
+The main difference between a Function DECLARATION and a Function EXPRESSION is of [**Hoisting**](#hoisting).
 
 ### a. Function DECLARATION
 
@@ -1004,30 +1031,52 @@ function functionName(paramA, paramB) {
 }
 ```
 
-A function declaration also known as a `function statement` declares a function with a function keyword. 
+A function declaration also known as a **function statement** declares a function with a `function` keyword. 
 
-The function declaration must have a function name.
+The function declaration must have a function name, it cannot be ANONYMOUS.
 
-Function declaration does not require a variable assignment as they are standalone constructs and they cannot be nested inside a functional block.
-
-These are executed before any other code.
-
-The function in function declaration can be accessed before and after the function definition, since JavaScript is a compiled language.
+Due to [hoisting](#hoisting), it can be called before its definition is reached in the code execution phase, because the definition is already stored in the execution context in the memory allocation phase.
 
 For example:
 ```javascript
-(function yo(){
+yo(); // Function INVOKATION
+
+function yo(){
     console.log("This is a functional declaration");
-})();
+};
 ```
 
 ### b. Function EXPRESSION
 
-Function Expressions can be assigned to variables/kept as property values in Javascript.
+A function EXPRESSION, in simple terms, is just a function DECLARATION without the function identifier name, but it CANNOT be used like a function DECLARATION
+
+For instance, this will give a syntax error:
+
+```javascript
+function () {
+  console.log("Hello");
+}
+```
+
+Output:
+
+```
+SyntaxError: Function statements require a function name
+```
+
+Instead, Function Expressions are used by be assigning them to variables/keeping them as property values in Javascript.
+
+> **NOTE:** If we specify a name for the Function getting stored in a variable, it is known as **Named Function Expression**.
+
+However, Function EXPRESSIONS don't have the advantage of [Hoisting](#hoisting) that Function DECLARATIONS do.
+
+This is because only variable declarations are hoisted, not variable initializations.
+
+Since the value of variables contain function expressions, the function itself is not accessible before the initialization of the variable storing it takes place.
 
 For calling the function expression, we just use the name of the variable it is stored in followed by arguments.
 
-The syntax for creating the assigning and calling the function expression is as follows:
+For example:
 ```javascript
 var variableName = function (paramA, paramB) {
     // Set of statements
@@ -1049,24 +1098,25 @@ objectName.funcEx(valueA, valueB);
 They can also be used in [IIFE](#immediately-invoked-function-expression-iife)s (which function declarations can be too but it is more appt. 
 to use function expressions).
 
-A function EXPRESSION is just a function declaration without the function name.
+#### Trying to call the function definition of a Named Function Expression
 
-Function expressions can be stored in a variable assignment.
-
-This is useful as we can conditionally store function expressions in variables. 
-
-So, the function operating can be different based on if a certain condition is met or not.
-
-Function expressions load and execute only when the program interpreter 
-reaches the line of code.
+Consider the following code-snippet:
 
 ```javascript
-var calSub = function (x, y) {
-    let z = x - y;
-    return z;
-};
-console.log("Subtraction : " + calSub(7, 4));
+var funcExpression = function bar() {
+  console.log("hello");
+}
+
+bar();
 ```
+
+This will throw an error saying `bar` is not defined because the definition of `bar` is not in the scope from where we are trying to call it.
+
+Because the name `bar` is used within a function expression, it doesn't get declared in the outer scope. 
+
+With named function expressions, the name of the function expression is **enclosed within its own scope**.
+
+---
 
 ## `arguments` object
 
@@ -1251,6 +1301,127 @@ However, this seems like quite an abstract concept.
 
 A practical explanation of how **Hoisting** works can be obtained by reading about [Phases of Execution Contexts](#phases-of-execution-contexts)
 
+## Closures
+
+A Closure is a function bundled together (enclosed) with references to its Lexical Environment.
+
+In other words, a closure gives us access to an outer function's scope from an inner function.
+
+A closure in JavaScript is like keeping a reference (NOT a copy) to the scope at the point of function declaration, which in turn keeps a reference to its outer scope, and so on, all the way to the global object at the top of the scope chain.
+
+> **NOTE:** Variables themselves are visible from within a closure, not copies. 
+> 
+> So, any mutation operations on the variables within the function change their values for future calls as well.
+
+A closure is created when a function is declared; this closure is used to configure the execution context when the function is invoked.
+
+Even in the case of functions declared the global scope, we know that a Javascript file itself is kept inside an **anonymous function** and called, in most Javascript runtime environments.
+
+So any function declared and called in the global scope (scope of the **anonymous function**) is closed by that **anonymous function**.
+
+### Uses of Closures
+
+![](images/uses-of-closures.png)
+
+### Examples for understanding Closures
+
+#### **First Example**
+
+- The following is an example of a **Closure** :
+  
+  ```javascript
+  function main() {
+      var x = 1;
+      
+      function nested() { // closed by 'main'
+          console.log(x);
+      }
+      
+      return nested;
+  }
+
+  var fn = main();
+  // The closure of 'nested' stored in this variable
+
+  fn();
+  ```
+
+  The function `nested` can access the the scope of the function `main`.
+
+- Let's add some complexity to the above code-snippet:
+
+  ```javascript
+  function main() {
+      var x = 1;
+      
+      function nested() {
+          console.log(x);
+      }
+
+      x = 100;
+
+      return nested;
+  }
+
+  var fn = main();
+
+  fn();
+  ```
+
+  Here, since the function `nested` has access to the lexical environment of `main`, and the value of the variable `x` is changed to `100` before the `return` statement is reached, the value of `x` is changed to 100 for all future calls to `nested`. 
+
+  So, the output of this would be `100`.
+
+#### **Second Example**
+
+We have to understand that the fact that a particular function, for example, `nested` is constructed inside of another function `main` and closes over some of its variables, is insignificant to what functions are displayed in the [execution stack](#working-of-execution-stack-in-javascript) when `nested` is called.
+
+This is because the execution stack doesn't care where the values are defined. 
+
+The only thing that the execution stack cares about is, when function `nested` is executed, which function's execution caused it. 
+
+- Take a look at the first code-snippet:
+  ```javascript
+  1 function main() {
+  2   function nested() {
+  3       console.trace();
+  4   }
+  5   nested();
+  6 }
+  7   
+  8 const fn = main(); 
+  ```
+
+  At line 8, `top-level` calls `main`, which calls `nested` (At line 5 of the definition of `main`).
+
+  Because of this, the stack trace of this code looks like this:
+  
+  ![](./images/closures-second-example-1.png)
+
+- The second-code snippet is slightly different:
+  
+  ```javascript
+  1 function main() {
+  2   function nested() {
+  3     console.trace();
+  4   }
+  5   return nested;
+  6 }
+  7
+  8 const fn = main();  
+  9 fn()
+  ```
+
+  At line 8, top-level calls `main`. 
+  
+  At line 9 top-level directly calls `fn`, a.k.a `nested`.
+
+  Because of this, the stack trace of this code looks like this:
+
+  ![](./images/closures-second-example-2.png)
+
+---
+
 ## Understanding the behaviour of for-of loop
  
 The `for of` loop of Javascript allows looping over iterable data structures such as `Arrays`, `Strings`, `Maps`, `NodeLists`, etcetera.
@@ -1386,6 +1557,8 @@ JavaScript cares about the Lexical Environment when you ask for a variable while
 So we can say that whenever a execution context is created, along with it a lexical environment is created. 
 
 Suppose a function is called. Now, any other functions called within THAT function will have access to the lexical environment of THAT function through a **reference**.
+
+> **NOTE:** Observe that because a **reference** to the lexical environment is stored, any changes to the variables of the lexical environment are updated for future calls of the function.
 
 If a chain of **references** to Lexical Environments is formed, it is known as **Scope Chain**.
 

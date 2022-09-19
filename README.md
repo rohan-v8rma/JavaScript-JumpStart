@@ -1913,9 +1913,11 @@ So, we can conclude that Javascript files are put inside **anonymous** functions
 
 ## Callback functions
 
-A callback function is a function passed into another function as an argument, which is then invoked inside the outer function to do some kind of routine or action:
+A callback function is a function passed into another function as an argument. The callback function can be invoked in two ways:
   - either synchronously, where it is executed instantaneously upon reaching its call. 
   - or asynchronously, where it waits for a specific event to occur or a task to complete, before getting called and executed.
+
+    Hence the name—the function argument is *called (back)* at a later point in time.
 
 ## Event Loop
 

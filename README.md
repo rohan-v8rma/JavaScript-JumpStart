@@ -71,8 +71,9 @@
   - [`const` keyword for CONSTANT variables](#const-keyword-for-constant-variables)
   - [Temporal Dead Zone](#temporal-dead-zone)
   - [Different Storage Location for `let` and `const` variables](#different-storage-location-for-let-and-const-variables)
+  - [Are **function parameters** `var` or `let` variables?](#are-function-parameters-var-or-let-variables)
   - [Accessing global variables of the same name as local variables](#accessing-global-variables-of-the-same-name-as-local-variables)
-    - [Variables created using `var` keyword](#variables-created-using-var-keyword)
+    - [Global Execution Context as a Function Scope](#global-execution-context-as-a-function-scope)
 - [Values vs. References in Javascript](#values-vs-references-in-javascript)
 - [Functions in Javascript](#functions-in-javascript)
   - [First-class Functions](#first-class-functions)
@@ -83,6 +84,7 @@
   - [`arguments` object](#arguments-object)
   - [No Parameters vs. Default Parameters](#no-parameters-vs-default-parameters)
   - [Function Overriding in Javascript](#function-overriding-in-javascript)
+  - [Higher-order Functions](#higher-order-functions)
   - [`call` method of 'global Function class'](#call-method-of-global-function-class)
   - [`this` object of functions](#this-object-of-functions)
   - [Immediately Invoked Function Expression (`IIFE`)](#immediately-invoked-function-expression-iife)
@@ -95,7 +97,7 @@
     - [Uses of Closures](#uses-of-closures)
     - [Examples for understanding Closures](#examples-for-understanding-closures)
       - [**First Example**](#first-example)
-      - [**Second Example**](#second-example)
+      - [**Second Example** (Helpful for understanding how stack tracing works)](#second-example-helpful-for-understanding-how-stack-tracing-works)
   - [Understanding the behaviour of for-of loop](#understanding-the-behaviour-of-for-of-loop)
   - [Javascript Engines](#javascript-engines)
   - [Execution Contexts in Javascript](#execution-contexts-in-javascript)
@@ -104,11 +106,11 @@
       - [Creation Phase](#creation-phase)
       - [Execution Phase](#execution-phase)
     - [Types of Execution Contexts](#types-of-execution-contexts)
-      - [Working of Execution Stack in Javascript](#working-of-execution-stack-in-javascript)
+      - [**Working of Execution Stack in Javascript**](#working-of-execution-stack-in-javascript)
+        - [<center>**Stack Tracing using `console.trace()` method**</center>](#centerstack-tracing-using-consoletrace-methodcenter)
       - [Global Execution Context](#global-execution-context)
       - [Function Execution Context](#function-execution-context)
-        - [Asynchronous Calls in Function Execution Contexts](#asynchronous-calls-in-function-execution-contexts)
-        - [In Browsers, (Global Execution Context) is a (Function Execution Context)](#in-browsers-global-execution-context-is-a-function-execution-context)
+        - [**In Browsers, (Global Execution Context) is a (Function Execution Context)**](#in-browsers-global-execution-context-is-a-function-execution-context)
 - [Asynchronous Programming in Javasript](#asynchronous-programming-in-javasript)
   - [Synchronous vs. Asynchronous Programming](#synchronous-vs-asynchronous-programming)
   - [Callback functions](#callback-functions)
@@ -491,6 +493,7 @@ The output is similar to this:
 
 ![](images/console-trace.png)
 
+Learn more about stack tracing using `console.trace()` [below](#centerstack-tracing-using-consoletrace-methodcenter).
 
 ### `console.warn(<arg>)` and `console.error(<arg>)` method
 
@@ -932,6 +935,19 @@ This is a practical explanation of why `a`, declared using `var` keyword, can be
 
 ---
 
+## Are **function parameters** `var` or `let` variables?
+
+`let` and `const` are relatively new features in the language, they were added in EcmaScript 6. 
+
+Prior to this, all variables were either global or local to the function. 
+
+In the function body we declare local variables with `var`, but **function parameters** are automatically local so there's no need for a keyword to distinguish them from global variables.
+
+In a sense, **function parameters** can be thought of as variables local to the function declared using the `var` 
+keyword.
+
+---
+
 ## Accessing global variables of the same name as local variables
 
 > **_NOTE:_**  The creation of GLOBAL variables in Node JS is slightly different from Browser JS Engines. 
@@ -954,7 +970,7 @@ This is a practical explanation of why `a`, declared using `var` keyword, can be
   console.log(global.globVar); // Both work
   ```
 
-### Variables created using `var` keyword
+### Global Execution Context as a Function Scope
 
 Variables created using `var` keyword are function-scoped.
 
@@ -1216,6 +1232,43 @@ When you define multiple functions that have the same name, the last one defined
 
   By default, `alert()` function displays the message in the alert box. But here we have overridden it. Now it is displaying the message in the [`document`](#document-object).
 
+## Higher-order Functions
+
+A higher-order function is a function that accepts functions as parameters and/or returns a function.
+
+Take a look at the following example:
+
+```javascript
+const radius = [3, 1, 2, 4];
+
+// outputArrayGen is a higher-order function
+function outputArrayGen(radiusArray, callbackFn) {
+    const output = [];
+    for(let index = 0; index < radiusArray.length; index++) {
+        output[index] = (callbackFn(radiusArray[index]));
+    }
+
+    return output;
+}
+
+area = function(radius) {
+    return (Math.PI * radius * radius);
+}
+
+circumfrence = function(radius) {
+    return (2 * Math.PI * radius);
+}
+
+diameter = function(radius) {
+    return (2 * radius);
+}
+
+
+console.log(outputArrayGen(radius, area));
+console.log(outputArrayGen(radius, circumfrence));
+console.log(outputArrayGen(radius, diameter));
+```
+
 ## `call` method of 'global Function class'
 
 TODO
@@ -1372,7 +1425,7 @@ So any function declared and called in the global scope (scope of the **anonymou
 
   So, the output of this would be `100`.
 
-#### **Second Example**
+#### **Second Example** (Helpful for understanding how stack tracing works)
 
 We have to understand that the fact that a particular function, for example, `nested` is constructed inside of another function `main` and closes over some of its variables, is insignificant to what functions are displayed in the [execution stack](#working-of-execution-stack-in-javascript) when `nested` is called.
 
@@ -1682,7 +1735,7 @@ But, before looking at these in detail, we must understand how the Execution Sta
 
 ---
 
-#### Working of Execution Stack in Javascript
+#### **Working of Execution Stack in Javascript**
 
 Execution stack, also known as “calling stack” in other programming languages, is a stack which is used to store all the [execution contexts](#execution-contexts-in-javascript) created during the code execution.
 
@@ -1695,6 +1748,70 @@ HOWEVER, note that all the execution contexts of functions also have access to t
 The engine executes the function whose execution context is at the top of the stack, line-by-line. 
 
 When this function completes, its execution context is popped off from the stack, and the control reaches to the context below it in the current stack.
+
+##### <center>**Stack Tracing using `console.trace()` method**</center>
+
+In computing, a stack trace is a report of the active stack frames at a certain point in time during the execution of a program.
+
+In the case of Browser JS engines, we use the [`console.trace()`](#consoletrace-method) method for this purpose.
+
+There are some things we need to understand when tracing:
+
+1. The only thing that the execution stack cares about is, when a function is executed, which function's execution CAUSED it. 
+   
+   The **location of the definition of the function** does NOT matter.
+
+    The [second example](#second-example-helpful-for-understanding-how-stack-tracing-works) given under Closures demonstrates this concept.
+
+2. As mentioned later, under 
+  
+    In the case of Asynchronous calls, we know that all synchronous calls are executed before them and all execution contexts are popped from the execution stack, before the event queue pushes the context of the asynchronous call into the execution stack.
+
+    Still, the dev-tools of your browser do keep track of the initial call stack (functions inside which the asynchronous call was made).
+    
+    They then REBUILD it for your convenience when you call `console.trace()` as shown in the output of the example BELOW.
+  
+    But the initial synchronous function calls are not on the stack anymore.
+
+    Take a look at the following example:
+
+    ```javascript
+    function func() {    
+            console.trace();
+        }
+
+    function main() {
+      
+        func();
+        
+        setTimeout(func, 0);
+        
+        console.log("End of main");
+    }
+
+    main();
+
+    console.log("One last command");
+    ```
+
+    Here, BOTH a synchronous as well as an asynchronous call to a function `func`  is made inside an outer function `main` (this can be done BECAUSE `func` is actually accessible in the scope of `main`).
+
+    In this case, the whole body of `main` would be executed first, along with the popping of the execution contexts of ANY synchronous calls (such as the synchronous call to `func`) made in `main`. 
+
+    Also, commands in the Global Execution Context would be executed.
+    
+    After that, the asynchronous call to `func` would be executed.
+
+    Take a look at the stack trace of this code-snippet obtained using `console.trace()`:
+    
+    ![](images/asynchronous-stack-trace.png)
+
+    - Observe how the `console.trace()` inside the asynchronous `func` call is only reached after `One last command`, in the global execution context, is logged.
+    - Notice the difference between the stack trace of the synchronous and asynchronous call.
+
+      Both calls occur from the same place, but in the case of the asynchronous one, the ***(async)*** suffix explicitly marks where the "real" stack ends. 
+
+      The functions after the ***(async)*** suffix aren't actually in the Execution Stack, but the stack is still re-built by the browser dev-tools to make debugging easy.
 
 ---
 
@@ -1762,36 +1879,7 @@ There can be any number of **function execution contexts**.
 
 ---
 
-##### Asynchronous Calls in Function Execution Contexts
-
-Note that if an asynchronous call to a function `func`  is made inside an outer function `main` (provided `func` is actually accessible in the scope of `main`), the whole body of `main` would be executed first, along with the popping of the execution contexts of any synchronous calls made in `main`.
-
-After that, once all execution contexts, except for the context in which the asynchronous call was made along with outer contexts (which means the context of `main`, along with its outer contexts), are popped, the callback queue executes the call to `func`.
-
-After all this, the context of `main` is popped from the Execution Stack.
-
-This is an example code snippet in which this behaviour is witnessed:
-
-```javascript
-function func() {
-    console.log(n);
-}
-
-function main() {
-    var n = 10;    
-
-    func();
-    setTimeout(func, 0);
-    
-    console.log("Hello");
-}
-
-main();
-```
-
----
-
-##### In Browsers, (Global Execution Context) is a (Function Execution Context)
+##### **In Browsers, (Global Execution Context) is a (Function Execution Context)**
 
 In the case of Browser [JS engines](#javascript-engines), the **global execution context** is also a **function execution context**.
 
@@ -1881,6 +1969,9 @@ Alongside the Callback Queue, there is another queue monitored by the Event Loop
 If suppose the Microtasks within the **Microtask Queue** recursively create more Microtasks, the "messages" in the Callback Queue won't every get a chance to get de-queued.
 
 This phenomenon known as **Starvation of Functions in Callback Queue**.
+
+---
+
 
 ---
 

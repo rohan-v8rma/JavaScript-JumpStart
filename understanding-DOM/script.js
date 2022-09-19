@@ -1,26 +1,28 @@
+const radius = [3, 1, 2, 4];
 
-let num0 = Number('123');
-let num1 = Number(123);
+// outputArrayGen is a higher-order function
+function outputArrayGen(radiusArray, callbackFn) {
+    const output = [];
+    for(let index = 0; index < radiusArray.length; index++) {
+        output[index] = (callbackFn(radiusArray[index]));
+    }
 
-let num2 = 123;
+    return output;
+}
 
-let num3 = new Number('123');
-let num4 = new Number(123);
+area = function(radius) {
+    return (Math.PI * radius * radius);
+}
+
+circumfrence = function(radius) {
+    return (2 * Math.PI * radius);
+}
+
+diameter = function(radius) {
+    return (2 * radius);
+}
 
 
-// fo(currentTime);
-
-console.log(typeof(num0));
-console.log(num0);
-
-console.log(typeof(num1));
-console.log(num1);
-
-console.log(typeof(num2));
-console.log(num2);
-
-console.log(typeof(num3));
-console.log(num3);
-
-console.log(typeof(num4));
-console.log(num4);
+console.log(outputArrayGen(radius, area));
+console.log(outputArrayGen(radius, circumfrence));
+console.log(outputArrayGen(radius, diameter));

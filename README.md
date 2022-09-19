@@ -1811,7 +1811,11 @@ There are some things we need to understand when tracing:
 
       Both calls occur from the same place, but in the case of the asynchronous one, the ***(async)*** suffix explicitly marks where the "real" stack ends. 
 
-      The functions after the ***(async)*** suffix aren't actually in the Execution Stack, but the stack is still re-built by the browser dev-tools to make debugging easy.
+      The functions after the ***(async)*** suffix aren't actually in the Execution Stack, but the stack is still re-built by the browser dev-tools.
+
+      It's shown because the browser thinks that if you need the trace, it's more because you want to know where the call came from in your code, rather than what was really on the internal call stack. 
+      
+      After all the goal is to be useful to the developers.
 
 ---
 

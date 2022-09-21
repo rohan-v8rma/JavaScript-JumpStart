@@ -114,6 +114,10 @@
 - [Asynchronous Programming in Javasript](#asynchronous-programming-in-javasript)
   - [Synchronous vs. Asynchronous Programming](#synchronous-vs-asynchronous-programming)
   - [Callback functions](#callback-functions)
+    - [Hack for passing arguments to Callback Functions](#hack-for-passing-arguments-to-callback-functions)
+    - [Callback Hell](#callback-hell)
+    - [Inversion of Control](#inversion-of-control)
+      - [Dependency Injection](#dependency-injection)
   - [Event Loop](#event-loop)
     - [Run to completion](#run-to-completion)
   - [Callback Queue](#callback-queue)
@@ -134,9 +138,12 @@
     - [`window.document.links`](#windowdocumentlinks)
     - [`window.document.images`](#windowdocumentimages)
     - [`window.document.scripts`](#windowdocumentscripts)
-    - [Element Selectors](#element-selectors)
-      - [`window.document.getElementsByTagName(<name>)`](#windowdocumentgetelementsbytagnamename)
-      - [`window.document.getElementById(<name>)`](#windowdocumentgetelementbyidname)
+    - [`window.document.getElementsByTagName(<name>)`](#windowdocumentgetelementsbytagnamename)
+    - [`window.document.getElementById(<name>)`](#windowdocumentgetelementbyidname)
+    - [Locating DOM Elements using *complex* CSS Selectors (**Selectors API**)](#locating-dom-elements-using-complex-css-selectors-selectors-api)
+      - [`<selectors>` argument of Selector API methods](#selectors-argument-of-selector-api-methods)
+      - [`window.document.querySelector(<selectors>)`](#windowdocumentqueryselectorselectors)
+      - [`window.document.querySelectorAll(<selectors>)`](#windowdocumentqueryselectorallselectors)
   - [What is an HTMLCollection?](#what-is-an-htmlcollection)
     - [Creating an Array from an HTMLCollection](#creating-an-array-from-an-htmlcollection)
   - [Nodes in DOM](#nodes-in-dom)
@@ -1915,15 +1922,76 @@ So, we can conclude that Javascript files are put inside **anonymous** functions
 
 A callback function is a function passed into another function as an argument. The callback function can be invoked in two ways:
   - either synchronously, where it is executed instantaneously upon reaching its call. 
-  - or asynchronously, where it waits for a specific event to occur or a task to complete, before getting called and executed.
+  - OR the more MAJOR  use of callback functions which is asynchronously, where it waits for a specific event to occur or a task to complete, before getting called and executed.
 
     Hence the name—the function argument is *called (back)* at a later point in time.
+
+### Hack for passing arguments to Callback Functions
+
+We know that we need to pass only function definitions when passing callbacks to [**higher-order functions**](#higher-order-functions), which is why we are unable pass arguments to callback functions.
+
+In order to pass arguments into callback functions, we can use [**Closures**](#closures) and return a function definition.
+
+The function definition returned will have access to the variables in its lexical environment (i.e., the outer function, which has its parameters as its ).
+
+```javascript
+function callBackReturn(num1, num2) {
+    return (function callBack() {
+        console.log(num1 + num2);
+    });
+}
+
+setTimeout(callBackReturn(5, 10), 1000);
+setTimeout(callBackReturn(10, 20), 2000);
+```
+
+### Callback Hell
+
+Callback Hell is essentially nested callbacks stacked below one another forming a pyramid structure. Every callback depends/waits for the previous callback, thereby making a pyramid structure that affects the readability and maintainability of the code.
+
+Take a look at this example code-snippet:
+
+```javascript
+firstRequest(function(response) {  
+    secondRequest(response, function(nextResponse) {    
+        thirdRequest(nextResponse, function(finalResponse) {     
+            console.log('Final response: ' + finalResponse);    
+        }, failureCallback);  
+    }, failureCallback);
+}, failureCallback);
+```
+
+This type of code-block is referred to as a "**Pyramid of Doom**", which arises when a program uses many levels of nested indentation to control access to a function.
+
+### Inversion of Control
+
+In the Inversion of Control principle, the framework controls the app's flow and up to the developer is to provide the custom logic.
+
+> Suppose a developer defines a function, and passes it to an API, to call-back when a certain task is done. 
+>
+> So here, the developer passes the control of calling the defined function to the API, instead of manually calling the function
+>
+> This is an example of [Dependency Injection](#dependency-injection).
+
+#### Dependency Injection
+
+In software engineering, dependency injection is a **design pattern** (A general repeatable solution to a commonly occurring problem in software design) in which an object or function receives other objects or functions that it depends on.
+
+Let's try to understand this with the help of an example:
+
+Say you have some sort of "repository" class, and that repository is responsible for handing data to you from a data source.
+
+The repository could establish a connection to the data source by itself. But what if it allowed you to pass in a connection to the data source through the repository's constructor?
+
+By allowing the caller to provide the connection, you have decoupled the *data source connection* **dependency** from the repository class, allowing any data source to work with the repository, not just the one that the repository specifies.
+
+In a sense, we **injected** the required dependency. Here, the control being inverted is setting an object's dependencies (control inverted from the object's constructor to programmer).
+
+Dependency injection is only a subset of inversion of control. There are other things totally unrelated to dependency injection that practice inversion of control.
 
 ## Event Loop
 
 The event loop concept is very simple. 
-
-
 
 There’s an endless loop, where the JavaScript engine waits for a "message", dequeues the "message" and calls the associated [Callback Function](#callback-functions), and once the Callback Function finishes processing, it begins to wait for more "messages".
 
@@ -2051,6 +2119,26 @@ console.log("World");
 
 ## Promises
 
+![](images/promises-1.png)
+
+Creating a new `Promise` object.
+
+Javascript has pre-defined
+- The executor is called automatically and immediately (by new Promise).
+
+- The executor function receives two callback functions as arguments: `resolve` and `reject`. 
+  
+  > **NOTE:** These callback functions that the executor function receives, are pre-defined by the JavaScript engine.
+  >  
+  > Meaning it is NOT necessary that we keep these EXACT names in the function. The JS Engine has defined behaviour for each function, based on its position in the argument list of the Executor Function.
+  >
+  > So we don’t need to create them. We should only call one of them when ready.
+
+```javascript
+new Promise(function executorFunction(resolve, reject) {
+  // Executor code
+})
+```
 
 # `Date` objects in Javascript
 
@@ -2129,14 +2217,7 @@ TODO
 
 TODO
 
----
-
-### Element Selectors
-
-<!-- ### `window.document.all` -->
-<!-- DEPRECATED -->
-
-#### `window.document.getElementsByTagName(<name>)`
+### `window.document.getElementsByTagName(<name>)`
 
 The `getElementsByTagName` method of `Document` interface returns an [HTMLCollection](#what-is-an-htmlcollection) of all elements with the given tag name.
 
@@ -2148,7 +2229,7 @@ document.getElementsByTagName("span");
 document.getElementsByTagName("*");
 ```
 
-#### `window.document.getElementById(<name>)`
+### `window.document.getElementById(<name>)`
 
 The `getElementById()` method returns an element with a specific ID. If an ID isn't unique, it returns the first occurrence.
 
@@ -2159,6 +2240,43 @@ The `getElementById()` method is one of the most common methods in the HTML DOM.
 ```javascript
 document.getElementById("demo");
 ```
+
+<!-- ### `window.document.all` -->
+<!-- DEPRECATED -->
+
+---
+
+### Locating DOM Elements using *complex* CSS Selectors (**Selectors API**)
+
+The **Selectors API** provides methods that make it quick and easy to retrieve Element nodes from the DOM by matching against a set of selectors. 
+
+The methods of **Selectors API** accept any CSS selector, so you are no longer limited by selecting elements by `id`.
+
+> **NOTE:** Before we get into Element Selectors, it is important to note that CSS Pseudo-classes can't be used to select elements because as indicated by the name, pseudo-classes don't actually exist in the DOM Tree.
+> 
+> Since, these are NOT represented in the DOM tree, these can't be accessed by methods of **Selectors API**.
+
+#### `<selectors>` argument of Selector API methods
+
+Selectors to determine what element or elements should be returned. 
+
+This includes selector lists so you can group multiple selectors in a single query. For example,
+```css
+element, element, element { style properties }
+```  
+
+Only elements can be selected, pseudo-classes are not supported.
+
+> **NOTE:** If the specified selectors include a CSS pseudo-element, the returned list/element is always EMPTY.
+
+#### `window.document.querySelector(<selectors>)`
+
+- Return value: An [Element](#element-interface) object representing the first element in the document that matches the specified set of CSS selectors, or null is returned if there are no matches.
+
+
+#### `window.document.querySelectorAll(<selectors>)`
+
+- Return value : A non-live [NodeList](#nodes-in-dom) containing one [Element](#element-interface) object for each descendant node that matches at least one of the specified selectors.
 
 ---
 
@@ -2630,7 +2748,7 @@ Note that simply removing the prefix on from the HTML event attribute values, gi
 
 ## Arrow Functions
 
-TODO
+
 
 ## Rest Parameters
 

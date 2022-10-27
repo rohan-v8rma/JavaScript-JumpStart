@@ -131,6 +131,7 @@
   - [Promises](#promises)
     - [Passing Callbacks into functions vs. Promises](#passing-callbacks-into-functions-vs-promises)
     - [Pyramid of Doom/Callback Hell vs. Promise Chaining](#pyramid-of-doomcallback-hell-vs-promise-chaining)
+    - [What happens if we don't return promises from callbacks in Promise Chains](#what-happens-if-we-dont-return-promises-from-callbacks-in-promise-chains)
     - [Inconsistency in Promises in Chromium Based Browsers](#inconsistency-in-promises-in-chromium-based-browsers)
     - [Code-snippet for understanding the intricacies of Promises](#code-snippet-for-understanding-the-intricacies-of-promises)
 - [`Date` objects in Javascript](#date-objects-in-javascript)
@@ -2250,20 +2251,76 @@ If we were assume all these APIs to return Promises (Objects representing the ev
 const cart = ["shoes", "pants", "watch"];
 
 createOrder(cart)
-.then(function (orderId) {
-  return proceedToPayment(orderId);
-})
-.then(function (paymentInfo) {
-  return showOrderSummary(paymentInfo);
-})
-.then(function (amountDeducted) {
-  return updateWalletBalance(amountDeducted);
-});
+  .then(function (orderId) {
+    return proceedToPayment(orderId);
+  })
+  .then(function (paymentInfo) {
+    return showOrderSummary(paymentInfo);
+  })
+  .then(function (amountDeducted) {
+    return updateWalletBalance(amountDeducted);
+  });
 ```
 
-> ***NOTE:*** The **Promises** that are returned by the API calls have to be returned from inside the callback function as well (which is the reason for the presence of the `return` keywords).
+> ***NOTE:*** The **Promises** that are returned by the API calls are returned from inside the callback function as well over here(which is the reason for the presence of the `return` keywords).
 > 
-> This is in order for the data to be passed down the chain of callbacks.
+> The outcome of not doing this is explained [below](#what-happens-if-we-dont-return-promises-from-callbacks-in-promise-chains).
+
+### What happens if we don't return promises from callbacks in Promise Chains 
+
+If don't return the promises from the callbacks in the Promise chain, like this:
+```javascript
+const promise0 = new Promise(function (resolve, reject) {
+    setTimeout(function () {
+        resolve(1);
+    }, 5000);
+})
+
+promise0
+  .then(function () {
+      console.log("hello");
+  })
+  .then(function() {
+      console.log("world");
+  });
+```
+
+All the `.then`/`.catch` blocks would have executed upon fulfillment/rejection of the first promise, instead of waiting for every subsequent promise, being generated in the callback functions to be evaluated. 
+
+This is because the `then`/`catch` methods return a `Promise` object always. If the callback function within them doesn't return a new `Promise` object, then the promise returned by these methods takes on the state (fulfilled/rejected) of the original `Promise` object they were called upon.
+
+> ***NOTE:*** Read about return values of `then` and `catch` methods in detail on [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then), to truly understand this concept.
+
+So, in the above example, the words "hello" and "world" would be displayed at once, upon fulfillment of the promise `promise0`, because the first `then` method's callback function doesn't return a new `Promise` object, so it's returned `Promise` object takes on the state of `promise0` (fulfilled) instantly, leading to simultaneous displaying of both the word.
+
+Let us take another example:
+
+```javascript
+const promise1 = new Promise(function (resolve, reject) {
+    setTimeout(function () {
+        resolve(1);
+    }, 5000);
+})
+
+promise1
+  .then(function () {
+      console.log("hello");
+
+      const promise2 = new Promise(function (resolve, reject) {
+          setTimeout(function () {
+              resolve(1);
+          }, 5000);
+      });
+      return promise2;
+  })
+  .then(function() {
+      console.log("world");
+  });
+```
+
+In this code, the first `.then` block returns a new promise, so the `.then` block after it is now called upon on the newly generate promise, instead of on the state of the original promise.
+
+This is why in this code, we would see the word "hello" first (when the promise `promise1` is fulfilled) and the word "world" after approximately 5 seconds of that (when the promise `promise2` is fulfilled).
 
 ---
 
@@ -2305,9 +2362,13 @@ const promise = createOrder(cart);
 console.log(promise);
 //! Observe what happens if you try to see the members of the Promise object logged here BEFORE and AFTER the promise is rejected.
 
-promise.then(function (orderId) {
-    proceedToPayment(orderId);
-});
+promise
+  .then(function (orderId) {
+      return proceedToPayment(orderId);
+  })
+  .catch(function (order) {
+
+  })
 
 function createOrder(cart) {
     const prom = new Promise(function (resolve, reject) {
@@ -2338,6 +2399,9 @@ function validateCart(cart) {
     if(cart.length) {
         return true;
     }
+    else {
+        return false;
+    }
 }
 
 function getOrderIdFromDB(cart) {
@@ -2345,7 +2409,7 @@ function getOrderIdFromDB(cart) {
 }
 
 function proceedToPayment(orderId) {
-    console.log("Payment of order number " + orderId + " initiated...");
+    console.log("Payment of order number " + orderId + " **initiated**...");
 }
 ```
 

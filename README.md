@@ -27,6 +27,9 @@
     - [Some prototype/static methods of the global `Array` class](#some-prototypestatic-methods-of-the-global-array-class)
       - [`Array.prototype.forEach()`](#arrayprototypeforeach)
       - [Creating an array from other sequences using: `Array.from()`](#creating-an-array-from-other-sequences-using-arrayfrom)
+- [Statements in Javascript](#statements-in-javascript)
+  - [`throw` statement](#throw-statement)
+  - [Understanding the behaviour of `for-of` loop statement](#understanding-the-behaviour-of-for-of-loop-statement)
 - [Web APIs in Javascript](#web-apis-in-javascript)
   - [`Console` API](#console-api)
     - [`console.log(<arg>)` method](#consolelogarg-method)
@@ -98,7 +101,6 @@
     - [Examples for understanding Closures](#examples-for-understanding-closures)
       - [**First Example**](#first-example)
       - [**Second Example** (Helpful for understanding how stack tracing works)](#second-example-helpful-for-understanding-how-stack-tracing-works)
-  - [Understanding the behaviour of for-of loop](#understanding-the-behaviour-of-for-of-loop)
   - [Javascript Engines](#javascript-engines)
   - [Execution Contexts in Javascript](#execution-contexts-in-javascript)
     - [Lexical Environment & Scope Chain](#lexical-environment--scope-chain)
@@ -115,7 +117,7 @@
   - [Synchronous vs. Asynchronous Programming](#synchronous-vs-asynchronous-programming)
   - [Callback functions](#callback-functions)
     - [Hack for passing arguments to Callback Functions](#hack-for-passing-arguments-to-callback-functions)
-    - [Callback Hell](#callback-hell)
+    - [Callback Hell (Pyramid of Doom)](#callback-hell-pyramid-of-doom)
     - [Inversion of Control](#inversion-of-control)
       - [Dependency Injection](#dependency-injection)
   - [Event Loop](#event-loop)
@@ -127,6 +129,10 @@
     - [`setTimeout` Web API Event](#settimeout-web-api-event)
     - [`DOM` Web API Event](#dom-web-api-event)
   - [Promises](#promises)
+    - [Passing Callbacks into functions vs. Promises](#passing-callbacks-into-functions-vs-promises)
+    - [Pyramid of Doom/Callback Hell vs. Promise Chaining](#pyramid-of-doomcallback-hell-vs-promise-chaining)
+    - [Inconsistency in Promises in Chromium Based Browsers](#inconsistency-in-promises-in-chromium-based-browsers)
+    - [Code-snippet for understanding the intricacies of Promises](#code-snippet-for-understanding-the-intricacies-of-promises)
 - [`Date` objects in Javascript](#date-objects-in-javascript)
   - [`new Date()` constructor vs. `Date()` function](#new-date-constructor-vs-date-function)
   - [Displaying dates using `Date.prototype.toString()`](#displaying-dates-using-dateprototypetostring)
@@ -142,8 +148,8 @@
     - [`window.document.getElementById(<name>)`](#windowdocumentgetelementbyidname)
     - [Locating DOM Elements using *complex* CSS Selectors (**Selectors API**)](#locating-dom-elements-using-complex-css-selectors-selectors-api)
       - [`<selectors>` argument of Selector API methods](#selectors-argument-of-selector-api-methods)
-      - [`window.document.querySelector(<selectors>)`](#windowdocumentqueryselectorselectors)
-      - [`window.document.querySelectorAll(<selectors>)`](#windowdocumentqueryselectorallselectors)
+      - [`window.document.querySelector(<selectors>)` OR `Element.prototype.querySelector(<selectors>)`](#windowdocumentqueryselectorselectors-or-elementprototypequeryselectorselectors)
+      - [`window.document.querySelectorAll(<selectors>)` OR `Element.prototype.querySelectorAll(<selectors>)`](#windowdocumentqueryselectorallselectors-or-elementprototypequeryselectorallselectors)
   - [What is an HTMLCollection?](#what-is-an-htmlcollection)
     - [Creating an Array from an HTMLCollection](#creating-an-array-from-an-htmlcollection)
   - [Nodes in DOM](#nodes-in-dom)
@@ -442,6 +448,115 @@ The `Array.from()` static method creates a new, shallow-copied Array instance fr
 This is useful for converting `Array`-like objects (e.g. HTMLCollection) into arrays, in order to use prototype methods of the global `Array` object on them.  
 
 ---
+
+# Statements in Javascript
+
+## `throw` statement 
+
+The `throw` statement throws a user-defined exception. 
+
+Execution of the current function will stop (the statements after throw won't be executed).
+
+Read about it more on [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/throw).
+
+## Understanding the behaviour of `for-of` loop statement
+ 
+The `for of` loop of Javascript allows looping over iterable data structures such as `Arrays`, `Strings`, `Maps`, `NodeLists`, etcetera.
+
+Let us take two examples to understand how the `for of` loop works.
+
+Taking a look at the first example:
+
+```javascript
+
+let cats_list_1 = ['Leopard', 'Serval', 'Jaguar', 'Tiger', 'Caracal', 'Lion'];
+
+let index1 = 0;
+
+for (let cat of cats_list_1) { 
+
+    console.log((index1+1) + ". " + cats_list_1[index1]);
+    
+    if(index1 < cats_list_1.length) {
+        cats_list_1[index1] = 'Mannn';        
+    }
+    index1++;
+
+    console.log(cat); 
+    // See how this is same as the original array
+}
+
+console.log(cats_list_1); 
+// As we can see, all elements of `cats_list_1` have been changed to 'Mann'
+```
+
+Since `cat` is assigned a copy of an element of `cats_list_1`, even if we modify the element at the same index position as assigned to `cat`, the variable `cat` will remain unchanged, unless we modify `cat` itself.
+
+Output:
+```
+1. Leopard
+Leopard
+2. Serval
+Serval
+3. Jaguar
+Jaguar
+4. Tiger
+Tiger
+5. Caracal
+Caracal
+6. Lion
+Lion
+[ 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn' ]
+```
+
+Taking a look at the second example:
+
+```javascript
+
+let cats_list_2 = ['Leopard', 'Serval', 'Jaguar', 'Tiger', 'Caracal', 'Lion'];
+
+let index2 = 0;
+
+for (let cat of cats_list_2) { 
+
+    console.log((index2+1) + ". " + cats_list_2[index2]);
+    
+    // The below IF condition is important to ensure the array is NOT extended.
+    if(index2 < cats_list_2.length - 1) {
+        cats_list_2[index2 + 1] = 'Mannn';   
+        console.log(cats_list_2);
+  
+    }
+    index2++;
+
+    console.log(cat); 
+    // Notice how we can see 'Mann' the second element onwards.
+}
+```
+
+Here, we assign the value `Mann` to the second element onwards in the iteration before the value of `cat` is set using that index of the array, which is why see `Mann` as the output from the second iteration of the `for of` loop.
+
+Output:
+```
+1. Leopard
+[ 'Leopard', 'Mannn', 'Jaguar', 'Tiger', 'Caracal', 'Lion' ]
+Leopard
+2. Mannn
+[ 'Leopard', 'Mannn', 'Mannn', 'Tiger', 'Caracal', 'Lion' ]
+Mannn
+3. Mannn
+[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Caracal', 'Lion' ]
+Mannn
+4. Mannn
+[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Lion' ]
+Mannn
+5. Mannn
+[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn' ]
+Mannn
+6. Mannn
+Mannn
+```
+
 
 # Web APIs in Javascript
 
@@ -1482,105 +1597,6 @@ The only thing that the execution stack cares about is, when function `nested` i
 
 ---
 
-## Understanding the behaviour of for-of loop
- 
-The `for of` loop of Javascript allows looping over iterable data structures such as `Arrays`, `Strings`, `Maps`, `NodeLists`, etcetera.
-
-Let us take two examples to understand how the `for of` loop works.
-
-Taking a look at the first example:
-
-```javascript
-
-let cats_list_1 = ['Leopard', 'Serval', 'Jaguar', 'Tiger', 'Caracal', 'Lion'];
-
-let index1 = 0;
-
-for (let cat of cats_list_1) { 
-
-    console.log((index1+1) + ". " + cats_list_1[index1]);
-    
-    if(index1 < cats_list_1.length) {
-        cats_list_1[index1] = 'Mannn';        
-    }
-    index1++;
-
-    console.log(cat); 
-    // See how this is same as the original array
-}
-
-console.log(cats_list_1); 
-// As we can see, all elements of `cats_list_1` have been changed to 'Mann'
-```
-
-Since `cat` is assigned a copy of an element of `cats_list_1`, even if we modify the element at the same index position as assigned to `cat`, the variable `cat` will remain unchanged, unless we modify `cat` itself.
-
-Output:
-```
-1. Leopard
-Leopard
-2. Serval
-Serval
-3. Jaguar
-Jaguar
-4. Tiger
-Tiger
-5. Caracal
-Caracal
-6. Lion
-Lion
-[ 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn' ]
-```
-
-Taking a look at the second example:
-
-```javascript
-
-let cats_list_2 = ['Leopard', 'Serval', 'Jaguar', 'Tiger', 'Caracal', 'Lion'];
-
-let index2 = 0;
-
-for (let cat of cats_list_2) { 
-
-    console.log((index2+1) + ". " + cats_list_2[index2]);
-    
-    // The below IF condition is important to ensure the array is NOT extended.
-    if(index2 < cats_list_2.length - 1) {
-        cats_list_2[index2 + 1] = 'Mannn';   
-        console.log(cats_list_2);
-  
-    }
-    index2++;
-
-    console.log(cat); 
-    // Notice how we can see 'Mann' the second element onwards.
-}
-```
-
-Here, we assign the value `Mann` to the second element onwards in the iteration before the value of `cat` is set using that index of the array, which is why see `Mann` as the output from the second iteration of the `for of` loop.
-
-Output:
-```
-1. Leopard
-[ 'Leopard', 'Mannn', 'Jaguar', 'Tiger', 'Caracal', 'Lion' ]
-Leopard
-2. Mannn
-[ 'Leopard', 'Mannn', 'Mannn', 'Tiger', 'Caracal', 'Lion' ]
-Mannn
-3. Mannn
-[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Caracal', 'Lion' ]
-Mannn
-4. Mannn
-[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Lion' ]
-Mannn
-5. Mannn
-[ 'Leopard', 'Mannn', 'Mannn', 'Mannn', 'Mannn', 'Mannn' ]
-Mannn
-6. Mannn
-Mannn
-```
-
----
 
 ## Javascript Engines
 
@@ -1945,7 +1961,7 @@ setTimeout(callBackReturn(5, 10), 1000);
 setTimeout(callBackReturn(10, 20), 2000);
 ```
 
-### Callback Hell
+### Callback Hell (Pyramid of Doom)
 
 Callback Hell is essentially nested callbacks stacked below one another forming a pyramid structure. Every callback depends/waits for the previous callback, thereby making a pyramid structure that affects the readability and maintainability of the code.
 
@@ -1969,7 +1985,7 @@ In the Inversion of Control principle, the framework controls the app's flow and
 
 > Suppose a developer defines a function, and passes it to an API, to call-back when a certain task is done. 
 >
-> So here, the developer passes the control of calling the defined function to the API, instead of manually calling the function
+> So here, the developer passes the control of calling the defined function to the API, instead of manually calling the function.
 >
 > This is an example of [Dependency Injection](#dependency-injection).
 
@@ -2006,7 +2022,7 @@ The general algorithm of the engine:
 
 Explaining this algorithm....
 
-At some point during the event loop, the runtime starts handling the messages in the [callback queue](#callback-queue), starting with the oldest one. 
+At some point during the event loop, the runtime starts handling the messages in the [callback queue](#callback-queue), starting witspreadh the oldest one. 
 
 To do so, the message is removed from the queue and its corresponding callback function is called with the message as an input parameter. 
 
@@ -2117,11 +2133,27 @@ console.log("World");
 
   The `callbackFn` will be de-registered from the Web API environment, only when we use the `removeEventListener` method of the `DOM` API, to remove the event listener waiting for the `click` event to happen.
 
+---
+
 ## Promises
 
-![](images/promises-1.png)
+A `Promise` is an object representing the eventual completion or failure of an asynchronous operation.
 
-Creating a new `Promise` object.
+The structure of a `Promise` object is like this:
+
+1. `pending` state (initial state, neither fulfilled nor rejected.)
+   ![](images/promises-1.png)
+2. `fulfilled` state (meaning that the operation was completed successfully.)
+   ![](images/promises-2.png)
+3. `rejected` state (meaning that the operation failed.)
+   ![](images/promises-3.png)
+
+Constructor for creating a new `Promise` object:
+```javascript
+new Promise(function executorFunction(resolve, reject) {
+  // Executor code
+})
+```
 
 Javascript has pre-defined
 - The executor is called automatically and immediately (by new Promise).
@@ -2134,11 +2166,190 @@ Javascript has pre-defined
   >
   > So we don’t need to create them. We should only call one of them when ready.
 
+  ![](images/promises-4.png)
+
+---
+
+### Passing Callbacks into functions vs. Promises
+
+They help bring control of performing callbacks to the developer, instead of external APIs.
+
+Let us take an example to understand this. If we are implementing the logic of an e-commerce website, using regular callbacks:
+
 ```javascript
-new Promise(function executorFunction(resolve, reject) {
-  // Executor code
+const cart = ["shoes", "pants", "watch"];
+
+createOrder(cart, function(orderId) {
+  proceedToPayment(orderId);
+})
+
+function proceedToPayment(orderId) {
+  // Logic of proceed to payment.
+}
+```
+
+In this code, we are passing the responsibility of calling the `proceedToPayment` function to the `createOrder` API, whose logic is not known to us.
+
+It is possible that the `createOrder` API has faulty logic and doesn't call our `proceedToPayment` function or it performs multiple calls.
+
+Let us try to improve this code using promises.
+
+```javascript
+const cart = ["shoes", "pants", "watch"];
+
+const promise = createOrder(cart);
+
+promise.then(function (orderId) {
+  return proceedToPayment(orderId); 
 })
 ```
+
+> ***NOTE:*** Read the reason for writing the `return` keyword over here below, under [Promise Chaining](#pyramid-of-doomcallback-hell-vs-promise-**chaining**).
+
+Now, the `createOrder` API is made to return a `Promise` object, which initially has an `undefined` value.
+
+Using the `Promise.prototype.then` method, we have attached the `proceedToPayment` callback function to the promise object. 
+
+> ***NOTE:*** This is somewhat similar to attaching an event listener to an event.
+> 
+> In this case, the event is the ***fulfillment*** of the promise.
+> 
+> Similarly, the `Promise.prototype.catch` method is used to listen for the ***rejection*** of a promise, and subsequently invoking an attached callback function.
+
+Now, the only job of the `createOrder` API is to generate order details and fill the promise object, which is done asynchronously.
+
+Now, upon fulfillment of the promise the callback `proceedToPayment` is invoked with the value of the promise as its argumnet.
+
+So, the control of when the callback function is invoke stays with us.
+
+---
+
+### Pyramid of Doom/Callback Hell vs. Promise Chaining
+
+As seen above, in the case of [Callback Hell](#callback-hell-pyramid-of-doom), our code starts to grow horizontally instead of vertically because of the increased number of callbacks.
+
+Continuing with our e-commerce website example and considering all the functions to be APIs:
+
+```javascript
+const cart = ["shoes", "pants", "watch"];
+
+createOrder(cart, function(orderId) {
+  proceedToPayment(orderId, function(paymentInfo) {
+    showOrderSummary(paymentInfo, function(amountDeducted) {
+      updateWalletBalance(amountDeducted);
+    })
+  })
+})
+```
+
+We can see that this code is already unmanageable and would be hard to maintain.
+
+If we were assume all these APIs to return Promises (Objects representing the eventual completion or failure of an asynchronous operation), we can chain `Promise.prototype.then` methods and pass each inner API that is dependent on the outer action, as a callback to be executed once the promise it is dependent on is in `fulfilled` state.
+
+```javascript
+const cart = ["shoes", "pants", "watch"];
+
+createOrder(cart)
+.then(function (orderId) {
+  return proceedToPayment(orderId);
+})
+.then(function (paymentInfo) {
+  return showOrderSummary(paymentInfo);
+})
+.then(function (amountDeducted) {
+  return updateWalletBalance(amountDeducted);
+});
+```
+
+> ***NOTE:*** The **Promises** that are returned by the API calls have to be returned from inside the callback function as well (which is the reason for the presence of the `return` keywords).
+> 
+> This is in order for the data to be passed down the chain of callbacks.
+
+---
+
+### Inconsistency in Promises in Chromium Based Browsers
+
+Suppose we execute the following script in our chromium based browser's console.
+```javascript
+const GITHUB_API = "https://api.github.com/users/rohan-verma19";
+
+const user = fetch(GITHUB_API);
+
+console.log(user);
+```
+
+We get a somewhat weird result(only reproducible in Chrome):
+![](images/promises-5.png)
+
+The `console.log` shows that the promise is ***`<pending>`***, but the state inside the promise shows **"fulfilled"** state.
+
+This is because this script was synchronously executed almost instantaneously, and at that time the promise wasn't yet fulfilled. 
+
+But, the values inside the promise object represent the current state of the promise i.e., even if the promise wasn't fulfilled at the time of logging the promise object, we are displayed the updated values of the promise object.
+
+> NOTE: This is only in the case when we try to view the members of the Promise object, ONLY after the promise is resolved. 
+> 
+> If we somehow view the members of the Promise object before the promise is resolved (by using a [`setTimeout`](#settimeout-web-api-event) API call to delay the resolution of the promise, OR using a debugger), there would be no inconsistency.
+>
+> This can be verified using the code-snippet [below](#code-snippet-for-understanding-the-intricacies-of-promises).
+
+---
+
+### Code-snippet for understanding the intricacies of Promises
+
+```javascript
+const cart = ["shoes", "watch", "ring"];
+
+const promise = createOrder(cart);
+
+console.log(promise);
+//! Observe what happens if you try to see the members of the Promise object logged here BEFORE and AFTER the promise is rejected.
+
+promise.then(function (orderId) {
+    proceedToPayment(orderId);
+});
+
+function createOrder(cart) {
+    const prom = new Promise(function (resolve, reject) {
+        
+        // If card is not valid, promise is REJECTED.
+        if(!validateCart(cart)) { 
+            const err = new Error("Cart is not valid!");
+            reject(err);
+        }
+
+        // logic for createOrder
+
+        const orderId = getOrderIdFromDB(cart);
+
+        if(orderId) {
+            setTimeout(function () {
+                resolve(orderId);
+                console.log(prom); 
+                // Promise object logged after the promise is resolved, just above.
+            }, 5000);
+        }
+    })
+
+    return prom;
+}
+
+function validateCart(cart) {
+    if(cart.length) {
+        return true;
+    }
+}
+
+function getOrderIdFromDB(cart) {
+    return "12345";
+}
+
+function proceedToPayment(orderId) {
+    console.log("Payment of order number " + orderId + " initiated...");
+}
+```
+
+---
 
 # `Date` objects in Javascript
 
@@ -2256,6 +2467,8 @@ The methods of **Selectors API** accept any CSS selector, so you are no longer l
 > 
 > Since, these are NOT represented in the DOM tree, these can't be accessed by methods of **Selectors API**.
 
+The methods of the Selector API are also prototype methods of the [`Element`](#element-interface) interface, which means that we can use these methods with the return values of [`getElementById()`](#windowdocumentgetelementbyidname), etcetera.
+
 #### `<selectors>` argument of Selector API methods
 
 Selectors to determine what element or elements should be returned. 
@@ -2269,12 +2482,11 @@ Only elements can be selected, pseudo-classes are not supported.
 
 > **NOTE:** If the specified selectors include a CSS pseudo-element, the returned list/element is always EMPTY.
 
-#### `window.document.querySelector(<selectors>)`
+#### `window.document.querySelector(<selectors>)` OR `Element.prototype.querySelector(<selectors>)`
 
 - Return value: An [Element](#element-interface) object representing the first element in the document that matches the specified set of CSS selectors, or null is returned if there are no matches.
 
-
-#### `window.document.querySelectorAll(<selectors>)`
+#### `window.document.querySelectorAll(<selectors>)` OR `Element.prototype.querySelectorAll(<selectors>)`
 
 - Return value : A non-live [NodeList](#nodes-in-dom) containing one [Element](#element-interface) object for each descendant node that matches at least one of the specified selectors.
 

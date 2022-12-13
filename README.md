@@ -69,7 +69,7 @@
   - [`MutationObserver` Interface](#mutationobserver-interface)
 - [Prototypes](#prototypes)
 - [Variable and Constant values](#variable-and-constant-values)
-  - [`let` & `var` keywords for variables](#let--var-keywords-for-variables)
+  - [`let` \& `var` keywords for variables](#let--var-keywords-for-variables)
     - [Example for understanding the difference between `let` and `var`](#example-for-understanding-the-difference-between-let-and-var)
   - [`const` keyword for CONSTANT variables](#const-keyword-for-constant-variables)
   - [Temporal Dead Zone](#temporal-dead-zone)
@@ -103,13 +103,13 @@
       - [**Second Example** (Helpful for understanding how stack tracing works)](#second-example-helpful-for-understanding-how-stack-tracing-works)
   - [Javascript Engines](#javascript-engines)
   - [Execution Contexts in Javascript](#execution-contexts-in-javascript)
-    - [Lexical Environment & Scope Chain](#lexical-environment--scope-chain)
+    - [Lexical Environment \& Scope Chain](#lexical-environment--scope-chain)
     - [Phases of Execution Contexts](#phases-of-execution-contexts)
       - [Creation Phase](#creation-phase)
       - [Execution Phase](#execution-phase)
     - [Types of Execution Contexts](#types-of-execution-contexts)
       - [**Working of Execution Stack in Javascript**](#working-of-execution-stack-in-javascript)
-        - [<center>**Stack Tracing using `console.trace()` method**</center>](#centerstack-tracing-using-consoletrace-methodcenter)
+        - [**Stack Tracing using `console.trace()` method**](#stack-tracing-using-consoletrace-method)
       - [Global Execution Context](#global-execution-context)
       - [Function Execution Context](#function-execution-context)
         - [**In Browsers, (Global Execution Context) is a (Function Execution Context)**](#in-browsers-global-execution-context-is-a-function-execution-context)
@@ -134,6 +134,7 @@
     - [What happens if we don't return promises from callbacks in Promise Chains](#what-happens-if-we-dont-return-promises-from-callbacks-in-promise-chains)
     - [Inconsistency in Promises in Chromium Based Browsers](#inconsistency-in-promises-in-chromium-based-browsers)
     - [Code-snippet for understanding the intricacies of Promises](#code-snippet-for-understanding-the-intricacies-of-promises)
+    - [Sequence of `.then` and `.catch` blocks, and return values of `.catch` blocks (TODO: Do in detail)](#sequence-of-then-and-catch-blocks-and-return-values-of-catch-blocks-todo-do-in-detail)
 - [`Date` objects in Javascript](#date-objects-in-javascript)
   - [`new Date()` constructor vs. `Date()` function](#new-date-constructor-vs-date-function)
   - [Displaying dates using `Date.prototype.toString()`](#displaying-dates-using-dateprototypetostring)
@@ -165,7 +166,7 @@
     - [`Node.childElementCount` property](#nodechildelementcount-property)
     - [Changing the text of a node](#changing-the-text-of-a-node)
       - [`Node.innerText` vs. `Node.textContent`](#nodeinnertext-vs-nodetextcontent)
-  - [Removing & Replacing Nodes](#removing--replacing-nodes)
+  - [Removing \& Replacing Nodes](#removing--replacing-nodes)
     - [`Element.replaceWith()`](#elementreplacewith)
     - [`Node.replaceChild()`](#nodereplacechild)
     - [`Node.removeChild()`](#noderemovechild)
@@ -176,7 +177,7 @@
     - [`Attr` interface](#attr-interface)
     - [`Text` interface](#text-interface)
     - [`Comment` interface](#comment-interface)
-  - [Creating, Removing & Replacing Elements](#creating-removing--replacing-elements)
+  - [Creating, Removing \& Replacing Elements](#creating-removing--replacing-elements)
     - [`document.createElement()`](#documentcreateelement)
     - [`document.createTextNode()`](#documentcreatetextnode)
     - [`document.appendChild()`](#documentappendchild)
@@ -196,7 +197,7 @@
 - [ES6 (ECMAScript 6) Features](#es6-ecmascript-6-features)
   - [Arrow Functions](#arrow-functions)
   - [Rest Parameters](#rest-parameters)
-  - [`let`, `const` keywords & **Temporal Dead Zones**](#let-const-keywords--temporal-dead-zones)
+  - [`let`, `const` keywords \& **Temporal Dead Zones**](#let-const-keywords--temporal-dead-zones)
 - [Unexpected Behaviors in Javascript](#unexpected-behaviors-in-javascript)
   - [Increasing the length of an `Array`](#increasing-the-length-of-an-array)
 - [TODO](#todo)
@@ -1625,7 +1626,7 @@ Whenever any code is run in JavaScript, it’s run inside an **Execution Context
 
 Every execution context has a **reference** to its outer environment, and that outer environment is called Lexical Environment.
 
-> ***NOTE:*** The Lexical Environment of a function is the combination of the function's Execution Context and the **reference** to the Lexical Environment of its PARENT.
+> ***Note***: The Lexical Environment of a function is the combination of the function's Execution Context and the **reference** to the Lexical Environment of its PARENT.
 > 
 > Also, by PARENT, we mean the Lexical PARENT i.e., the location where the function declaration sits, NOT where the function was CALLED from.
 
@@ -1862,7 +1863,7 @@ It performs two things:
 
 There can only be one **global execution context** in a program. 
 
-> ***NOTE:*** The global execution context has a reference to the [Lexical Environment](#lexical-environment) outside it, pointing to **NULL**.
+> ***Note***: The global execution context has a reference to the [Lexical Environment](#lexical-environment) outside it, pointing to **NULL**.
 
 In the case of execution of asynchronous functions, the callback queue waits for all contexts (except for the context in which the asynchronous call was made) to be popped from the [Execution Stack](#working-of-execution-stack-in-javascript), before executing the asynchronous function calls present in the callback queue.
 
@@ -2205,13 +2206,13 @@ promise.then(function (orderId) {
 })
 ```
 
-> ***NOTE:*** Read the reason for writing the `return` keyword over here below, under [Promise Chaining](#pyramid-of-doomcallback-hell-vs-promise-**chaining**).
+> ***Note***: Read the reason for writing the `return` keyword over here below, under [Promise Chaining](#pyramid-of-doomcallback-hell-vs-promise-**chaining**).
 
 Now, the `createOrder` API is made to return a `Promise` object, which initially has an `undefined` value.
 
 Using the `Promise.prototype.then` method, we have attached the `proceedToPayment` callback function to the promise object. 
 
-> ***NOTE:*** This is somewhat similar to attaching an event listener to an event.
+> ***Note***: This is somewhat similar to attaching an event listener to an event.
 > 
 > In this case, the event is the ***fulfillment*** of the promise.
 > 
@@ -2251,20 +2252,26 @@ If we were assume all these APIs to return Promises (Objects representing the ev
 const cart = ["shoes", "pants", "watch"];
 
 createOrder(cart)
-  .then(function (orderId) {
+  // The parameter in the callback function in the `.then` block BELOW is the resolve argument of the promise returned by the call to `createOrder`.
+  .then(function (orderId) { 
     return proceedToPayment(orderId);
   })
+  // The parameter in the callback function in the `.then` block BELOW is the resolve argument of the promise returned by the call to `proceedToPayment`.
   .then(function (paymentInfo) {
     return showOrderSummary(paymentInfo);
   })
+  // The parameter in the callback function in the `.then` block BELOW is the resolve argument of the promise returned by the call to `showOrderSummary`.
   .then(function (amountDeducted) {
     return updateWalletBalance(amountDeducted);
   });
 ```
 
-> ***NOTE:*** The **Promises** that are returned by the API calls are returned from inside the callback function as well over here(which is the reason for the presence of the `return` keywords).
-> 
-> The outcome of not doing this is explained [below](#what-happens-if-we-dont-return-promises-from-callbacks-in-promise-chains).
+> ***Note***: 
+> 1. Take a close look at the parameters of the callback functions in the `.then` blocks above, along with the corresponding explanations.
+> 2. The **Promises** that are returned by the API calls are returned from inside the callback function as well over here (which is the reason for the presence of the `return` keywords).
+>   
+>     The outcome of not doing this is explained [below](#what-happens-if-we-dont-return-promises-from-callbacks-in-promise-chains).
+ 
 
 ### What happens if we don't return promises from callbacks in Promise Chains 
 
@@ -2289,9 +2296,9 @@ All the `.then`/`.catch` blocks would have executed upon fulfillment/rejection o
 
 This is because the `then`/`catch` methods return a `Promise` object always. If the callback function within them doesn't return a new `Promise` object, then the promise returned by these methods takes on the state (fulfilled/rejected) of the original `Promise` object they were called upon.
 
-> ***NOTE:*** Read about return values of `then` and `catch` methods in detail on [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then), to truly understand this concept.
+> ***Note***: Read about return values of `then` and `catch` methods in detail on [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then), to truly understand this concept.
 
-So, in the above example, the words "hello" and "world" would be displayed at once, upon fulfillment of the promise `promise0`, because the first `then` method's callback function doesn't return a new `Promise` object, so it's returned `Promise` object takes on the state of `promise0` (fulfilled) instantly, leading to simultaneous displaying of both the word.
+So, in the above example, the words "hello" and "world" would be displayed at once, upon fulfillment of the promise `promise0`, because the first `then` method's callback function doesn't return a new `Promise` object, so it's returned `Promise` object takes on the state of `promise0` (fulfilled) instantly, leading to simultaneous displaying of both the words.
 
 Let us take another example:
 
@@ -2412,6 +2419,14 @@ function proceedToPayment(orderId) {
     console.log("Payment of order number " + orderId + " **initiated**...");
 }
 ```
+
+---
+
+### Sequence of `.then` and `.catch` blocks, and return values of `.catch` blocks (TODO: Do in detail)
+ 
+Depending upon the application, it could be ideal to have a `.then` and `.catch` block alternating, to check the promise generated by each API call.
+
+Watch [this](https://www.youtube.com/watch?v=U74BJcr8NeQ&t=26m00s) video from `26:00`, to understand this type of error handling in detail. 
 
 ---
 

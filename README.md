@@ -1,3 +1,4 @@
+- [Are Java and Javascript in any way related?](#are-java-and-javascript-in-any-way-related)
 - [Important Information relating to Web Development](#important-information-relating-to-web-development)
   - [What is a Session?](#what-is-a-session)
   - [User Agent](#user-agent)
@@ -196,12 +197,25 @@
     - [Handling Mouse Events using `addEventListener()` and `MouseEvent` objectss properties](#handling-mouse-events-using-addeventlistener-and-mouseevent-objectss-properties)
 - [ES6 (ECMAScript 6) Features](#es6-ecmascript-6-features)
   - [Arrow Functions](#arrow-functions)
+    - [1. Single-lined function without any parameters](#1-single-lined-function-without-any-parameters)
+    - [2. Single-lined functions with exactly one parameters](#2-single-lined-functions-with-exactly-one-parameters)
+    - [3. Multi-line functions with more than a single parameter](#3-multi-line-functions-with-more-than-a-single-parameter)
+    - [`this` value in Regular functions](#this-value-in-regular-functions)
+    - [How `this` is different in Arrow functions](#how-this-is-different-in-arrow-functions)
+    - [Another way to different between Arrow Functions and Regular Functions](#another-way-to-different-between-arrow-functions-and-regular-functions)
   - [Rest Parameters](#rest-parameters)
   - [`let`, `const` keywords \& **Temporal Dead Zones**](#let-const-keywords--temporal-dead-zones)
 - [Unexpected Behaviors in Javascript](#unexpected-behaviors-in-javascript)
   - [Increasing the length of an `Array`](#increasing-the-length-of-an-array)
 - [TODO](#todo)
   - [Interfaces in TypeScript (mentioned in MDN)](#interfaces-in-typescript-mentioned-in-mdn)
+
+# Are Java and Javascript in any way related?
+
+The Netscape Navigator browser introduced a scripting language called *LiveScript*, whose name was changed to JavaScript in a subsequent version of the browser.
+
+- They advertised it as a built-in scripting language of the browser, that was developed based on the JAVA language; and it had the intended purpose of *extending and enhancing the capability of HTML documents*. 
+- At the time it came into being, JavaScript supported most of JAVA's expression syntax and basic control flow constructs, but without JAVA's strong type checking and static typing.
 
 # Important Information relating to Web Development
 
@@ -3039,6 +3053,148 @@ Note that simply removing the prefix on from the HTML event attribute values, gi
 
 ## Arrow Functions
 
+Arrow functions allow us to write functions in a short and concise manner. What is written in 3 lines of code in regular functions can possibly written in just 1 in arrow functions.
+
+The `=>` is used to define the function, and it is followed by the function's body.
+
+### 1. Single-lined function without any parameters
+
+In this case, we can omit the `return` keyword and curly braces; in arrow functions.
+
+```js
+// Regular functions
+const something = function() {
+  return 2;
+}
+
+// Arrow functions
+const something = () => 2;
+```
+
+### 2. Single-lined functions with exactly one parameters
+
+In this case, we can omit the `return` keyword, curly braces as well as parentheses; in arrow functions.
+
+```js
+// Regular functions 
+const something = function(parameterOne) {
+  return parameterOne;
+}
+
+// Arrow functions
+const something = parameterOne => parameterOne;
+```
+
+### 3. Multi-line functions with more than a single parameter
+
+In this case, arrow functions look quite similar to regular functions. 
+
+We aren't able to omit the curly braces, the parentheses and the return keyword.
+
+```js
+// Regular functions
+const something = function(first, second) {
+  const newvar = first + second;
+  return newvar;
+}
+
+// Arrow function
+const something = (first, second) => {
+  const newvar = first + second;
+  return newvar;
+}
+```
+
+### `this` value in Regular functions
+
+When a regular function (also known as a ["function declaration"](#a-function-declaration) or "function statement") is passed as a callback, its `this` value is determined by how the function is called, not how it is defined.
+
+In most cases, when a function is invoked as a callback, its this value will be set to the global object (`window` in the browser), which is usually not what you want.
+
+Here's an example:
+
+```js
+const obj = {
+  name: "John Doe",
+  printName: function () {
+    console.log(this.name);
+  },
+  printNameWithTimeout: function() {
+    setTimeout(function () {
+      console.log(this.name);
+    }, 1000);
+  }
+};
+
+obj.printName(); // "John Doe"
+obj.printNameWithTimeout(); // undefined
+```
+
+In the above example, `obj.printName()` logs the expected value `"John Doe"` because the function is called on the `obj` object and `this` inside the function refers to obj. 
+
+However, when `obj.printNameWithTimeout()` is invoked, the anonymous function passed to `setTimeout` as a callback, is invoked as a standalone function and thus this inside the anonymous function refers to the global object and name property is not defined on the global object thus resulting in undefined.
+
+### How `this` is different in Arrow functions
+
+To fix this, you can use `bind()`, `call()` or `apply()` method to change the value of this inside the function 
+
+OR 
+
+You can use arrow function which don't bind their own `this` value; they lexically bind the `this` value from the parent scope.
+
+This means that the value of `this` inside an arrow function is the same as the value of `this` outside the function. This is useful when passing a method as a callback, which would otherwise lose the value of `this`.
+
+```js
+const obj = {
+  name: "John Doe",
+  printNameWithTimeout: function() {
+    setTimeout(() => {
+      console.log(this.name);
+    }, 1000);
+  }
+};
+
+obj.printNameWithTimeout(); // "John Doe"
+```
+> ***Note***: Using `bind()` method can have performance impact, using arrow functions or using `call()` or `apply()` methods are more efficient ways of handling the `this` value when passing regular functions as callbacks.
+
+### Another way to different between Arrow Functions and Regular Functions
+
+- With a regular function `this` represents the object that calls the function:
+
+  ```js
+  // Regular Function:
+  hello = function() {
+    document.getElementById("demo").innerHTML += this;
+  }
+
+  // The window object calls the function:
+  window.addEventListener("load", hello);
+
+  // A button object calls the function:
+  document.getElementById("btn").addEventListener("click", hello);
+
+  // At first the output is going to be [object Window]. But when we click the button again, we will get [object HTMLButtonElement] instead
+  ```
+
+- With arrow functions, the value of `this` is inherited from the parent scope. 
+
+  ```js
+  // Regular Function:
+  hello = () => document.getElementById("demo").innerHTML += this;
+
+  // The window object calls the function:
+  window.addEventListener("load", hello);
+
+  // A button object calls the function:
+  document.getElementById("btn").addEventListener("click", hello);
+
+  // The output is always going to be [object Window].
+  ```
+
+  > ***Note***: The output is so because; in JavaScript running in a web browser, the value of `this` in the global scope (i.e., outside of any function) is the `window` object. This means that if you're in the global scope and you type `this`, you will get a reference to the `window` object, which represents the current web page and provides access to the browser's built-in objects and functions.
+  >
+  > It's worth noting that in Node.js (JavaScript running on the server), this in the global scope is not the global object (global) but undefined.
 
 
 ## Rest Parameters

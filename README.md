@@ -135,6 +135,7 @@
     - [What happens if we don't return promises from callbacks in Promise Chains](#what-happens-if-we-dont-return-promises-from-callbacks-in-promise-chains)
     - [Inconsistency in Promises in Chromium Based Browsers](#inconsistency-in-promises-in-chromium-based-browsers)
     - [Code-snippet for understanding the intricacies of Promises](#code-snippet-for-understanding-the-intricacies-of-promises)
+    - [Another example for understanding `.then()` blocks](#another-example-for-understanding-then-blocks)
     - [Sequence of `.then` and `.catch` blocks, and return values of `.catch` blocks (TODO: Do in detail)](#sequence-of-then-and-catch-blocks-and-return-values-of-catch-blocks-todo-do-in-detail)
 - [`Date` objects in Javascript](#date-objects-in-javascript)
   - [`new Date()` constructor vs. `Date()` function](#new-date-constructor-vs-date-function)
@@ -2234,7 +2235,7 @@ Using the `Promise.prototype.then` method, we have attached the `proceedToPaymen
 
 Now, the only job of the `createOrder` API is to generate order details and fill the promise object, which is done asynchronously.
 
-Now, upon fulfillment of the promise the callback `proceedToPayment` is invoked with the value of the promise as its argumnet.
+Now, upon fulfillment of the promise the callback `proceedToPayment` is invoked with the value of the promise as its argument.
 
 So, the control of when the callback function is invoke stays with us.
 
@@ -2308,7 +2309,9 @@ promise0
 
 All the `.then`/`.catch` blocks would have executed upon fulfillment/rejection of the first promise, instead of waiting for every subsequent promise, being generated in the callback functions to be evaluated. 
 
-This is because the `then`/`catch` methods return a `Promise` object always. If the callback function within them doesn't return a new `Promise` object, then the promise returned by these methods takes on the state (fulfilled/rejected) of the original `Promise` object they were called upon.
+This is because the `then`/`catch` methods return a `Promise` object always, upon their creationg. 
+
+If the callback function within them doesn't return a new `Promise` object, then the promise returned by these methods takes on the state (fulfilled/rejected) of the original `Promise` object they were called upon.
 
 > ***Note***: Read about return values of `then` and `catch` methods in detail on [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then), to truly understand this concept.
 
@@ -2433,6 +2436,37 @@ function proceedToPayment(orderId) {
     console.log("Payment of order number " + orderId + " **initiated**...");
 }
 ```
+
+---
+
+### Another example for understanding `.then()` blocks
+
+Code-snippet:
+```js
+const promise = new Promise(function (resolve, reject) {
+    setTimeout(function () {
+        resolve(1);
+    }, 2000);
+})
+
+promise
+.then(originalData => console.log(originalData))
+.then(data => console.log(data)); 
+```
+
+Output:
+```
+1
+undefined
+```
+
+We know that `then()` blocks return a new Promise object immediately. 
+
+The first `then()` block is waiting for the first Promise to resolve; which resolves after 2 seconds, with the value 1.
+
+Since the first `then()` block only logs the data of the first promise and doesn't return anything; According to MDN [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then), if the `then` handler doesn't return anything, the promise returned by it upon its creation gets fulfilled with `undefined`.
+
+This is why the second `then()` block logs `undefined`.
 
 ---
 

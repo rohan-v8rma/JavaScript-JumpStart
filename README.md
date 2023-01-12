@@ -137,7 +137,9 @@
     - [Code-snippet for understanding the intricacies of Promises](#code-snippet-for-understanding-the-intricacies-of-promises)
     - [Another example for understanding `.then()` blocks](#another-example-for-understanding-then-blocks)
     - [Sequence of `.then` and `.catch` blocks, and return values of `.catch` blocks (TODO: Do in detail)](#sequence-of-then-and-catch-blocks-and-return-values-of-catch-blocks-todo-do-in-detail)
-- [`Date` objects in Javascript](#date-objects-in-javascript)
+- [Use of Promises](#use-of-promises)
+  - [`fetch()` method of JavaScript](#fetch-method-of-javascript)
+- [`Date` objects in JavaScript](#date-objects-in-javascript)
   - [`new Date()` constructor vs. `Date()` function](#new-date-constructor-vs-date-function)
   - [Displaying dates using `Date.prototype.toString()`](#displaying-dates-using-dateprototypetostring)
   - [Methods of `Date` objects](#methods-of-date-objects)
@@ -2478,7 +2480,64 @@ Watch [this](https://www.youtube.com/watch?v=U74BJcr8NeQ&t=26m00s) video from `2
 
 ---
 
-# `Date` objects in Javascript
+# Use of Promises
+
+## `fetch()` method of JavaScript
+
+The `fetch()` function in JavaScript is used to make network requests to a specified resource, such as an API endpoint or a web page. It returns a promise that resolves to a `Response` object, which contains the response to the request.
+
+Here is an example of how `fetch()` might be used to make a `GET` request to an API endpoint:
+
+```js
+fetch('https://api.example.com/data')
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+```
+
+In this example; 
+- `fetch('https://api.example.com/data')` makes a `GET` request to the specified URL and returns a promise that resolves to a `Response` object. 
+- The `.then(response => response.json())` method call extracts the JSON data from the `Response` object, 
+- `.then(data => { console.log(data); })` logs the data to the console. 
+- The `.catch(error => { console.error('Error:', error); })` method call is used to catch any errors that occur during the request.
+
+`fetch()` also allows you to pass an options object with various settings, such as:
+- the method (e.g. GET, POST, etc)
+- headers, 
+- and body
+
+This example shows a post request with headers and body added.
+
+```js
+fetch('https://api.example.com/data', {
+  method: 'POST', // or 'PUT'
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    key: 'value',
+  }),
+})
+  .then(response => response.json())
+  .then(data => {
+    console.log('Success:', data);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+```
+
+> ***Note***: `fetch()` uses a JavaScript promise, and that it is not supported in some older browsers. 
+> 
+> If you need to support older browsers, you can use a library such as axios or isomorphic-fetch which have the same api and provide backwards compatibility.
+
+---
+
+# `Date` objects in JavaScript
 
 JavaScript `Date` objects represent a single moment in time in a platform-independent format. 
 

@@ -15,6 +15,9 @@
     - [`String.prototype.includes()`](#stringprototypeincludes)
   - [`undefined` data type](#undefined-data-type)
   - [Objects](#objects)
+    - [Classes in JS](#classes-in-js)
+      - [Constructor Function](#constructor-function)
+      - [Prototype object (present as value of `prototype` property of the class)](#prototype-object-present-as-value-of-prototype-property-of-the-class)
     - [Converting an `Object` to `string` type using `toString()`](#converting-an-object-to-string-type-using-tostring)
     - [Displaying an `Object`](#displaying-an-object)
     - [Retrieving a reference to an `Object` from READ-ONLY properties of other objects](#retrieving-a-reference-to-an-object-from-read-only-properties-of-other-objects)
@@ -97,6 +100,8 @@
   - [Template literals and string interpolation in Javascript](#template-literals-and-string-interpolation-in-javascript)
   - [Ending statements with semi-colons](#ending-statements-with-semi-colons)
   - [Hoisting](#hoisting)
+    - [Function and Variable Hoisting](#function-and-variable-hoisting)
+    - [Class Hoisting](#class-hoisting)
   - [Closures](#closures)
     - [Uses of Closures](#uses-of-closures)
     - [Examples for understanding Closures](#examples-for-understanding-closures)
@@ -357,6 +362,47 @@ This creates an empty instance of the global Object class.
 Objects created are stored in Heap memory and they are accessed using **references** pointing to them.
 
 An object persists in heap memory and is not garbage-collected, as long as there is a **reference** pointing to it.
+
+### Classes in JS
+
+In JavaScript, a class is a blueprint for creating objects, and it is based on the prototype-based inheritance model. The `class` syntax is just a convenient way to create and manage prototypes, it's not a new feature in itself.
+
+When you define a class, you are essentially creating a ***constructor function*** and a ***prototype object***:
+
+---
+
+#### Constructor Function 
+
+A constructor function is a special kind of function that is used to create new objects/instances of the class. 
+
+When a constructor function is called with the `new` keyword, it creates a new object, sets the `this` keyword inside the function to refer to the new object, and then executes the code inside the function.
+
+#### Prototype object (present as value of `prototype` property of the class)
+
+This object contains the methods and properties that are shared among all instances of the class. 
+
+> ***Note***: It is the value of the `prototype` property in the class that was just created.
+> 
+> For example, if a class named `A` was created, `A.prototype` can be used to access the Prototype object that instances of the class will inherit from.
+
+Upon using the `new` keyword to create an instance of a class, JavaScript creates a new object and sets its `__proto__` property to the class's prototype object. This allows the new object to inherit the methods and properties defined on the prototype.
+
+For example, if you have a class called `Person` with a method called `speak`, you can create a new instance of Person and call the `speak` method on it:
+
+```js
+class Person {
+  speak() {
+    console.log("Hello");
+  }
+}
+
+const person = new Person();
+person.speak(); // prints "Hello"
+```
+
+In this example, the speak method is defined on the `Person.prototype` object, and it is inherited by the person object through its `__proto__` property.
+
+---
 
 ### Converting an `Object` to `string` type using `toString()`
 
@@ -1252,8 +1298,7 @@ const objectName = {
 
 objectName.funcEx(valueA, valueB);
 ```
-They can also be used in [IIFE](#immediately-invoked-function-expression-iife)s (which function declarations can be too but it is more appt. 
-to use function expressions).
+They can also be used in [IIFE](#immediately-invoked-function-expression-iife)s (which function declarations can be too, but it is more appropriate to use function expressions).
 
 #### Trying to call the function definition of a Named Function Expression
 
@@ -1475,11 +1520,15 @@ Although ending statements (NOT BLOCKS of code like if-else) with semi-colons is
 
 **Hoisting** in JavaScript refers to the process whereby the interpreter **APPEARS** to move the declaration of functions, variables of type `var`, or classes to the top of their scope, prior to execution of the code. 
 
-Note, JavaScript only hoists declarations, not initializations! 
+> ***Note***: JavaScript only hoists declarations, not initializations! 
 
 This means that initialization doesn't happen until the associated line of code is executed, even if the variable was originally initialized then declared, or declared and initialized in the same line.
 
 Until that point in the execution is reached the variable has its default initialization (`undefined` for a variable declared using `var`, otherwise uninitialized).
+
+---
+
+### Function and Variable Hoisting
 
 To summarize...
 
@@ -1489,7 +1538,21 @@ To summarize...
   
   Read about [Temporal Dead Zones](#temporal-dead-zone) for in-depth understanding of these cases.
 
-- TODO: <!-- class hoisting https://developer.mozilla.org/en-US/docs/Glossary/Hoisting#class_hoisting -->
+---
+
+### Class Hoisting
+
+Unlike function declarations, class declarations are not hoisted.
+
+```js
+new MyClass(); // ReferenceError: Cannot access 'MyClass' before initialization
+
+class MyClass {}
+```
+
+This behavior is similar to variables declared with `let` and `const`.
+
+---
 
 However, this seems like quite an abstract concept.
 
@@ -2466,7 +2529,7 @@ We know that `then()` blocks return a new Promise object immediately.
 
 The first `then()` block is waiting for the first Promise to resolve; which resolves after 2 seconds, with the value 1.
 
-Since the first `then()` block only logs the data of the first promise and doesn't return anything; According to MDN [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then), if the `then` handler doesn't return anything, the promise returned by it upon its creation gets fulfilled with `undefined`.
+Since the first `then()` block only logs the data of the first promise and doesn't return anything; According to MDN [here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then), if the `then` success handler doesn't return anything, the promise returned by it upon its creation gets fulfilled with `undefined`.
 
 This is why the second `then()` block logs `undefined`.
 
@@ -3202,7 +3265,7 @@ const something = (first, second) => {
 
 When a regular function (also known as a ["function declaration"](#a-function-declaration) or "function statement") is passed as a callback, its `this` value is determined by how the function is called, not how it is defined.
 
-In most cases, when a function is invoked as a callback, its this value will be set to the global object (`window` in the browser), which is usually not what you want.
+In most cases, when a function is invoked as a callback, its `this` value will be set to the global object (`window` in the browser), which is usually not what you want.
 
 Here's an example:
 
@@ -3225,7 +3288,7 @@ obj.printNameWithTimeout(); // undefined
 
 In the above example, `obj.printName()` logs the expected value `"John Doe"` because the function is called on the `obj` object and `this` inside the function refers to obj. 
 
-However, when `obj.printNameWithTimeout()` is invoked, the anonymous function passed to `setTimeout` as a callback, is invoked as a standalone function and thus this inside the anonymous function refers to the global object and name property is not defined on the global object thus resulting in undefined.
+However, when `obj.printNameWithTimeout()` is invoked, the anonymous function passed to `setTimeout` as a callback, is invoked as a standalone function and thus `this` inside the anonymous function refers to the global object and name property is not defined on the global object, thus resulting in undefined.
 
 ### How `this` is different in Arrow functions
 

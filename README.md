@@ -142,6 +142,8 @@
     - [Code-snippet for understanding the intricacies of Promises](#code-snippet-for-understanding-the-intricacies-of-promises)
     - [Another example for understanding `.then()` blocks](#another-example-for-understanding-then-blocks)
     - [Sequence of `.then` and `.catch` blocks, and return values of `.catch` blocks (TODO: Do in detail)](#sequence-of-then-and-catch-blocks-and-return-values-of-catch-blocks-todo-do-in-detail)
+  - [`async`/`await`](#asyncawait)
+    - [Code-snippet demonstrating the usage of `async`/`await`](#code-snippet-demonstrating-the-usage-of-asyncawait)
 - [Use of Promises](#use-of-promises)
   - [`fetch()` method of JavaScript](#fetch-method-of-javascript)
 - [`Date` objects in JavaScript](#date-objects-in-javascript)
@@ -202,7 +204,7 @@
     - [Handling Keyboard Events using `addEventListener()` and `KeyboardEvent` objects' properties](#handling-keyboard-events-using-addeventlistener-and-keyboardevent-objects-properties)
   - [`MouseEvent` objects](#mouseevent-objects)
     - [Mouse Event Attributes](#mouse-event-attributes)
-    - [Handling Mouse Events using `addEventListener()` and `MouseEvent` objectss properties](#handling-mouse-events-using-addeventlistener-and-mouseevent-objectss-properties)
+    - [Handling Mouse Events using `addEventListener()` and `MouseEvent` object properties](#handling-mouse-events-using-addeventlistener-and-mouseevent-object-properties)
 - [ES6 (ECMAScript 6) Features](#es6-ecmascript-6-features)
   - [Arrow Functions](#arrow-functions)
     - [1. Single-lined function without any parameters](#1-single-lined-function-without-any-parameters)
@@ -215,6 +217,8 @@
   - [`let`, `const` keywords \& **Temporal Dead Zones**](#let-const-keywords--temporal-dead-zones)
 - [Unexpected Behaviors in Javascript](#unexpected-behaviors-in-javascript)
   - [Increasing the length of an `Array`](#increasing-the-length-of-an-array)
+- [TypeScript](#typescript)
+  - [How is TypeScript strongly typed?](#how-is-typescript-strongly-typed)
 - [TODO](#todo)
   - [Interfaces in TypeScript (mentioned in MDN)](#interfaces-in-typescript-mentioned-in-mdn)
 
@@ -2543,6 +2547,62 @@ Watch [this](https://www.youtube.com/watch?v=U74BJcr8NeQ&t=26m00s) video from `2
 
 ---
 
+## `async`/`await`
+
+`async`/`await` is a way to write asynchronous code that is more readable and easier to understand than using [callbacks](#callback-functions) or [Promises](#promises).
+
+- `async` is a keyword that is added before a function to make it asynchronous. This means that the function will return a `Promise`, and; 
+- Any code inside the function that is preceded by the `await` keyword will be executed asynchronously.
+
+For example, this is a simple asynchronous function that uses `async`/`await`:
+```js
+async function example() {
+  const data = await fetch('https://example.com');
+  console.log(data);
+}
+```
+In this example, the [fetch](#fetch-method-of-javascript) function returns a `Promise`, and the `await` keyword is used to wait for the Promise to resolve before logging the data to the console.
+
+> ***Note***: `await` can only be used inside an `async` function, if you use it outside of it you will get a `SyntaxError`.
+>
+> Also, you should be careful when using `await`, if the promise it's waiting for is rejected, it will throw an error and you should handle it using ***try-catch*** blocks.
+
+### Code-snippet demonstrating the usage of `async`/`await`
+
+```js
+function promiseGen() {
+    let number = Math.floor(Math.random() * 1000);
+
+    return new Promise( (resolve, reject) => {
+        if (number % 2) {
+            setTimeout(() => reject(number), 1000);
+        }
+    
+        // If number is even.
+        setTimeout(() => resolve(number), 1000);
+    } );
+}
+
+async function test() {
+    try {
+        while(true) {
+            const num = await promiseGen();
+            console.log(num);
+        }
+    }
+    catch(e) {
+        console.log("Random number generated was odd so promise rejected.");
+        console.log("Catch block executed...");
+    }
+}
+
+test();
+```
+
+This code runs infinitely, until the random number being generated at each iteration turns out to be odd.
+
+---
+
 # Use of Promises
 
 ## `fetch()` method of JavaScript
@@ -3201,7 +3261,7 @@ button.onclick = function(event) {
 
 ---
 
-### Handling Mouse Events using `addEventListener()` and `MouseEvent` objectss properties
+### Handling Mouse Events using `addEventListener()` and `MouseEvent` object properties
 
 Note that simply removing the prefix on from the HTML event attribute values, gives us events which we can use with `addEventListener()` method. For example: `onwheel` -> `wheel`.
 
@@ -3406,6 +3466,27 @@ The output of this snippet would be something like this:
 ```
 
 In order to prevent this, we should ALWAYS set an upper bound of the number of elements.
+
+# TypeScript
+
+## How is TypeScript strongly typed?
+
+TypeScript is strongly typed because it uses a type system to ensure that variables, function parameters, and return values conform to specific types. 
+
+This means that when you declare a variable in TypeScript, you must specify its type, and the TypeScript compiler will check that the value assigned to the variable is of the correct type. 
+
+If the value is not of the correct type, the compiler will generate an error, preventing the code from being compiled.
+
+For example, if you declare a variable of type string, you cannot assign a value of type number to it. If you try to do so, the compiler will generate an error.
+
+```js
+let name: string = "John Doe";
+name = 10; // Error: Type '10' is not assignable to type 'string'.
+```
+
+This helps to catch errors early in the development process, before the code is deployed, and also makes the code more predictable and maintainable, as it is clear what types of values are expected in different parts of the code.
+
+Additionally, TypeScript also allows you to use interfaces, classes, and other types to define more complex data structures and ensure that objects conform to a specific structure. This allows developers to catch errors that might otherwise not be detected until runtime, improving the overall quality and reliability of the code.
 
 # TODO
 

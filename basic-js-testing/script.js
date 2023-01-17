@@ -1,27 +1,8 @@
-function promiseGen() {
-    let number = Math.floor(Math.random() * 1000);
+const [a, b] = [2, 4];
 
-    return new Promise( (resolve, reject) => {
-        if (number % 2) {
-            setTimeout(() => reject(number), 1000);
-        }
-    
-        // If number is even.
-        setTimeout(() => resolve(number), 1000);
-    } );
-}
+a++; // This behaves in the following way: a = a + 1, so it is considered as a reassignment, rather than a change of value in-place
 
-async function test() {
-    try {
-        while(true) {
-            const num = await promiseGen();
-            console.log(num);
-        }
-    }
-    catch(e) {
-        console.log("Random number generated was odd so promise rejected.");
-        console.log("Catch block executed...");
-    }
-}
+console.log(a);
 
-test();
+
+

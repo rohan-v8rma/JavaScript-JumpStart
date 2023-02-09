@@ -1,14 +1,15 @@
-let obj = {
-    a: 22,
-    b: 24
-};
+const buttonElement = document.querySelector(".first-button");
 
-const { c, d } = obj; // c and d are undefined
+function makeInvisible(event) {
+    
+    // Logging the event object
+    console.log(event); 
 
-console.log(c);
-console.log(d);
+    // Logging the event target, i.e., the DOM representation of the button element.
+    console.log(event.target);
 
-const { a, b } = obj; // a and b are 22 and 24, respectively
+    // Making the button invisible
+    event.target.style.visibility = "hidden";
+}
 
-console.log(a);
-console.log(b);
+buttonElement.addEventListener("click", makeInvisible);

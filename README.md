@@ -142,10 +142,11 @@
     - [Code-snippet for understanding the intricacies of Promises](#code-snippet-for-understanding-the-intricacies-of-promises)
     - [Another example for understanding `.then()` blocks](#another-example-for-understanding-then-blocks)
     - [Sequence of `.then` and `.catch` blocks, and return values of `.catch` blocks (TODO: Do in detail)](#sequence-of-then-and-catch-blocks-and-return-values-of-catch-blocks-todo-do-in-detail)
-  - [`async`/`await`](#asyncawait)
-    - [Code-snippet demonstrating the usage of `async`/`await`](#code-snippet-demonstrating-the-usage-of-asyncawait)
+  - [`async/await`](#asyncawait)
+    - [Code-snippet demonstrating the usage of `async/await`](#code-snippet-demonstrating-the-usage-of-asyncawait)
 - [Use of Promises](#use-of-promises)
   - [`fetch()` method of JavaScript](#fetch-method-of-javascript)
+    - [Need of two `.then` blocks for parsing the body of the respose obtained using `fetch`](#need-of-two-then-blocks-for-parsing-the-body-of-the-respose-obtained-using-fetch)
 - [`Date` objects in JavaScript](#date-objects-in-javascript)
   - [`new Date()` constructor vs. `Date()` function](#new-date-constructor-vs-date-function)
   - [Displaying dates using `Date.prototype.toString()`](#displaying-dates-using-dateprototypetostring)
@@ -198,6 +199,9 @@
     - [`Element.removeAttribute()`](#elementremoveattribute)
 - [Events in Javascript](#events-in-javascript)
   - [Event Listeners vs. Event Handlers](#event-listeners-vs-event-handlers)
+  - [Native DOM Event Object](#native-dom-event-object)
+    - [First example showing its usage](#first-example-showing-its-usage)
+    - [Second example showing its usage](#second-example-showing-its-usage)
   - [`addEventListener()` method](#addeventlistener-method)
   - [`KeyboardEvent` objects](#keyboardevent-objects)
     - [Keyboard Event Attributes](#keyboard-event-attributes)
@@ -2547,7 +2551,7 @@ Watch [this](https://www.youtube.com/watch?v=U74BJcr8NeQ&t=26m00s) video from `2
 
 ---
 
-## `async`/`await`
+## `async/await`
 
 `async`/`await` is a way to write asynchronous code that is more readable and easier to understand than using [callbacks](#callback-functions) or [Promises](#promises).
 
@@ -2567,7 +2571,7 @@ In this example, the [fetch](#fetch-method-of-javascript) function returns a `Pr
 >
 > Also, you should be careful when using `await`, if the promise it's waiting for is rejected, it will throw an error and you should handle it using ***try-catch*** blocks.
 
-### Code-snippet demonstrating the usage of `async`/`await`
+### Code-snippet demonstrating the usage of `async/await`
 
 ```js
 function promiseGen() {
@@ -2657,6 +2661,10 @@ fetch('https://api.example.com/data', {
 > ***Note***: `fetch()` uses a JavaScript promise, and that it is not supported in some older browsers. 
 > 
 > If you need to support older browsers, you can use a library such as axios or isomorphic-fetch which have the same api and provide backwards compatibility.
+
+### Need of two `.then` blocks for parsing the body of the respose obtained using `fetch`
+
+Watch Hussein Nasser's video on this: https://www.youtube.com/watch?v=ZYwrQsBvZtI.
 
 ---
 
@@ -3134,6 +3142,55 @@ When JavaScript is used in HTML pages, JavaScript can "react" on these events.
 
 - Event listener listens out for the event happening.
 - Event handler is the code that is run in response to it happening.
+
+## Native DOM Event Object
+
+The ***Native DOM Event Object*** is an object that is passed as an argument to *event handler functions*, when an event occurs on a DOM element. 
+
+It contains information about the event, such as:
+- the type of event (e.g. `"click"`, `"input"`, etc.)
+- the target element that the event occurred on
+- the state of the keyboard and mouse at the time of the event.
+
+### First example showing its usage
+
+```js
+const button = document.querySelector("button");
+
+button.addEventListener("click", function(event) {
+  console.log(event.type); // logs "click"
+  console.log(event.target); // logs the button element
+  console.log(event.clientX, event.clientY); // logs the x and y coordinates of the mouse when the event occurred
+});
+```
+
+In this example, a `click` event listener is added to a button element. 
+
+When the button is clicked, the event handler function is called, and it receives the DOM `event` object as its argument. 
+
+The function logs the type of event (in this case, `"click"`), the target element (the DOM representation of the button element), and the x and y coordinates of the mouse when the event occurred.
+
+### Second example showing its usage
+
+```js
+const buttonElement = document.querySelector(".first-button");
+
+function makeInvisible(event) {
+    
+    // Logging the event object
+    console.log(event); 
+
+    // Logging the event target, i.e., the DOM representation of the button element.
+    console.log(event.target);
+
+    // Making the button invisible
+    event.target.style.visibility = "hidden";
+}
+
+buttonElement.addEventListener("click", makeInvisible);
+```
+
+---
 
 ## `addEventListener()` method
 

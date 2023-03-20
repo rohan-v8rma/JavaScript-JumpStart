@@ -28,8 +28,9 @@
     - [Structure of created array objects](#structure-of-created-array-objects)
     - [Accessing elements at specific indices of an array](#accessing-elements-at-specific-indices-of-an-array)
     - [What is an `Array`-like object?](#what-is-an-array-like-object)
-    - [Some prototype/static methods of the global `Array` class](#some-prototypestatic-methods-of-the-global-array-class)
-      - [`Array.prototype.forEach()`](#arrayprototypeforeach)
+    - [Methods of Array classs](#methods-of-array-classs)
+      - [`forEach()`, `filter()`, `map()`, `sort()`, `reduce()`](#foreach-filter-map-sort-reduce)
+      - [Difference between `forEach()` and `map()`](#difference-between-foreach-and-map)
       - [Creating an array from other sequences using: `Array.from()`](#creating-an-array-from-other-sequences-using-arrayfrom)
 - [Statements in Javascript](#statements-in-javascript)
   - [`throw` statement](#throw-statement)
@@ -219,6 +220,7 @@
     - [Another way to different between Arrow Functions and Regular Functions](#another-way-to-different-between-arrow-functions-and-regular-functions)
   - [Rest Parameters](#rest-parameters)
   - [`let`, `const` keywords \& **Temporal Dead Zones**](#let-const-keywords--temporal-dead-zones)
+  - [](#)
 - [Unexpected Behaviors in Javascript](#unexpected-behaviors-in-javascript)
   - [Increasing the length of an `Array`](#increasing-the-length-of-an-array)
 - [TypeScript](#typescript)
@@ -508,11 +510,178 @@ The second statement is valid.
 
 An `Array`-like object is an object that has a length property and properties indexed from zero, but it doesn't have `Array`'s built-in methods like `forEach()` or `map()`.
 
-### Some prototype/static methods of the global `Array` class
+### Methods of Array classs
 
-#### `Array.prototype.forEach()`
+#### `forEach()`, `filter()`, `map()`, `sort()`, `reduce()`
 
-The `forEach()` prototype method executes a provided function (Arrow/Callback/Inline-callback) once for each array element.
+Watch this video from Traversy Media: https://www.youtube.com/watch?v=rRgD1yVwIvE
+
+Code snippet for quick glance:
+```js
+const companies= [
+  {name: "Company One", category: "Finance", start: 1981, end: 2004},
+  {name: "Company Two", category: "Retail", start: 1992, end: 2008},
+  {name: "Company Three", category: "Auto", start: 1999, end: 2007},
+  {name: "Company Four", category: "Retail", start: 1989, end: 2010},
+  {name: "Company Five", category: "Technology", start: 2009, end: 2014},
+  {name: "Company Six", category: "Finance", start: 1987, end: 2010},
+  {name: "Company Seven", category: "Auto", start: 1986, end: 1996},
+  {name: "Company Eight", category: "Technology", start: 2011, end: 2016},
+  {name: "Company Nine", category: "Retail", start: 1981, end: 1989}
+];
+
+const ages = [33, 12, 20, 16, 5, 54, 21, 44, 61, 13, 15, 45, 25, 64, 32];
+
+for(let i = 0; i < companies.length; i++) {
+  console.log(companies[i]);
+}
+
+// forEach
+
+companies.forEach(function(company) {
+  console.log(company.name);
+});
+
+// filter
+
+// Get 21 and older
+
+let canDrink = [];
+for(let i = 0; i < ages.length; i++) {
+  if(ages[i] >= 21) {
+    canDrink.push(ages[i]);
+  }
+}
+
+const canDrink = ages.filter(function(age) {
+  if(age >= 21) {
+    return true;
+  }
+});
+
+const canDrink = ages.filter(age => age >= 21);
+
+// Filter retail companies
+
+const retailCompanies = companies.filter(function(company) {
+  if(company.category === 'Retail') {
+    return true;
+  }
+});
+
+const retailCompanies = companies.filter(company => company.category === 'Retail');
+
+// Get 80s companies
+
+const eightiesCompanies = companies.filter(company => (company.start >= 1980 && company.start < 1990));
+
+// Get companies that lasted 10 years or more
+
+const lastedTenYears = companies.filter(company => (company.end - company.start >= 10));
+
+// map
+
+// Create array of company names
+const companyNames = companies.map(function(company) {
+  return company.name;
+});
+
+const testMap = companies.map(function(company) {
+  return `${company.name} [${company.start} - ${company.end}]`;
+});
+
+const testMap = companies.map(company => `${company.name} [${company.start} - ${company.end}]`);
+
+const ageMap = ages
+  .map(age => Math.sqrt(age))
+  .map(age => age * 2);
+
+
+// sort
+
+// Sort companies by start year
+
+const sortedCompanies  = companies.sort(function(c1, c2) {
+  if(c1.start > c2.start) {
+    return 1;
+  } else {
+    return -1;
+  }
+});
+
+const sortedCompanies = companies.sort((a, b) => (a.start > b.start ? 1 : -1));
+
+// Sort ages
+const sortAges = ages.sort((a, b) => a - b);
+
+console.log(sortAges);
+
+
+// reduce
+
+let ageSum = 0;
+for(let i = 0; i < ages.length; i++) {
+  ageSum += ages[i];
+}
+
+const ageSum = ages.reduce(function(total, age) {
+  return total + age;
+}, 0);
+
+const ageSum = ages.reduce((total, age) => total + age, 0);
+
+// Get total years for all companies
+
+const totalYears = companies.reduce(function(total, company) {
+  return total + (company.end - company.start);
+}, 0);
+
+const totalYears = companies.reduce((total, company) => total + (company.end - company.start), 0);
+
+// Combine Methods
+
+const combined = ages
+  .map(age => age * 2)
+  .filter(age => age >= 40)
+  .sort((a, b) => a - b)
+  .reduce((a, b) => a + b, 0);
+
+console.log(combined);
+```
+
+#### Difference between `forEach()` and `map()`
+
+`map()` and `forEach()` are both array methods in JavaScript, but they have different purposes and return values.
+
+`forEach()` is used to iterate over each item in an array and execute a function for each item. It doesn't create a new array, and it doesn't modify the original array. It's useful when you want to perform some action on each item in an array, such as printing them to the console or updating a property on each object in the array.
+
+Here's an example of using `forEach()`:
+
+```javascript
+const numbers = [1, 2, 3, 4];
+
+numbers.forEach((number) => {
+  console.log(number);
+});
+```
+
+`map()`, on the other hand, is used to create a new array based on an existing array. It executes a function on each item in the array and returns a new array with the results. It doesn't modify the original array.
+
+Here's an example of using `map()`:
+
+```javascript
+const numbers = [1, 2, 3, 4];
+
+const doubledNumbers = numbers.map((number) => {
+  return number * 2;
+});
+
+console.log(doubledNumbers); // Output: [2, 4, 6, 8]
+```
+
+In this example, `map()` is used to create a new array (doubledNumbers) with each number in the original array (numbers) multiplied by 2.
+
+So, the key difference between `forEach()` and `map()` is that `forEach()` is used for executing a function on each item in an array, while `map()` is used for creating a new array based on an existing array.
 
 #### Creating an array from other sequences using: `Array.from()`
 
@@ -3477,6 +3646,10 @@ TODO
 ## `let`, `const` keywords & **Temporal Dead Zones**
 
 Given under [Variable and Constant values](#variable-and-constant-values) above.
+
+##
+
+---
 
 # Unexpected Behaviors in Javascript
 

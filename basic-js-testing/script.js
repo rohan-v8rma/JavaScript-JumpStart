@@ -1,15 +1,18 @@
-const buttonElement = document.querySelector(".first-button");
+const variable1 = 1;
 
-function makeInvisible(event) {
-    
-    // Logging the event object
-    console.log(event); 
+class World {
+    constructor() {
+        const variable0 = 0;
+        this.variable2 = 2
+    }
 
-    // Logging the event target, i.e., the DOM representation of the button element.
-    console.log(event.target);
-
-    // Making the button invisible
-    event.target.style.visibility = "hidden";
+    showVar() {
+        // console.log(variable0)
+        console.log(variable1)
+        console.log(this.variable2);
+    }
 }
 
-buttonElement.addEventListener("click", makeInvisible);
+const instance1 = new World()
+
+instance1.showVar();

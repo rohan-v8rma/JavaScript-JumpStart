@@ -1,18 +1,12 @@
-const variable1 = 1;
+const string = 
+`h
 
-class World {
-    constructor() {
-        const variable0 = 0;
-        this.variable2 = 2
-    }
+d`
 
-    showVar() {
-        // console.log(variable0)
-        console.log(variable1)
-        console.log(this.variable2);
-    }
-}
+console.log(string);
 
-const instance1 = new World()
+const array = string.split('\n\n')
 
-instance1.showVar();
+console.log(array);
+
+array.forEach((element) => console.log(element))
